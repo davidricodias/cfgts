@@ -1,0 +1,40 @@
+site_name: cfgts
+site_description: CfGTS (Counterfactual Generation for Time Series) is a Python package designed to automatically generate counterfactuals for artificial intelligence models.
+site_url: https://davidricodias.github.io/cfgts
+
+theme:
+  name: material
+  locale: en
+  icon:
+    repo: fontawesome/brands/github
+  palette:
+    - scheme: slate
+      primary: green
+      accent: blue
+      toggle:
+        icon: material/lightbulb-outline
+        name: Switch to dark mode
+    - scheme: default
+      primary: green
+      accent: blue
+      toggle:
+        icon: material/lightbulb
+        name: Switch to light mode
+  features:
+    - search.suggest
+    - search.highlight
+repo_name: cfgts
+repo_url: https://github.com/davidricodias/cfgts
+markdown_extensions:
+  - pymdownx.arithmatex:
+      inline_syntax: ['dollar']
+
+extra_javascript:
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+nav:
+  - Home: index.md
+
+plugins:
+  - mkdocstrings
+  - search
