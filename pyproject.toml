@@ -48,7 +48,7 @@ dev = [
   "latextomd==0.1.6",
   "mkdocstrings[python]==0.29.1",
   "pymdown-extensions==10.15",
-  "mypy[faster-cache]==1.15.0",
+  "mypy[faster-cache]==1.18.2",
   "pre-commit==4.2.0",
   "pytest==8.3.5",
   "pytest-cov==6.1.1",
