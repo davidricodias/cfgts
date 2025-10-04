@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+from collections import defaultdict
 from logging import getLevelNamesMapping, getLogger, root
 from threading import Lock
 
@@ -150,10 +151,13 @@ class CFGTS:
             timeout=self.timeout,
             n_jobs=-1,
         )
-        result = []
+
+        # Store best trials
+        counterfactuals = defaultdict(list)
         for _trial in self._study.best_trials:
-            result.append(list(self._study.best_trials[0].params.values()))
-        self._counterfactuals = DataFrame(result, schema=self.instance.columns)
+            for k, v in _trial.params.items():
+                counterfactuals[k].append(v)
+        self._counterfactuals = DataFrame(counterfactuals, schema=self.instance.columns)
 
     class Objective:
         def __init__(
@@ -176,7 +180,7 @@ class CFGTS:
             for i in range(len(self.suggested_instance)):
                 for j in range(len(self.suggested_instance[i])):
                     self.suggested_instance[i][j] = trial.suggest_float(
-                        f"{i}_{j}", self.range_min, self.range_max
+                        f"{self.variables[j]}", self.range_min, self.range_max
                     )
             features_diff = distance_between_observations(self.instance, self.suggested_instance)
             y_hat = self.model.predict(DataFrame(self.suggested_instance, schema=self.variables))
