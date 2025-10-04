@@ -22,6 +22,7 @@ __license__ = "CC BY-NC-ND"
 class CFGTS:
     __slots__ = (
         "__run_lock",
+        "_all_trials",
         "_counterfactuals",
         "_study",
         "counterfactual_value",
@@ -69,6 +70,7 @@ class CFGTS:
         self.kwargs: dict[str, str] = kwargs
 
         self._counterfactuals: DataFrame | None = None
+        self._all_trials: DataFrame | None = None
         self._study: Study | None = None
 
         self.__run_lock = Lock()
@@ -151,6 +153,13 @@ class CFGTS:
             timeout=self.timeout,
             n_jobs=-1,
         )
+
+        # Store all trials
+        all_trials = defaultdict(list)
+        for _trial in self._study.trials:
+            for k, v in _trial.params.items():
+                all_trials[k].append(v)
+        self._all_trials = DataFrame(all_trials, schema=self.instance.columns)
 
         # Store best trials
         counterfactuals = defaultdict(list)
