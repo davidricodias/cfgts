@@ -92,22 +92,21 @@ class CFGTS:
         return self._study
 
     def __setup_logging(self: CFGTS) -> None:
-        logging_level = "NOTSET"
-        if (
-            "verbose" in self.kwargs.keys()
-            and self.kwargs.get("verbose") in getLevelNamesMapping().keys()
-            and self.kwargs.get("verbose") != "NOTSET"
-        ):
-            activate_logger()
-            logging_level = self.kwargs.get("verbose")
+        logging_level: str = "NOTSET"
+        if "verbose" in self.kwargs.keys():
+            verbose_level = (
+                self.kwargs.get("verbose") if self.kwargs.get("verbose") is not None else "NOTSET"
+            )
+            if verbose_level in getLevelNamesMapping().keys() and verbose_level != "NOTSET":
+                activate_logger()
+                logging_level = verbose_level
 
         set_logger_level(logging_level)
         # Setup logging for optuna
-        [
-            getLogger(name).setLevel(logging_level)
-            for name in root.manager.loggerDict
-            if name.startswith("optuna")
-        ]
+        for name in root.manager.loggerDict:
+            if name.startswith("optuna"):
+                optuna_logger = getLogger(name)
+                optuna_logger.setLevel(logging_level)
 
     def __assert_preconditions(self: CFGTS) -> None:
         try:
@@ -124,11 +123,6 @@ class CFGTS:
             log.error(msg)
             raise ValueError(msg)
 
-    def __generate_randomized_samples(self: CFGTS) -> DataFrame:
-        """Generates randomized samples for the independent variables having the instance as the average of the sample
-        distribution"""
-        return DataFrame()
-
     def run(self: CFGTS) -> DataFrame:
         """Runs the CFGTS algorithm to generate counterfactuals.
 
@@ -144,21 +138,21 @@ class CFGTS:
 
     def __generate_counterfactuals(self: CFGTS) -> None:
         self._study = create_study(directions=["minimize", "minimize"])
+        optimization_objective: CFGTS.Objective = self.Objective(
+            self.model,
+            self.counterfactual_value,
+            self.instance,
+            range_min=self.range_min,
+            range_max=self.range_max,
+        )
         self._study.optimize(
-            self.Objective(
-                self.model,
-                self.counterfactual_value,
-                self.instance,
-                range_min=self.range_min,
-                range_max=self.range_max,
-            ),
+            optimization_objective,
             timeout=self.timeout,
             n_jobs=-1,
         )
         result = []
         for _trial in self._study.best_trials:
             result.append(list(self._study.best_trials[0].params.values()))
-        # TODO: Remove rows whose values are closer within epsilon to each other
         self._counterfactuals = DataFrame(result, schema=self.instance.columns)
 
     class Objective:
@@ -172,20 +166,20 @@ class CFGTS:
         ) -> None:
             self.model = model
             self.objective_value = copy.deepcopy(objective_value).to_numpy()
-            self.instances = copy.deepcopy(instance).to_numpy()
+            self.instance = copy.deepcopy(instance).to_numpy()
             self.variables = copy.deepcopy(instance.columns)
-            self.suggested_instances = np.ndarray(shape=(instance.shape[0], instance.shape[1]))
+            self.suggested_instance = np.ndarray(shape=(instance.shape[0], instance.shape[1]))
             self.range_min = range_min
             self.range_max = range_max
 
         def __call__(self, trial: Trial) -> tuple[float, float]:
-            for i in range(len(self.suggested_instances)):
-                for j in range(len(self.suggested_instances[i])):
-                    self.suggested_instances[i][j] = trial.suggest_float(
+            for i in range(len(self.suggested_instance)):
+                for j in range(len(self.suggested_instance[i])):
+                    self.suggested_instance[i][j] = trial.suggest_float(
                         f"{i}_{j}", self.range_min, self.range_max
                     )
-            features_diff = distance_between_observations(self.instances, self.suggested_instances)
-            y_hat = self.model.predict(DataFrame(self.suggested_instances, schema=self.variables))
+            features_diff = distance_between_observations(self.instance, self.suggested_instance)
+            y_hat = self.model.predict(DataFrame(self.suggested_instance, schema=self.variables))
             objective_diff = np.abs(self.objective_value - y_hat) / (
                 self.objective_value
             )  # Relative difference
