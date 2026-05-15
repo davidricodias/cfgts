@@ -1,0 +1,36 @@
+name: Docs Publish
+
+on:
+  release:
+    types:
+      - published
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Dependencies
+        run: uv sync --frozen
+
+      - name: Install Pandoc
+        run: sudo apt-get update && sudo apt-get install -y pandoc
+
+      - name: Convert LaTeX to Markdown
+        run: |
+          pandoc docs/report/report.tex -o docs/report/report.md --mathjax
+
+      - name: Deploy Docs
+        run: uv run mkdocs gh-deploy --force

@@ -1,0 +1,115 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cfgts"
+description = "CfGTS (Counterfactual Generation for Time Series) is a Python package designed to automatically generate counterfactuals for artificial intelligence models."
+authors = [
+  { name = "José David Rico Días" }
+]
+license = { file = "LICENSE" }
+readme = "README.md"
+requires-python = ">=3.11"
+version = "0.0.1"
+dependencies = [
+  "polars",
+  "ipython",
+  "ipykernel",
+  "pandas",
+  "optuna",
+  "scikit-learn",
+  "scipy",
+  "numba",
+  "matplotlib",
+  "session_info",
+  "dowhy",
+  "pyarrow",
+  "tigramite",
+  "ipywidgets",
+  "networkx==3.4.2",
+  "puncc",
+  "dcor",
+]
+
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Rust"
+]
+
+[dependency-groups]
+dev = [
+  "mkdocs==1.6.1",
+  "mkdocs-material==9.6.12",
+  "latextomd==0.1.6",
+  "mkdocstrings[python]==0.29.1",
+  "pymdown-extensions==10.15",
+  "mypy[faster-cache]==1.15.0",
+  "pre-commit==4.2.0",
+  "pytest==8.3.5",
+  "pytest-cov==6.1.1",
+  "pytest-xdist==3.8.0",
+  "ruff==0.11.8",
+]
+
+[tool.hatch.version]
+path = "cfgts/_version.py"
+
+[tool.mypy]
+check_untyped_defs = true
+disallow_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = ["tests.*", "sklearn.*", "pytest_bdd.*"]
+disallow_untyped_defs = false
+follow_untyped_imports = true
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-n auto --cov=cfgts --cov-report term-missing --no-cov-on-fail"
+
+[tool.coverage.report]
+exclude_lines = ["if __name__ == .__main__.:", "pragma: no cover"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+fix = true
+
+[tool.ruff.lint]
+select = [
+  "E",  # pycodestyle
+  "B",  # flake8-bugbear
+  "W",  # Warning
+  "F",  # pyflakes
+  "UP",  # pyupgrade
+  "I001",  # unsorted-imports
+  "T201",  # print found
+  "T203",  # pprint found
+  "RUF022",  # Unsorted __all__
+  "RUF023",  # Unforted __slots__
+]
+ignore=[
+  # Recommended ignores by ruff when using formatter
+  "E501",
+  "W191",
+  "E111",
+  "E114",
+  "E117",
+  "D206",
+  "D300",
+  "Q000",
+  "Q001",
+  "Q002",
+  "Q003",
+  "COM812",
+  "COM819",
+  "ISC001",
+  "ISC002",
+]
