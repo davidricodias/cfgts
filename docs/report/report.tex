@@ -334,6 +334,7 @@ Una de las mejores metáforas sobre la relación de las causas y efectos, y nues
 \section{Instancias contrafactuales}
 \subsection{Explicaciones contrafactuales}
 
+\section{Optimización multi-objetivo}
 
 \chapter{Objetivos}
 
@@ -709,10 +710,10 @@ Las aristas del grafo causal CFGTS se construyen según dos reglas:
 
 \subsubsection{Efectos causales, efecto total y cambio esperado}
 
-\begin{definition}[Sistema dinámico lineal de orden $p$]
-    Sea $n \in \mathbb{N}$ el número de variables observadas. Un sistema dinámico lineal con $p$ retardos se escribe como
+\begin{definition}[Sistema dinámico lineal de orden $\ell$]
+    Sea $n \in \mathbb{N}$ el número de variables observadas. Un sistema dinámico lineal con $\ell$ retardos se escribe como
     \begin{equation}
-        \mathbf{Z}_t = A_1 \mathbf{Z}_{t-1} + A_2 \mathbf{Z}_{t-2} + \cdots + A_p \mathbf{Z}_{t-p} + \boldsymbol{\varepsilon}_t,
+        \mathbf{Z}_t = A_1 \mathbf{Z}_{t-1} + A_2 \mathbf{Z}_{t-2} + \cdots + A_\ell \mathbf{Z}_{t-\ell} + \boldsymbol{\varepsilon}_t,
         \qquad A_{\ell} \in \mathbb{R}^{n \times n}.
         \label{eq:formal_varp}
     \end{equation}
@@ -727,7 +728,7 @@ Las aristas del grafo causal CFGTS se construyen según dos reglas:
         \mathbf{T}^{(h+1)} = \sum_{j=0}^{h} A_{j+1}\,\mathbf{T}^{(h-j)},
         \label{eq:formal_total_lag_effect}
     \end{equation}
-    con la convención $A_q = 0$ cuando $q > p$. La matriz $\mathbf{T}^{(h+1)}$ agrega \textbf{todas} las trayectorias dirigidas que conectan el instante $t-(h+1)$ con el instante $t$.
+    con la convención $A_q = 0$ cuando $q > \ell$. La matriz $\mathbf{T}^{(h+1)}$ agrega \textbf{todas} las trayectorias dirigidas que conectan el instante $t-(h+1)$ con el instante $t$.
 \end{definition}
 
 \begin{definition}[Efecto directo y efecto mediado]
