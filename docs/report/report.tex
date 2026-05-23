@@ -318,13 +318,94 @@ TODO
 
 \chapter{Motivación}
 
+La motivación de este trabajo surge desde dos perspectivas:
+\begin{itemize}
+    \item Un problema que me encontré durante una etapa de trabajo en \textit{Santander Corporate and Investment Banking}: dados los movimientos diarios en rendimiento de un portfolio de deuda, explicar qué tipo de porfolio tendríamos que haber tenido ayer para que el movimiento hubiese sido cero, en vez del movimiento finalmente observado. Los instrumentos de deuda presentan autocorrelación y correlación cruzada. Es necesario predecir los movimientos de ambos instrumentos, y explicar qué movimientos en los instrumentos de deuda en los días anteriores podrían haber llevado a un movimiento cero en el día actual. Este problema se puede formular como un problema de generación de explicaciones contrafactuales para modelos predictivos de series temporales.
+    \item El Trabajo de Fin de Grado que realicé en el Grado en Administración de Empresas, el cual implementó un modelo de series temporales para predecir los movimientos del libro de órdenes de varias empresas cotizadas. El libro de órdenes es un vector de precios, volúmenes, y número de agentes en competencia, para un instrumento financiero. Una de las incógnitas que los investigadores en microestructura de mercados intentan activamente resolver, es \textit{¿En qué estado tendría que haber estado el libro de órdenes para que el precio no hubiese cambiado?} Este problema igualmente se puede formular como un problema de generación de explicaciones contrafactuales para modelos predictivos de series temporales.
+\end{itemize}
+
+Ambas motivaciones nacen de un interés personal, pero la generación de contrafactuales en caso particular de las series temporales no solo tiene aplicaciones en finanzas, pues como veremos a lo largo de este trabajo las técnicas de generación de contrafactuales son aplicables en múltiples domininios, mientras exista un modelo y una predicción que explicar. Las buenas explicaciones contrafactuales son plausibles, aumentan nuestra confianza en el modelo y amplían nuestro conocimiento sobre el fenómeno que se modela, lo que es especialmente relevante en dominios de alto impacto como la medicina, la justicia o las finanzas.
+
 \chapter{Fundamentos teóricos}
+
+En esta sección se desarrollan los fundamentos teóricos de las técnicas que se usarán para resolver el problema de generación de explicaciones contrafactuales para modelos predictivos de series temporales. Se presentan los conceptos básicos sobre series temporales, causalidad \textit{pearliana}, instancias contrafactuales y optimización multi-objetivo.
 
 \section{Series temporales}
 
+No hay nada más natural para el ser humano que el concepto del tiempo: la realidad se experimenta como una sucesión irreversible de eventos. El interés humano se centra en comprender esa sucesión de eventos, predecir lo que ocurrirá a continuación, y explicar por qué ocurren las cosas. Las series temporales son la formalización matemática de esa sucesión de eventos, y los modelos de series temporales son herramientas para predecir y explicar esa sucesión.
+
+Alrededor del año 600 A.C., reyes y sacerdotes viajaban a la ciudad griega de Delfos para consultar a la pitonisa sobre el futuro. La pitonisa, sentada sobre un trípode, inhalaba vapores de gas natural que emanaban de una grieta en la tierra, lo que le inducía un estado de trance. En ese estado la pitonisa pronunciaba crípticas profecías\cite{deBoer2001}. El interés en predecir el futuro es tan antiguo como la propia civilización humana.
+
+Volviendo a la formalización, una serie temporal es un conjunto de observaciones $x_t$, donde $t$ representa un momento en el tiempo concreto. La serie temporal puede ser discreta, si $t$ pertenece a un conjunto de instantes discretos, o contínua, si $t$ puede tomar cualquier valor real. Usualmente las series temporales son discretas ya que las medidas se toman en instantes concretos, como por ejemplo cada hora, cada día, etc.
+
+Un modelo de series temporales para los datos observados $\{x_t\}$ es una especificación de las distribuciones conjuntas de dichos datos, en forma de secuencia de variables aleatorias $\{X_t\}$ de las que $\{x_t\}$ es una instancia de la distribución. Con frecuencia el término series temporales se usa para referirse tanto al dato como al proceso generador; la temperatura (distribución) es una serie temporal, así como un dataset de temperaturas también es una serie temporal.
+
+Normalmente se especifican los valores esperados $\mathbb{E}[X_t]$ y los productos esperados $\mathbb{E}[X_{t+h}X_t]$, para $t = 1, 2, \ldots$ y $h = 0, 1, 2, \ldots$, centrándose en las propiedades de la secuencia $\{X_t\}$ que dependen únicamente de ellos \cite{Brockwell2006}.
+
+\begin{figure}[H]
+	\ffigbox[\FBwidth] {
+	\caption[Ejemplo de serie temporal]{Ejemplo de serie temporal: número de hipotecas sobre viviendas en España de 2011 a 2025 \cite{ine2026espanaCifras}.}
+	}
+    {\includegraphics[width=0.6\linewidth]{hipotecas-en-miles.png}}
+\end{figure}
+
+\paragraph*{Series temporales multivariables}\mbox{}
+
+Existen problemas de series temporales que no se pueden describir únicamente con una variable, sino que es necesario el uso de múltiples variables que \textit{pueden} estar correlacionadas. Este tipo de series temporales se denominan \textit{series temporales multivariadas}, denotadas por el vector $\{\mathbf{X}_t\}$, en la que no solo existe dependencia dentro de cada componente $\{X_{ti}\}$, sino también interdependencia entre distintos componentes de la serie, $\{X_{ti}\}$ y $\{X_{tj}\}$, con $i \neq j$. Gran parte de la teoría de series temporales univariantes se extiende casi de forma natural al caso multivariante \cite{Brockwell2006}. Expandiendo las componentes podemos escribir la serie como:
+$$
+\mathbf{X}_t =
+\begin{pmatrix}
+X_{t1} \\
+X_{t2} \\
+\vdots \\
+X_{tp}
+\end{pmatrix},
+\qquad t \in \mathcal{T},
+$$
+
+donde cada componente $X_{ti}$ representa la variable aleatoria $i$-ésima observada en el instante $t$, para $i = 1, 2, \ldots, p$.
+
+\begin{figure}[H]
+	\ffigbox[\FBwidth] {
+	\caption[Ejemplo de serie temporal multivariante]{Ejemplo de serie temporal multivariante: tasa de cambio de los pares EUR/USD y GBP/USD del 01/01/2024 al 01/01/2026 \cite{tradingview_eurusd_gbpusd_2026}.}
+	}
+    {\includegraphics[width=0.8\linewidth]{EURUSD_2026-05-21_21-15-14.png}}
+\end{figure}
+
 \subsection{Taxonomía de problemas en series temporales}
 
-\subsection{Modelos de series temporales}
+Las series temporales como dato pueden ser de interés desde múltiples perspectivas: predecir la evolución de la serie, comparar varias series, decidir si un punto en una serie es una anomalía, etc. Esta taxonomía se recoge de \cite{Fu2011}, \cite{Esling2012}, \cite{Ding2008} y \cite{Anderson1994}.
+
+Para todos y cada unos de los siguientes tipos de problemas, se pueden encontrar formulación en el caso univariante como el multivariante.
+\paragraph{Regresión}\mbox{}
+
+La regresión de series temporales trata de predecir el valor futuro de la serie, dado un conjunto de observaciones pasadas. Por ejemplo, predecir el número de hipotecas sobre viviendas en España para el próximo año, dado el número de hipotecas en los años anteriores. La teoría estadística de la regresión de series temporales asume que la secuencia observada es una realización específica de un proceso aleatorio, donde la aleatoriedad surge de muchas interacciones independientes entre sí. En este marco, el objetivo es construir un modelo que capture las dependencias temporales y permita predecir el valor futuro de la serie con la mayor precisión posible \cite{Anderson1994}. La tarea de regresión puede ser de un único paso, donde se predice un único valor futuro, o de múltiples pasos, donde se predicen varios valores futuros de la serie.
+
+\paragraph{Clasificación}\mbox{}
+
+La clasificación de series temporales trata de asignar una etiqueta (\textit{label}) a la serie. Este tipo de problemas se considera de información completa, ya que se dispone de la serie completa para tomar la decisión. Por ejemplo, clasificar una serie temporal de temperatura como \textit{cómoda} o \textit{incómoda}. Entra dentro de la clase de problemas supervisados, ya que se dispone de un conjunto de entrenamiento con series temporales etiquetadas. La teoría estadística de la clasificación de series temporales se basa en la teoría de la clasificación supervisada clásica (métodos como \textit{clasificadores logísticos}, \textit{knn}, etc.), pero adaptada a la naturaleza secuencial de los datos.
+
+Dentro de la tarea de clasificación se pueden distinguir dos subtipos de problemas:
+\begin{itemize}
+    \item Clasificación de series temporales completas, donde se asigna una etiqueta a toda la serie.
+    \item Clasificación de instantes temporales, donde se asigna una etiqueta a un único instante temporal de la serie. Dentro de subtipo se encuentra la tarea de detección de anomalías, donde se asigna una etiqueta de \textit{normal} o \textit{anómalo} a cada instante temporal de la serie.
+\end{itemize}
+
+\paragraph*{Clusterización}\mbox{}
+
+La tarea de clusterización trata de encontrar agrupaciones (\textit{clusters}) de series temporales similares entre sí. Este tipo de problemas se considera de información completa y son problemas no supervisados, ya se basa en usar una función de homogeneidad que agrupe series lo más similares entre sí y lo más distintas entre grupos. Un ejemplo típico en finanzas es clusterizar los movimientos de pares de monedas, y descubrir si ciertos pares de monedas se mueven respecto a una moneda "base", para conocer si se agrupan entorno a los movimiento del dólar, el euro o el yen.
+
+\paragraph*{Similaridad}\mbox{}
+
+La tarea de similaridad consiste en cuantificar hasta qué punto dos series temporales se asemejan, mediante una función de distancia $\operatorname{Dist}(T, T')$. Se trata de un problema no supervisado, ya que no depende de etiquetas, sino de cómo se define la proximidad entre secuencias posiblemente ruidosas, desalineadas en el tiempo o incluso muestreadas a ritmos distintos \cite{Ding2008,Fu2011}. Una clasificación habitual distingue entre medidas de tipo \textit{lock-step}, que comparan el punto $i$-ésimo de una serie con el punto $i$-ésimo de la otra, y medidas elásticas, que permiten correspondencias de uno a muchos y deformaciones temporales \cite{Ding2008}.
+
+Dentro del primer grupo destacan las distancias inducidas por normas $L_p$, y en particular la distancia euclídea, por su simplicidad, coste lineal y facilidad de indexación, aunque son sensibles al ruido y a los desfases locales \cite{Faloutsos1994}. Entre las medidas elásticas, \textit{dynamic time warping} (DTW) permite comprimir o estirar localmente una serie para mejorar el emparejamiento \cite{BerndtClifford1994}, mientras que la familia de distancias basadas en edición, como LCSS, EDR y ERP, tolera huecos, emparejamientos parciales y discrepancias locales \cite{Ding2008,ChenOzsuOria2005,ChenNg2004}. Existen además propuestas más especializadas, como TQuEST, basada en intervalos de cruce de umbral, o SpADe, orientada a detectar patrones con desplazamientos y escalados en tiempo y amplitud \cite{Assfalg2006,Chen2007SpADe}. En la práctica, la elección de la medida de similaridad depende del equilibrio deseado entre robustez frente a desalineaciones, número de parámetros, interpretabilidad y coste computacional \cite{Ding2008}.
+
+\paragraph*{Segmentación}\mbox{}
+
+También conocido como resumen, tiene por objetivo crear una nueva serie temporal, derivada de la original, usando la menor cantidad de datos posibles y conservando la mayor cantidad de información posible. Se considera un subproblema del problema de la discretización, dado que se busca reducir la cantidad de datos a través de la creación de segmentos o resúmenes de la serie temporal original.
+
+\subsection{Modelos de regresión de series temporales}
 
 \section{Causalidad \textit{Pearliana}}
 Una de las mejores metáforas sobre la relación de las causas y efectos, y nuestro conocimiento sobre estos, se encuentra en el libro divulgativo \textit{The book of why} del propio Judea Pearl. En él se explica la \textit{La escalera de la causalidad}, una metáfora en la que se según se sube la escalera, más seguros podemos encontrarnos de que las causas y efectos son reales, siendo los peldaños la \textbf{asociación}, la \textbf{intervención} y los \textbf{contrafactuales}; cada peldaño requieren de herramientas matemáticas distintas y responde a preguntas diferentes \cite{pearl2017}.
