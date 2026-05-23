@@ -184,6 +184,7 @@ bibs/
 report/
 notebooks/
 ~report.tex
+~references.bib
 lean/.gitignore
 lean/CfgtsLean.lean
 lean/lake-manifest.json
