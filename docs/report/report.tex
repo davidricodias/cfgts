@@ -397,9 +397,37 @@ La tarea de clusterización trata de encontrar agrupaciones (\textit{clusters}) 
 
 \paragraph*{Similaridad}\mbox{}
 
-La tarea de similaridad consiste en cuantificar hasta qué punto dos series temporales se asemejan, mediante una función de distancia $\operatorname{Dist}(T, T')$. Se trata de un problema no supervisado, ya que no depende de etiquetas, sino de cómo se define la proximidad entre secuencias posiblemente ruidosas, desalineadas en el tiempo o incluso muestreadas a ritmos distintos \cite{Ding2008,Fu2011}. Una clasificación habitual distingue entre medidas de tipo \textit{lock-step}, que comparan el punto $i$-ésimo de una serie con el punto $i$-ésimo de la otra, y medidas elásticas, que permiten correspondencias de uno a muchos y deformaciones temporales \cite{Ding2008}.
+La tarea de similaridad consiste en cuantificar hasta qué punto dos series temporales se asemejan, mediante una función de distancia $\operatorname{Dist}(T, T')$. Se trata de un problema no supervisado, ya que no depende de etiquetas, sino de cómo se define la proximidad entre secuencias posiblemente ruidosas, desalineadas en el tiempo o incluso muestreadas a ritmos distintos \cite{Ding2008,Fu2011}. Una clasificación habitual distingue entre medidas de tipo \textit{lock-step}, que comparan el punto $i$-ésimo de una serie con el punto $i$-ésimo de la otra, y medidas elásticas, que permiten tanto correspondencias de uno a muchos como deformaciones temporales \cite{Ding2008}.
 
-Dentro del primer grupo destacan las distancias inducidas por normas $L_p$, y en particular la distancia euclídea, por su simplicidad, coste lineal y facilidad de indexación, aunque son sensibles al ruido y a los desfases locales \cite{Faloutsos1994}. Entre las medidas elásticas, \textit{dynamic time warping} (DTW) permite comprimir o estirar localmente una serie para mejorar el emparejamiento \cite{BerndtClifford1994}, mientras que la familia de distancias basadas en edición, como LCSS, EDR y ERP, tolera huecos, emparejamientos parciales y discrepancias locales \cite{Ding2008,ChenOzsuOria2005,ChenNg2004}. Existen además propuestas más especializadas, como TQuEST, basada en intervalos de cruce de umbral, o SpADe, orientada a detectar patrones con desplazamientos y escalados en tiempo y amplitud \cite{Assfalg2006,Chen2007SpADe}. En la práctica, la elección de la medida de similaridad depende del equilibrio deseado entre robustez frente a desalineaciones, número de parámetros, interpretabilidad y coste computacional \cite{Ding2008}.
+Dentro del primer grupo destacan las distancias inducidas por normas $L_p$, y en particular la distancia euclídea, por su simplicidad, coste lineal y facilidad de indexación, aunque son sensibles al ruido y a los desfases locales \cite{Faloutsos1994}. Entre las medidas elásticas, \textit{dynamic time warping} (DTW) permite comprimir o estirar localmente una serie para mejorar el emparejamiento \cite{BerndtClifford1994}, mientras que la familia de distancias basadas en edición, como LCSS, EDR y ERP, tolera huecos, emparejamientos parciales y discrepancias locales \cite{Ding2008,ChenOzsuOria2005,ChenNg2004}.
+
+Si $T = (x_1, \ldots, x_n)$ y $T' = (x'_1, \ldots, x'_n)$ son dos series de igual longitud, una familia clásica de medidas \textit{lock-step} viene dada por las distancias inducidas por normas $L_p$:
+$$
+d_p(T, T') = \left(\sum_{i=1}^{n} |x_i - x'_i|^p\right)^{1/p}, \qquad p \geq 1.
+$$
+Como casos particulares se obtienen la distancia Manhattan, $d_1$, la distancia euclídea, $d_2$, y la distancia máxima,
+$$
+d_{\infty}(T, T') = \max_{1 \leq i \leq n} |x_i - x'_i|.
+$$
+Estas medidas son atractivas por su simplicidad, coste lineal y facilidad de indexación, aunque resultan sensibles al ruido y a los desfases locales \cite{Faloutsos1994}.
+
+Entre las medidas elásticas, DTW (\textit{Dynamic Time Warping}) permite comprimir o estirar localmente una serie para mejorar el emparejamiento \cite{BerndtClifford1994}. Si $T = (x_1, \ldots, x_n)$ y $T' = (x'_1, \ldots, x'_m)$, con $n \neq m$, la distancia se expresa como:
+$$
+\operatorname{DTW}(T, T') = D(n,m),
+$$
+$$
+D(0,0)=0, \qquad D(i,0)=D(0,j)=+\infty,
+$$
+$$
+D(i,j) = |x_i - x'_j| + \min\{D(i-1,j), D(i,j-1), D(i-1,j-1)\},
+$$
+para $1 \leq i \leq n$ y $1 \leq j \leq m$. Por su parte, una forma normalizada de la medida LCSS (\textit{Longest Common Subsequence}) puede escribirse como
+$$
+d_{\mathrm{LCSS}}(T, T') = 1 - \frac{\mathrm{LCSS}_{\varepsilon,\delta}(T, T')}{\min(n,m)},
+$$
+donde $\varepsilon$ controla la tolerancia en amplitud y $\delta$ la tolerancia temporal. Esta familia de distancias basadas en edición, junto con EDR (\textit{Edit Distance on Real sequence}) y ERP (\textit{Edit Distance with Real Penalty}), tolera huecos, emparejamientos parciales y discrepancias locales \cite{Ding2008,ChenOzsuOria2005,ChenNg2004,Morse2007}.
+
+Existen además propuestas más especializadas, como TQuEST (\textit{Threshold Query based Similarity Search}), basada en intervalos de cruce de umbral, o SpADe (\textit{Shape-based Pattern Detection}), orientada a detectar patrones con desplazamientos y escalados en tiempo y amplitud \cite{Assfalg2006,Chen2007SpADe}. En la práctica, la elección de la medida de similaridad depende del equilibrio deseado entre robustez frente a desalineaciones, número de parámetros, interpretabilidad y coste computacional \cite{Ding2008}.
 
 \paragraph*{Segmentación}\mbox{}
 
