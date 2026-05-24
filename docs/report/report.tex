@@ -343,9 +343,9 @@ Un modelo de series temporales para los datos observados $\{x_t\}$ es una especi
 Normalmente se especifican los valores esperados $\mathbb{E}[X_t]$ y los productos esperados $\mathbb{E}[X_{t+h}X_t]$, para $t = 1, 2, \ldots$ y $h = 0, 1, 2, \ldots$, centrándose en las propiedades de la secuencia $\{X_t\}$ que dependen únicamente de ellos \cite{Brockwell2006}.
 
 \begin{figure}[H]
-	\ffigbox[\FBwidth] {
-	\caption[Ejemplo de serie temporal]{Ejemplo de serie temporal: número de hipotecas sobre viviendas en España de 2011 a 2025 \cite{ine2026espanaCifras}.}
-	}
+    \ffigbox[\FBwidth] {
+        \caption[Ejemplo de serie temporal]{Ejemplo de serie temporal: número de hipotecas sobre viviendas en España de 2011 a 2025 \cite{ine2026espanaCifras}.}
+    }
     {\includegraphics[width=0.6\linewidth]{hipotecas-en-miles.png}}
 \end{figure}
 
@@ -353,22 +353,22 @@ Normalmente se especifican los valores esperados $\mathbb{E}[X_t]$ y los product
 
 Existen problemas de series temporales que no se pueden describir únicamente con una variable, sino que es necesario el uso de múltiples variables que \textit{pueden} estar correlacionadas. Este tipo de series temporales se denominan \textit{series temporales multivariadas}, denotadas por el vector $\{\mathbf{X}_t\}$, en la que no solo existe dependencia dentro de cada componente $\{X_{ti}\}$, sino también interdependencia entre distintos componentes de la serie, $\{X_{ti}\}$ y $\{X_{tj}\}$, con $i \neq j$. Gran parte de la teoría de series temporales univariantes se extiende casi de forma natural al caso multivariante \cite{Brockwell2006}. Expandiendo las componentes podemos escribir la serie como:
 $$
-\mathbf{X}_t =
-\begin{pmatrix}
-X_{t1} \\
-X_{t2} \\
-\vdots \\
-X_{tp}
-\end{pmatrix},
-\qquad t \in \mathcal{T},
+    \mathbf{X}_t =
+    \begin{pmatrix}
+        X_{t1} \\
+        X_{t2} \\
+        \vdots \\
+        X_{tp}
+    \end{pmatrix},
+    \qquad t \in \mathcal{T},
 $$
 
 donde cada componente $X_{ti}$ representa la variable aleatoria $i$-ésima observada en el instante $t$, para $i = 1, 2, \ldots, p$.
 
 \begin{figure}[H]
-	\ffigbox[\FBwidth] {
-	\caption[Ejemplo de serie temporal multivariante]{Ejemplo de serie temporal multivariante: tasa de cambio de los pares EUR/USD y GBP/USD del 01/01/2024 al 01/01/2026 \cite{tradingview_eurusd_gbpusd_2026}.}
-	}
+    \ffigbox[\FBwidth] {
+        \caption[Ejemplo de serie temporal multivariante]{Ejemplo de serie temporal multivariante: tasa de cambio de los pares EUR/USD y GBP/USD del 01/01/2024 al 01/01/2026 \cite{tradingview_eurusd_gbpusd_2026}.}
+    }
     {\includegraphics[width=0.8\linewidth]{EURUSD_2026-05-21_21-15-14.png}}
 \end{figure}
 
@@ -385,7 +385,7 @@ Desde el punto de vista estadístico, la regresión en series temporales busca a
 
 \textbf{Regresión lineal simple.} El caso más elemental aparece cuando se utiliza un único predictor. Entonces la relación entre la variable objetivo $y$ y la variable explicativa $x$ puede escribirse como:
 $$
-y_t = \beta_0 + \beta_1 x_t + \varepsilon_t.
+    y_t = \beta_0 + \beta_1 x_t + \varepsilon_t.
 $$
 En esta expresión, $\beta_0$ representa el intercepto y $\beta_1$ la pendiente de la recta de regresión. El primero indica el valor esperado de $y_t$ cuando $x_t = 0$, mientras que el segundo recoge la variación media esperada en $y_t$ ante un aumento unitario de $x_t$. El término $\varepsilon_t$ agrupa la parte no explicada por el modelo; no debe interpretarse como un error en sentido coloquial, sino como la contribución de todos aquellos factores que influyen sobre $y_t$ y que no han quedado incorporados explícitamente en la ecuación, incluyendo el ruido.
 
@@ -439,34 +439,34 @@ donde $T$ es el tamaño muestral, $\bar{x}$ es la media observada del predictor,
 
 \textbf{Forma matricial.} En problemas con múltiples observaciones y varios predictores, resulta conveniente escribir el modelo en forma matricial. Sea
 $$
-\mathbf{y} = (y_1, \ldots, y_T)^\top,
-\qquad
-\boldsymbol{\varepsilon} = (\varepsilon_1, \ldots, \varepsilon_T)^\top,
-\qquad
-\boldsymbol{\beta} = (\beta_0, \beta_1, \ldots, \beta_k)^\top,
+    \mathbf{y} = (y_1, \ldots, y_T)^\top,
+    \qquad
+    \boldsymbol{\varepsilon} = (\varepsilon_1, \ldots, \varepsilon_T)^\top,
+    \qquad
+    \boldsymbol{\beta} = (\beta_0, \beta_1, \ldots, \beta_k)^\top,
 $$
 y sea además la matriz de datos $X$ de dimensión $T \times (k+1)$, donde la primera columna es un vector de unos para el intercepto y las siguientes columnas contienen los valores de los predictores para cada observación:
 $$
-X =
-\begin{pmatrix}
-1 & x_{1,1} & x_{2,1} & \cdots & x_{k,1} \\
-1 & x_{1,2} & x_{2,2} & \cdots & x_{k,2} \\
-\vdots & \vdots & \vdots & \ddots & \vdots \\
-1 & x_{1,T} & x_{2,T} & \cdots & x_{k,T}
-\end{pmatrix}.
+    X =
+    \begin{pmatrix}
+        1      & x_{1,1} & x_{2,1} & \cdots & x_{k,1} \\
+        1      & x_{1,2} & x_{2,2} & \cdots & x_{k,2} \\
+        \vdots & \vdots  & \vdots  & \ddots & \vdots  \\
+        1      & x_{1,T} & x_{2,T} & \cdots & x_{k,T}
+    \end{pmatrix}
 $$
 Con esta notación, el modelo de regresión lineal puede escribirse de forma compacta como
 \begin{equation}
-    \mathbf{y} = X\boldsymbol{\beta} + \boldsymbol{\varepsilon},
+    \mathbf{y} = X\boldsymbol{\beta} + \boldsymbol{\varepsilon}
     \label{eq:matrix_regression_model}
 \end{equation}
 donde se asume que $\mathbb{E}[\boldsymbol{\varepsilon}] = \mathbf{0}$ y $\operatorname{Var}(\boldsymbol{\varepsilon}) = \sigma^2 I$. La matriz $X$ tiene $T$ filas, una por observación, y $k+1$ columnas, correspondientes al intercepto y a los $k$ predictores incluidos en el modelo.
 
 \textbf{Estimación por mínimos cuadrados.} En esta formulación, la estimación por mínimos cuadrados ordinarios se obtiene minimizando la suma de cuadrados residual,
 $$
-\boldsymbol{\varepsilon}^\top \boldsymbol{\varepsilon}
-=
-(\mathbf{y} - X\boldsymbol{\beta})^\top (\mathbf{y} - X\boldsymbol{\beta}).
+    \boldsymbol{\varepsilon}^\top \boldsymbol{\varepsilon}
+    =
+    (\mathbf{y} - X\boldsymbol{\beta})^\top (\mathbf{y} - X\boldsymbol{\beta}).
 $$
 La solución del problema viene dada por la ecuación:
 \begin{equation}
@@ -489,7 +489,7 @@ donde $H = X(X^\top X)^{-1}X^\top$ se conoce como matriz sombrero, ya que transf
     \operatorname{CV} = \frac{1}{T}\sum_{t=1}^{T}\left(\frac{e_t}{1-h_t}\right)^2,
     \label{eq:cv_hat_matrix}
 \end{equation}
-donde $e_t$ es el residuo obtenido al ajustar el modelo con las $T$ observaciones. Esta identidad evita tener que reestimar el modelo $T$ veces para evaluar el error de predicción fuera de muestra \cite{Hyndman2021}.
+donde $e_t$ es el residuo obtenido al ajustar el modelo con las $T$ observaciones. Esta identidad evita tener que reestimar el modelo $T$ veces para evaluar el error de predicción fuera de muestra (\textit{out-of-sample})\cite{Hyndman2021}.
 
 \textbf{Predicción e intervalos en forma matricial.} Sea $\mathbf{x}_*$ un vector fila que contiene los valores de los predictores, con el mismo formato que las filas de $X$, para los que se desea obtener una predicción. Entonces, la predicción puntual viene dada por
 \begin{equation}
@@ -530,27 +530,27 @@ Dentro del primer grupo destacan las distancias inducidas por normas $L_p$, y en
 
 Si $T = (x_1, \ldots, x_n)$ y $T' = (x'_1, \ldots, x'_n)$ son dos series de igual longitud, una familia clásica de medidas \textit{lock-step} viene dada por las distancias inducidas por normas $L_p$:
 $$
-d_p(T, T') = \left(\sum_{i=1}^{n} |x_i - x'_i|^p\right)^{1/p}, \qquad p \geq 1.
+    d_p(T, T') = \left(\sum_{i=1}^{n} |x_i - x'_i|^p\right)^{1/p}, \qquad p \geq 1.
 $$
 Como casos particulares se obtienen la distancia Manhattan, $d_1$, la distancia euclídea, $d_2$, y la distancia máxima,
 $$
-d_{\infty}(T, T') = \max_{1 \leq i \leq n} |x_i - x'_i|.
+    d_{\infty}(T, T') = \max_{1 \leq i \leq n} |x_i - x'_i|.
 $$
 Estas medidas son atractivas por su simplicidad, coste lineal y facilidad de indexación, aunque resultan sensibles al ruido y a los desfases locales \cite{Faloutsos1994}.
 
 Entre las medidas elásticas, DTW (\textit{Dynamic Time Warping}) permite comprimir o estirar localmente una serie para mejorar el emparejamiento \cite{BerndtClifford1994}. Si $T = (x_1, \ldots, x_n)$ y $T' = (x'_1, \ldots, x'_m)$, con $n \neq m$, la distancia se expresa como:
 $$
-\operatorname{DTW}(T, T') = D(n,m),
+    \operatorname{DTW}(T, T') = D(n,m),
 $$
 $$
-D(0,0)=0, \qquad D(i,0)=D(0,j)=+\infty,
+    D(0,0)=0, \qquad D(i,0)=D(0,j)=+\infty,
 $$
 $$
-D(i,j) = |x_i - x'_j| + \min\{D(i-1,j), D(i,j-1), D(i-1,j-1)\},
+    D(i,j) = |x_i - x'_j| + \min\{D(i-1,j), D(i,j-1), D(i-1,j-1)\},
 $$
 para $1 \leq i \leq n$ y $1 \leq j \leq m$. Por su parte, una forma normalizada de la medida LCSS (\textit{Longest Common Subsequence}) puede escribirse como
 $$
-d_{\mathrm{LCSS}}(T, T') = 1 - \frac{\mathrm{LCSS}_{\varepsilon,\delta}(T, T')}{\min(n,m)},
+    d_{\mathrm{LCSS}}(T, T') = 1 - \frac{\mathrm{LCSS}_{\varepsilon,\delta}(T, T')}{\min(n,m)},
 $$
 donde $\varepsilon$ controla la tolerancia en amplitud y $\delta$ la tolerancia temporal. Esta familia de distancias basadas en edición, junto con EDR (\textit{Edit Distance on Real sequence}) y ERP (\textit{Edit Distance with Real Penalty}), tolera huecos, emparejamientos parciales y discrepancias locales \cite{Ding2008,ChenOzsuOria2005,ChenNg2004,Morse2007}.
 
@@ -1294,8 +1294,8 @@ Para $h+1=2$, la descomposición $\mathbf{T}^{(2)} = \mathbf{D}^{(2)} + \mathbf{
     \label{thm:equality_iff}
     Fijada una salida $d$, las puntuaciones del CausalModel y del MCO coinciden si y solo si la contribución total del sesgo sobre la perturbación es nula:
     $$s_d\!\left(\mathbf{x}'; \widehat{\boldsymbol{\beta}}^{(d)}_{\text{mco}}\right) = s_d\!\left(\mathbf{x}'; \widehat{\boldsymbol{\beta}}^{(d)}_{\text{causal}}\right)
-    \iff
-    \sum_{i=0}^{n_{\text{In}}-1} b_i^{(d)} \cdot (x'_i - x_i) = 0.$$
+        \iff
+        \sum_{i=0}^{n_{\text{In}}-1} b_i^{(d)} \cdot (x'_i - x_i) = 0.$$
 \end{theorem}
 
 Este último resultado caracteriza exactamente cuándo la regresión lineal plenamente ajustada puede igualar a la estimación causal basada en el DAG: solo cuando la contribución total del sesgo sobre la perturbación se anula. En general, la diferencia entre ambos métodos no es un caso de \emph{omitted variable bias}, sino de \textbf{sesgo por bloqueo de mediación}: al condicionar sobre retardos intermedios, MCO reemplaza el efecto total por un efecto directo controlado.
@@ -1886,10 +1886,10 @@ $$
 Además, usaremos los siguientes predicados auxiliares:
 \begin{align*}
     \mathrm{Val}_{\varepsilon}(\mathbf{x}')
-     &\Longleftrightarrow \mathbf{x}' \in \mathcal{F}(r_{\min}, r_{\max})
+     & \Longleftrightarrow \mathbf{x}' \in \mathcal{F}(r_{\min}, r_{\max})
     \;\wedge\; \forall k \in \{0, \ldots, D-1\},\ \left|f_k(\mathbf{x}') - y_k^*\right| \le \varepsilon, \\
     \mathrm{ParetoDom}(\mathbf{u}, \mathbf{v})
-     &\Longleftrightarrow J_1(\mathbf{u}) \le J_1(\mathbf{v})
+     & \Longleftrightarrow J_1(\mathbf{u}) \le J_1(\mathbf{v})
     \;\wedge\; J_2(\mathbf{u}) \le J_2(\mathbf{v})
     \;\wedge\; \bigl(J_1(\mathbf{u}) < J_1(\mathbf{v}) \;\vee\; J_2(\mathbf{u}) < J_2(\mathbf{v})\bigr).
 \end{align*}
@@ -2030,17 +2030,17 @@ Además, usaremos los siguientes predicados auxiliares:
 \begin{proof}
     Sea $c \neq 0$ y definamos la versión escalada del objetivo mediante
     $$\tilde{y}_k^* = c\,y_k^*, \qquad g_k(\mathbf{x}') = c\,f_k(\mathbf{x}').$$
-        Definamos también los sumandos
-        $$a_k = \frac{|y_k^* - f_k(\mathbf{x}')|}{|y_k^*|}, \qquad \tilde{a}_k = \frac{|\tilde{y}_k^* - g_k(\mathbf{x}')|}{|\tilde{y}_k^*|}.$$
-        Sea $k$ un índice arbitrario. Entonces
-        $$\tilde{a}_k
-            = \frac{|c y_k^* - c f_k(\mathbf{x}')|}{|c y_k^*|}
-            = \frac{|c|\,|y_k^* - f_k(\mathbf{x}')|}{|c|\,|y_k^*|}
-            = \frac{|y_k^* - f_k(\mathbf{x}')|}{|y_k^*|}
-            = a_k,$$
-        donde hemos usado la multiplicatividad del valor absoluto y la cancelación del factor $|c| \neq 0$. Como $k$ era arbitrario, concluimos
-        $$\forall k \in \{0, \ldots, D-1\},\quad \tilde{a}_k = a_k.$$
-        Por tanto, las sumas finitas que definen el objetivo original y el escalado coinciden término a término, y en consecuencia $J_1$ es invariante por escalado simultáneo del objetivo y de la salida del modelo.
+    Definamos también los sumandos
+    $$a_k = \frac{|y_k^* - f_k(\mathbf{x}')|}{|y_k^*|}, \qquad \tilde{a}_k = \frac{|\tilde{y}_k^* - g_k(\mathbf{x}')|}{|\tilde{y}_k^*|}.$$
+    Sea $k$ un índice arbitrario. Entonces
+    $$\tilde{a}_k
+        = \frac{|c y_k^* - c f_k(\mathbf{x}')|}{|c y_k^*|}
+        = \frac{|c|\,|y_k^* - f_k(\mathbf{x}')|}{|c|\,|y_k^*|}
+        = \frac{|y_k^* - f_k(\mathbf{x}')|}{|y_k^*|}
+        = a_k,$$
+    donde hemos usado la multiplicatividad del valor absoluto y la cancelación del factor $|c| \neq 0$. Como $k$ era arbitrario, concluimos
+    $$\forall k \in \{0, \ldots, D-1\},\quad \tilde{a}_k = a_k.$$
+    Por tanto, las sumas finitas que definen el objetivo original y el escalado coinciden término a término, y en consecuencia $J_1$ es invariante por escalado simultáneo del objetivo y de la salida del modelo.
 \end{proof}
 
 \section*{E.2 Cobertura}
@@ -2050,7 +2050,7 @@ En esta sección se desarrollan las demostraciones de las propiedades del objeti
 \paragraph*{Notación de trabajo}\mbox{}\\
 Fijemos una componente $d \in \{0, \ldots, D-1\}$. Se define
 \begin{align*}
-    \Delta_d & = |\hat{y}_d - \hat{y}'_d|, \\
+    \Delta_d & = |\hat{y}_d - \hat{y}'_d|,               \\
     a_d      & = \min(\hat{y}_d, \hat{y}'_d) - \Delta_d, \\
     b_d      & = \max(\hat{y}_d, \hat{y}'_d) + \Delta_d,
 \end{align*}
@@ -2068,15 +2068,15 @@ Los índices recorrerán conjuntos finitos; en la notación matemática escribir
 \begin{proof}
     Por definición,
     $$a_d = \min(\hat{y}_d, \hat{y}'_d) - \Delta_d
-    \qquad \text{y} \qquad
-    b_d = \max(\hat{y}_d, \hat{y}'_d) + \Delta_d.$$
+        \qquad \text{y} \qquad
+        b_d = \max(\hat{y}_d, \hat{y}'_d) + \Delta_d.$$
     Además, $\Delta_d = |\hat{y}_d - \hat{y}'_d| \ge 0$ y, por la propiedad elemental del mínimo y el máximo,
     $$\min(\hat{y}_d, \hat{y}'_d) \le \max(\hat{y}_d, \hat{y}'_d).$$
     Restar una cantidad no negativa en el extremo inferior y sumar esa misma cantidad en el superior solo puede ensanchar el intervalo, de modo que
     $$a_d = \min(\hat{y}_d, \hat{y}'_d) - \Delta_d
-      \le \min(\hat{y}_d, \hat{y}'_d)
-      \le \max(\hat{y}_d, \hat{y}'_d)
-      \le \max(\hat{y}_d, \hat{y}'_d) + \Delta_d = b_d.$$
+        \le \min(\hat{y}_d, \hat{y}'_d)
+        \le \max(\hat{y}_d, \hat{y}'_d)
+        \le \max(\hat{y}_d, \hat{y}'_d) + \Delta_d = b_d.$$
     En consecuencia, $a_d \le b_d$ y el intervalo $\mathcal{I}_d(\hat{\mathbf{y}}, \hat{\mathbf{y}}')$ está bien definido.
 \end{proof}
 
@@ -2086,31 +2086,31 @@ Los índices recorrerán conjuntos finitos; en la notación matemática escribir
 
     Si $\hat{y}_d \le \hat{y}'_d$, entonces
     $$\min(\hat{y}_d, \hat{y}'_d) = \hat{y}_d,
-    \qquad
-    \max(\hat{y}_d, \hat{y}'_d) = \hat{y}'_d,$$
+        \qquad
+        \max(\hat{y}_d, \hat{y}'_d) = \hat{y}'_d,$$
     y además $\hat{y}_d - \hat{y}'_d \le 0$, luego
     $$\Delta_d = |\hat{y}_d - \hat{y}'_d| = \hat{y}'_d - \hat{y}_d.$$
     Sustituyendo en la definición de los extremos,
     \begin{align*}
         b_d - a_d
          & = \bigl(\hat{y}'_d + (\hat{y}'_d - \hat{y}_d)\bigr) - \bigl(\hat{y}_d - (\hat{y}'_d - \hat{y}_d)\bigr) \\
-         & = \bigl(2\hat{y}'_d - \hat{y}_d\bigr) - \hat{y}'_d \\
-         & = \hat{y}'_d - \hat{y}_d + 2(\hat{y}'_d - \hat{y}_d) \\
+         & = \bigl(2\hat{y}'_d - \hat{y}_d\bigr) - \hat{y}'_d                                                     \\
+         & = \hat{y}'_d - \hat{y}_d + 2(\hat{y}'_d - \hat{y}_d)                                                   \\
          & = 3(\hat{y}'_d - \hat{y}_d) = 3|\hat{y}_d - \hat{y}'_d|.
     \end{align*}
 
     Si, por el contrario, $\hat{y}'_d \le \hat{y}_d$, entonces
     $$\min(\hat{y}_d, \hat{y}'_d) = \hat{y}'_d,
-    \qquad
-    \max(\hat{y}_d, \hat{y}'_d) = \hat{y}_d,$$
+        \qquad
+        \max(\hat{y}_d, \hat{y}'_d) = \hat{y}_d,$$
     y como $\hat{y}_d - \hat{y}'_d \ge 0$, se tiene
     $$\Delta_d = |\hat{y}_d - \hat{y}'_d| = \hat{y}_d - \hat{y}'_d.$$
     Por tanto,
     \begin{align*}
         b_d - a_d
          & = \bigl(\hat{y}_d + (\hat{y}_d - \hat{y}'_d)\bigr) - \bigl(\hat{y}'_d - (\hat{y}_d - \hat{y}'_d)\bigr) \\
-         & = \bigl(2\hat{y}_d - \hat{y}'_d\bigr) - \hat{y}_d \\
-         & = \hat{y}_d - \hat{y}'_d + 2(\hat{y}_d - \hat{y}'_d) \\
+         & = \bigl(2\hat{y}_d - \hat{y}'_d\bigr) - \hat{y}_d                                                      \\
+         & = \hat{y}_d - \hat{y}'_d + 2(\hat{y}_d - \hat{y}'_d)                                                   \\
          & = 3(\hat{y}_d - \hat{y}'_d) = 3|\hat{y}_d - \hat{y}'_d|.
     \end{align*}
 
@@ -2174,8 +2174,8 @@ Los índices recorrerán conjuntos finitos; en la notación matemática escribir
 \begin{proof}
     Supongamos $y_1 \le y_2$ y $a < b$. Entonces $b-a > 0$. Consideremos la diferencia
     $$\varphi_{a,b}(y_2) - \varphi_{a,b}(y_1)
-      = \frac{y_2-a}{b-a} - \frac{y_1-a}{b-a}
-      = \frac{y_2-y_1}{b-a}.$$
+        = \frac{y_2-a}{b-a} - \frac{y_1-a}{b-a}
+        = \frac{y_2-y_1}{b-a}.$$
     Como $y_2-y_1 \ge 0$ y $b-a > 0$, el cociente es no negativo. Por tanto,
     $$\varphi_{a,b}(y_2) - \varphi_{a,b}(y_1) \ge 0,$$
     lo que equivale a $\varphi_{a,b}(y_1) \le \varphi_{a,b}(y_2)$.
@@ -2196,11 +2196,11 @@ Los índices recorrerán conjuntos finitos; en la notación matemática escribir
 
 \paragraph*{Demostración del teorema ``Punto medio normalizado''}
 \begin{proof}
-        Evaluamos la transformación en el punto medio del intervalo. Como $a < b$, se tiene $b-a \neq 0$, y por tanto es lícito simplificar por el denominador:
+    Evaluamos la transformación en el punto medio del intervalo. Como $a < b$, se tiene $b-a \neq 0$, y por tanto es lícito simplificar por el denominador:
     $$\varphi_{a,b}\!\left(\frac{a+b}{2}\right)
-      = \frac{\frac{a+b}{2}-a}{b-a}
-      = \frac{\frac{b-a}{2}}{b-a}
-      = \frac{1}{2},$$
+        = \frac{\frac{a+b}{2}-a}{b-a}
+        = \frac{\frac{b-a}{2}}{b-a}
+        = \frac{1}{2},$$
     donde la última igualdad usa de nuevo que $b-a \neq 0$ por la hipótesis $a < b$.
 \end{proof}
 
@@ -2210,10 +2210,10 @@ Los índices recorrerán conjuntos finitos; en la notación matemática escribir
 \begin{proof}
     Sustituyendo $u = 1/2$ en la definición de $k$, se obtiene
     $$k\!\left(\frac{1}{2}\right)
-      = 1 + \frac{1}{2}\left|\frac{1}{2} - \frac{1}{2}\right| - \frac{1}{2}\left|\frac{1}{2} - \frac{1}{2}\right|^2
-      = 1 + \frac{1}{2}|0| - \frac{1}{2}|0|^2
-            = 1,$$
-                ya que $|0| = 0$.
+        = 1 + \frac{1}{2}\left|\frac{1}{2} - \frac{1}{2}\right| - \frac{1}{2}\left|\frac{1}{2} - \frac{1}{2}\right|^2
+        = 1 + \frac{1}{2}|0| - \frac{1}{2}|0|^2
+        = 1,$$
+    ya que $|0| = 0$.
 \end{proof}
 
 \paragraph*{Demostración del teorema ``Simetría del núcleo por pares''}
