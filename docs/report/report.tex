@@ -360,7 +360,7 @@ $$
         \vdots \\
         X_{tp}
     \end{pmatrix},
-    \qquad t \in \mathcal{T},
+    \qquad t \in \mathcal{T}
 $$
 
 donde cada componente $X_{ti}$ representa la variable aleatoria $i$-ésima observada en el instante $t$, para $i = 1, 2, \ldots, p$.
@@ -381,15 +381,15 @@ Para todos y cada unos de los siguientes tipos de problemas, se pueden encontrar
 
 La regresión es una tarea supervisada cuyo objetivo consiste en predecir el valor de una variable de interés a partir de una o varias variables explicativas. En el contexto de las series temporales, este planteamiento permite relacionar la evolución en el tiempo para una magnitud objetivo, con información observada en instantes anteriores. Por ejemplo, puede resultar útil explicar las ventas mensuales a partir del gasto publicitario, o anticipar la demanda eléctrica diaria a partir de la temperatura. La variable que se desea pronosticar suele denominarse variable dependiente, respuesta o explicada, mientras que las variables utilizadas para construir la predicción se conocen como regresores o variables explicativas.
 
-Desde el punto de vista estadístico, la regresión en series temporales busca aproximar la dependencia entre la variable objetivo y sus predictores mediante una relación funcional suficientemente simple como para ser interpretable y suficientemente flexible como para proporcionar buenas predicciones \cite{Hyndman2021}. Dependiendo del horizonte considerado, el problema puede plantearse como una predicción de un solo paso o como una predicción de varios pasos hacia delante.
+Desde el punto de vista estadístico, la regresión en series temporales busca aproximar la dependencia entre la variable objetivo y sus variables explicativas mediante una relación funcional suficientemente simple como para ser interpretable y suficientemente flexible como para proporcionar buenas predicciones \cite{Hyndman2021}. Dependiendo del horizonte considerado, el problema puede plantearse como una predicción de un solo paso o como una predicción de varios pasos hacia delante.
 
 \textbf{Regresión lineal simple.} El caso más elemental aparece cuando se utiliza un único predictor. Entonces la relación entre la variable objetivo $y$ y la variable explicativa $x$ puede escribirse como:
 $$
-    y_t = \beta_0 + \beta_1 x_t + \varepsilon_t.
+    y_t = \beta_0 + \beta_1 x_t + \varepsilon_t
 $$
-En esta expresión, $\beta_0$ representa el intercepto y $\beta_1$ la pendiente de la recta de regresión. El primero indica el valor esperado de $y_t$ cuando $x_t = 0$, mientras que el segundo recoge la variación media esperada en $y_t$ ante un aumento unitario de $x_t$. El término $\varepsilon_t$ agrupa la parte no explicada por el modelo; no debe interpretarse como un error en sentido coloquial, sino como la contribución de todos aquellos factores que influyen sobre $y_t$ y que no han quedado incorporados explícitamente en la ecuación, incluyendo el ruido.
+En esta expresión, $\beta_0$ representa el intercepto y $\beta_1$ la pendiente de la recta de regresión. El primero indica el valor esperado de $y_t$ cuando $x_t = 0$, mientras que el segundo recoge la variación media esperada en $y_t$ ante un aumento unitario de $x_t$. El término $\varepsilon_t$ agrupa la parte no explicada por el modelo; no debe interpretarse como un error en sentido coloquial, sino como la contribución de todos aquellos factores que influyen en la varianza de $y_t$ y que no han quedado incorporados explícitamente en la ecuación, incluyendo el ruido.
 
-\textbf{Regresión lineal múltiple.} Cuando la predicción depende de varios predictores, la especificación anterior se extiende de forma natural a
+\textbf{Regresión lineal múltiple.} Cuando la predicción depende de varias variables explicativas, la especificación anterior se extiende de forma natural a
 \begin{equation}
     y_t = \beta_0 + \beta_1 x_{1,t} + \beta_2 x_{2,t} + \cdots + \beta_k x_{k,t} + \varepsilon_t,
     \label{eq:multiple_linear_regression}
@@ -401,51 +401,53 @@ donde $x_{1,t}, \ldots, x_{k,t}$ son variables numéricas observadas en el insta
     \item La relación lineal propuesta sea una aproximación razonable del fenómeno estudiado.
     \item Los errores $(\varepsilon_1, \ldots, \varepsilon_T)$ tengan media cero.
     \item Los errores no presenten autocorrelación.
-    \item Los errores sean independientes de los predictores.
+    \item Los errores sean independientes de las variables explicativas.
     \item Los errores sigan una distribución normal con varianza constante $\sigma^2$.
 \end{itemize}
 
 Si estas condiciones no se cumplen, las estimaciones pueden resultar sesgadas o ineficientes, y parte de la estructura presente en los datos quedaría sin modelizar. En particular, la hipótesis de normalidad con varianza constante simplifica la construcción de intervalos de predicción, que no deben confundirse con los intervalos de confianza.
 
-Por último, el modelo lineal clásico trata los predictores como variables fijadas externamente. En experimentos controlados esta hipótesis es natural, pero con datos observacionales, como ocurre en muchas aplicaciones económicas y empresariales, los valores de las variables explicativas no se controlan sino que simplemente se observan. En consecuencia, dicho supuesto debe entenderse como una idealización analítica que facilita el estudio del problema, no como una descripción literal del proceso generador de los datos.
+Por último, el modelo lineal clásico trata las variables explicativas como variables fijadas externamente. En experimentos controlados esta hipótesis es natural, pero con datos observacionales, como ocurre en muchas aplicaciones económicas y empresariales, los valores de las variables explicativas no se controlan sino que simplemente se observan. En consecuencia, dicho supuesto debe entenderse como una idealización analítica que facilita el estudio del problema, no como una descripción literal del proceso generador de los datos.
 
 \textbf{Predicción con modelos lineales.}
 
-Una vez estimados los coeficientes del modelo (por ejemplo, mediante mínimos cuadrados ordinarios), la predicción puntual de la variable objetivo puede obtenerse sustituyendo las estimaciones y los valores observados de los predictores en la ecuación de regresión. En el caso de un modelo lineal múltiple, la predicción ajustada viene dada por
+Una vez estimados los coeficientes del modelo (por ejemplo, mediante mínimos cuadrados ordinarios), la predicción puntual de la variable objetivo puede obtenerse sustituyendo las estimaciones y los valores observados de las variables explicativas en la ecuación de regresión. En el caso de un modelo lineal múltiple, la predicción ajustada viene dada por
 \begin{equation}
     \hat{y}_t = \hat{\beta}_0 + \hat{\beta}_1 x_{1,t} + \hat{\beta}_2 x_{2,t} + \cdots + \hat{\beta}_k x_{k,t},
     \label{eq:linear_fitted_values}
 \end{equation}
-donde el término de error no aparece porque la predicción trabaja con el valor esperado condicional de $y_t$. Si esta expresión se evalúa para $t = 1, \ldots, T$ usando los valores observados de los predictores en la muestra, se obtienen los valores ajustados del conjunto de entrenamiento. Sin embargo, en series temporales el interés principal no suele estar en reproducir la muestra histórica, sino en anticipar valores futuros de la variable objetivo \cite{Hyndman2021}.
+donde el término de error no aparece porque la predicción trabaja con el valor esperado condicional de $y_t$. Si esta expresión se evalúa para $t = 1, \ldots, T$ usando los valores observados de las variables explicativas en la muestra, se obtienen los valores ajustados del conjunto de entrenamiento. Sin embargo, en series temporales el interés principal no suele estar en reproducir la muestra histórica, sino en anticipar valores futuros de la variable objetivo \cite{Hyndman2021}.
 
-\textbf{Predicciones \textit{ex ante} y \textit{ex post}.} En regresión para series temporales conviene distinguir entre dos tipos de predicción según la información disponible en el momento de calcularlas. Las predicciones \textit{ex ante} se elaboran utilizando únicamente la información conocida con anterioridad al periodo que se quiere pronosticar; por tanto, constituyen predicciones genuinas. Su principal dificultad es que requieren disponer también de valores futuros para los predictores, lo que obliga a pronosticar esos regresores con modelos adicionales o a recurrir a proyecciones externas. En cambio, las predicciones \textit{ex post} se calculan una vez conocidos los valores efectivamente observados de los predictores. No son pronósticos genuinos, pero resultan útiles para estudiar el comportamiento del modelo y descomponer el origen de los errores de predicción.
+\textbf{Predicciones \textit{ex ante} y \textit{ex post}.} En regresión para series temporales conviene distinguir entre dos tipos de predicción según la información disponible en el momento de calcularlas. Las predicciones \textit{ex ante} se elaboran utilizando únicamente la información conocida con anterioridad al periodo que se quiere pronosticar; por tanto, constituyen predicciones genuinas. Su principal dificultad es que requieren disponer también de valores futuros para las variables explicativas, lo que obliga a pronosticar esos regresores con modelos adicionales o a recurrir a proyecciones externas. En cambio, las predicciones \textit{ex post} se calculan una vez conocidos los valores efectivamente observados de las variables explicativas. No son pronósticos genuinos, pero resultan útiles para estudiar el comportamiento del modelo y descomponer el origen de los errores de predicción.
 
-La comparación entre predicciones \textit{ex ante} y \textit{ex post} es especialmente útil porque permite separar dos fuentes de incertidumbre: la incertidumbre asociada al propio modelo de regresión y la derivada de tener que pronosticar los predictores.
+La comparación entre predicciones \textit{ex ante} y \textit{ex post} es especialmente útil porque permite separar dos fuentes de incertidumbre: la incertidumbre asociada al propio modelo de regresión y la derivada de tener que pronosticar las variables explicativas.
+
+Un ejemplo de esta diferencia se encuentra en los modelos que predicen precipitaciones. Una predicción \textit{ex ante} nos permite predecir la lluvia del siguiente periodo. Una predicción \textit{ex post} nos permite, usando valores históricos, comparar la predicción con la cantidad real de lluvia, para poder dar una estimación de cuánto se desvía la lluvia actual respecto a lo esperado; es una de las formas de medir los efectos del cambio climático.
 
 \textbf{Modelos predictivos con retardos.} Una forma habitual de hacer la regresión consiste en emplear como regresores valores retardados de las variables explicativas. Si el objetivo es obtener una predicción a $h$ pasos, una formulación natural es
 \begin{equation}
     y_{t+h} = \beta_0 + \beta_1 x_{1,t} + \cdots + \beta_k x_{k,t} + \varepsilon_{t+h},
-    \qquad h \geq 1.
+    \qquad h \geq 1
     \label{eq:lagged_predictive_regression}
 \end{equation}
-En esta especificación, los predictores se observan $h$ periodos antes que la variable que se desea pronosticar. Esto tiene una ventaja práctica importante: al proyectar el modelo más allá del final de la muestra, los valores de entrada ya son conocidos y no es necesario predecir simultáneamente todos los regresores. Además, esta formulación suele ser más verosímil ya que muchos efectos no se materializan de forma instantánea, sino con cierto retraso \cite{Anderson1994}. Cuando incluso esta estrategia resulta insuficiente, puede recurrirse a análisis por escenarios, fijando trayectorias plausibles para los predictores y evaluando cómo cambian las predicciones del modelo bajo cada una de ellas.
+En esta especificación, las variables explicativas se observan $h$ periodos antes que la variable que se desea pronosticar. Esto tiene una ventaja práctica importante: al proyectar el modelo más allá del final de la muestra, los valores de entrada ya son conocidos y no es necesario predecir simultáneamente todas las variables explicativas. Además, esta formulación suele ser más verosímil ya que muchos efectos no se materializan de forma instantánea, sino con cierto retraso \cite{Anderson1994}. Cuando incluso esta estrategia resulta insuficiente, puede recurrirse a análisis por escenarios, fijando trayectorias plausibles para las variables explicativas y evaluando cómo cambian las predicciones del modelo bajo cada una de ellas.
 
 \textbf{Intervalos de predicción.} Junto a la predicción puntual, en la práctica interesa cuantificar su incertidumbre. En el caso de la regresión lineal simple, y bajo el supuesto de errores normales, un intervalo de predicción aproximado al $95\%$ para una nueva observación puede expresarse como
 \begin{equation}
-    \hat{y} \pm 1.96\,\hat{\sigma}_e\sqrt{1 + \frac{1}{T} + \frac{(x - \bar{x})^2}{(T-1)s_x^2}},
+    \hat{y} \pm 1.96\,\hat{\sigma}_e\sqrt{1 + \frac{1}{T} + \frac{(x - \bar{x})^2}{(T-1)s_x^2}}
     \label{eq:simple_regression_prediction_interval}
 \end{equation}
-donde $T$ es el tamaño muestral, $\bar{x}$ es la media observada del predictor, $s_x$ es su desviación típica y $\hat{\sigma}_e$ es el error estándar residual. Para niveles de cobertura distintos basta con reemplazar el valor $1.96$ por el cuantil correspondiente; por ejemplo, un intervalo aproximado al $80\%$ se obtiene usando $1.28$. Esta expresión muestra además que la incertidumbre de la predicción crece cuando el valor del predictor se aleja de su media muestral, lo que refleja que el modelo predice con mayor precisión en regiones del espacio de entrada bien representadas por los datos observados \cite{Hyndman2021}.
+donde $T$ es el tamaño muestral, $\bar{x}$ es la media observada del predictor, $s_x$ es su desviación típica y $\hat{\sigma}_e$ es el error estándar residual. Para niveles de cobertura distintos basta con reemplazar el valor $1.96$ por el cuantil correspondiente. Esta expresión muestra además que la incertidumbre de la predicción crece cuando el valor del predictor se aleja de su media muestral, lo que refleja que el modelo predice con mayor precisión en regiones del espacio de entrada bien representadas por los datos observados \cite{Hyndman2021}.
 
-\textbf{Forma matricial.} En problemas con múltiples observaciones y varios predictores, resulta conveniente escribir el modelo en forma matricial. Sea
+\textbf{Forma matricial.} En problemas con múltiples observaciones y varias variables explicativas, resulta conveniente escribir el modelo en forma matricial. Sea
 $$
-    \mathbf{y} = (y_1, \ldots, y_T)^\top,
+    \mathbf{y} = (y_1, \ldots, y_T)^\top
     \qquad
-    \boldsymbol{\varepsilon} = (\varepsilon_1, \ldots, \varepsilon_T)^\top,
+    \boldsymbol{\varepsilon} = (\varepsilon_1, \ldots, \varepsilon_T)^\top
     \qquad
-    \boldsymbol{\beta} = (\beta_0, \beta_1, \ldots, \beta_k)^\top,
+    \boldsymbol{\beta} = (\beta_0, \beta_1, \ldots, \beta_k)^\top
 $$
-y sea además la matriz de datos $X$ de dimensión $T \times (k+1)$, donde la primera columna es un vector de unos para el intercepto y las siguientes columnas contienen los valores de los predictores para cada observación:
+y sea además la matriz de datos $X$ de dimensión $T \times (k+1)$, donde la primera columna es un vector de unos para el intercepto y las siguientes columnas contienen los valores de las variables explicativas para cada observación:
 $$
     X =
     \begin{pmatrix}
@@ -460,7 +462,7 @@ Con esta notación, el modelo de regresión lineal puede escribirse de forma com
     \mathbf{y} = X\boldsymbol{\beta} + \boldsymbol{\varepsilon}
     \label{eq:matrix_regression_model}
 \end{equation}
-donde se asume que $\mathbb{E}[\boldsymbol{\varepsilon}] = \mathbf{0}$ y $\operatorname{Var}(\boldsymbol{\varepsilon}) = \sigma^2 I$. La matriz $X$ tiene $T$ filas, una por observación, y $k+1$ columnas, correspondientes al intercepto y a los $k$ predictores incluidos en el modelo.
+donde se asume que $\mathbb{E}[\boldsymbol{\varepsilon}] = \mathbf{0}$ y $\operatorname{Var}(\boldsymbol{\varepsilon}) = \sigma^2 I$. La matriz $X$ tiene $T$ filas, una por observación, y $k+1$ columnas, correspondientes al intercepto y a las $k$ variables explicativas incluidas en el modelo.
 
 \textbf{Estimación por mínimos cuadrados.} En esta formulación, la estimación por mínimos cuadrados ordinarios se obtiene minimizando la suma de cuadrados residual,
 $$
@@ -473,7 +475,7 @@ La solución del problema viene dada por la ecuación:
     \hat{\boldsymbol{\beta}} = (X^\top X)^{-1} X^\top \mathbf{y}.
     \label{eq:normal_equation}
 \end{equation}
-Esta expresión requiere que $X$ tenga rango columna completo (por el Teorema de Rouché-Frobenius); de lo contrario, si la matriz $X^\top X$ es singular entonces el modelo no puede estimarse de forma única. Este problema aparece, por ejemplo, cuando se incluyen variables indicadoras redundantes y se incurre en la denominada \textit{dummy variable trap}. La varianza residual puede estimarse mediante
+Esta expresión requiere que $X$ tenga rango columna completo (por el Teorema de Rouché-Frobenius); de lo contrario, si la matriz $X^\top X$ es singular (no invertible) entonces el modelo no puede estimarse de forma única. Este problema aparece, por ejemplo, cuando se incluyen variables indicadoras redundantes y se incurre en la denominada \textit{dummy variable trap}. La varianza residual puede estimarse mediante
 \begin{equation}
     \hat{\sigma}_e^2 = \frac{1}{T-k-1}(\mathbf{y} - X\hat{\boldsymbol{\beta}})^\top (\mathbf{y} - X\hat{\boldsymbol{\beta}}).
     \label{eq:residual_variance_matrix}
@@ -491,22 +493,32 @@ donde $H = X(X^\top X)^{-1}X^\top$ se conoce como matriz sombrero, ya que transf
 \end{equation}
 donde $e_t$ es el residuo obtenido al ajustar el modelo con las $T$ observaciones. Esta identidad evita tener que reestimar el modelo $T$ veces para evaluar el error de predicción fuera de muestra (\textit{out-of-sample})\cite{Hyndman2021}.
 
-\textbf{Predicción e intervalos en forma matricial.} Sea $\mathbf{x}_*$ un vector fila que contiene los valores de los predictores, con el mismo formato que las filas de $X$, para los que se desea obtener una predicción. Entonces, la predicción puntual viene dada por
+\textbf{Predicción e intervalos en forma matricial.} Sea $\mathbf{x}_*$ un vector fila que contiene los valores de las variables explicativas, con el mismo formato que las filas de $X$, para los que se desea obtener una predicción. Entonces, la predicción puntual viene dada por
 \begin{equation}
-    \hat{y}_* = \mathbf{x}_*\hat{\boldsymbol{\beta}} = \mathbf{x}_*(X^\top X)^{-1}X^\top \mathbf{y},
+    \hat{y}_* = \mathbf{x}_*\hat{\boldsymbol{\beta}} = \mathbf{x}_*(X^\top X)^{-1}X^\top \mathbf{y}
     \label{eq:forecast_matrix_form}
 \end{equation}
 y la varianza estimada de predicción puede escribirse como
 \begin{equation}
-    \hat{\sigma}_e^2\left[1 + \mathbf{x}_*(X^\top X)^{-1}\mathbf{x}_*^\top\right].
+    \hat{\sigma}_e^2\left[1 + \mathbf{x}_*(X^\top X)^{-1}\mathbf{x}_*^\top\right]
     \label{eq:forecast_variance_matrix}
 \end{equation}
 Bajo el supuesto de errores normales, un intervalo de predicción aproximado al $95\%$ adopta la forma
 \begin{equation}
-    \hat{y}_* \pm 1.96\,\hat{\sigma}_e\sqrt{1 + \mathbf{x}_*(X^\top X)^{-1}\mathbf{x}_*^\top}.
+    \hat{y}_* \pm 1.96\,\hat{\sigma}_e\sqrt{1 + \mathbf{x}_*(X^\top X)^{-1}\mathbf{x}_*^\top}
     \label{eq:forecast_prediction_interval_matrix}
 \end{equation}
-Este intervalo incorpora tanto la incertidumbre asociada al término de error como la derivada de estimar los coeficientes del modelo. Sin embargo, no recoge la incertidumbre adicional procedente de posibles errores en los valores futuros de los predictores. Por ello, cuando $\mathbf{x}_*$ también debe pronosticarse, el intervalo anterior tiende a infraestimar la incertidumbre total \cite{Hyndman2021}.
+Este intervalo incorpora tanto la incertidumbre asociada al término de error como la incertidumbre causada por estimar los coeficientes del modelo. Sin embargo, no recoge la incertidumbre adicional procedente de posibles errores en los valores futuros de las variables explicativas.
+
+\textbf{Correlación, causalidad y predicción.} En modelos predictivos (tanto si son de series temporales como si no lo son) es necesario distinguir entre correlación, causalidad y poder de predicción. Que una variable $x$ resulte útil para predecir otra variable $y$ no implica, por sí mismo, que $x$ cause a $y$. La relación observada puede deberse a una causalidad en sentido contrario ($y$ causa a $x$) o a la presencia de una tercera variable omitida que influya simultáneamente sobre ambas; un factor de confusión. Un ejemplo clásico es la asociación entre las ventas de helados y el número de ahogamientos en una zona costera \cite{pearl2017}: ambas variables pueden moverse juntas sin que exista una relación causal directa entre ellas, simplemente porque las dos aumentan cuando sube la temperatura. En este caso, la temperatura actúa como variable de confusión, es decir, como una variable no incluida en el modelo que influye tanto sobre la respuesta como sobre al menos una de las variables explicativas.
+
+Tampoco debe identificarse causalidad con dirección de predicción. Es posible construir un modelo predictivo razonable incluso cuando la relación causal relevante apunta en sentido opuesto al modelo de predicción. Por ejemplo, un descenso inusual en el número de ciclistas por la mañana puede anticipar lluvia por la tarde, no porque los ciclistas modifiquen el tiempo atmosférico, sino porque la previsión meteorológica influye previamente sobre la decisión de desplazarse en bicicleta. En consecuencia, las correlaciones pueden ser valiosas para predecir aun cuando no exista un vínculo causal directo, cuando la causalidad sea inversa o cuando intervengan factores de confusión.
+
+\textbf{Predictores correlacionados.} Cuando dos o más variables explicativas están muy correlacionadas, resulta difícil separar con precisión sus efectos individuales. Esta situación no impide necesariamente obtener buenas predicciones, porque el modelo puede seguir explotando la información conjunta contenida en esas variables, pero sí complica tareas como la predicción por escenarios o el análisis de la contribución de cada variable (análisis de sensibilidades), ya que cualquier cambio hipotético en una variable debería ser coherente con su relación histórica con las demás.
+
+\textbf{Multicolinealidad.} Un caso especialmente relevante de esta dificultad es la multicolinealidad, que aparece cuando dos o más variables explicativas aportan información muy similar dentro de un modelo de regresión múltiple. Puede manifestarse porque dos variables estén altamente correlacionadas entre sí, o porque una combinación lineal de algunas variables esté casi perfectamente relacionada con otra combinación lineal distinta. El ejemplo más conocido es la \textit{dummy variable trap}: si se incluyen variables indicadoras para todas las categorías de una variable cualitativa junto con un intercepto, una de ellas queda determinada exactamente por las demás y aparece una dependencia lineal perfecta.
+
+En presencia de correlación perfecta, la matriz de diseño pierde rango y el modelo no puede estimarse de forma única. Cuando la correlación no es perfecta pero sí muy alta, la estimación sigue siendo posible, aunque los coeficientes individuales pasan a ser numéricamente inestables y su incertidumbre aumenta considerablemente. Como consecuencia, los contrastes sobre coeficientes concretos se vuelven poco fiables y también empeora la capacidad de interpretar el peso específico de cada variable explicativa. El problema se vuelve mucho más acuciante cuando se extrapola fuera del soporte histórico de las variables explicativas, pues en ese caso pequeñas inestabilidades en los coeficientes pueden traducirse en pronósticos muy poco robustos \cite{Hyndman2021}.
 
 \paragraph{Clasificación}\mbox{}
 
