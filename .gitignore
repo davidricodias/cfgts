@@ -177,11 +177,12 @@ dmypy.json
 *.acn
 *.acr
 *.alg
+pdfa.xmpi
+*.bbl*
 _auto/
 _build/
 latex.out/
 bibs/
-report/
 notebooks/
 ~report.tex
 ~references.bib
