@@ -45,7 +45,7 @@ classifiers = [
 [dependency-groups]
 dev = [
   "mkdocs==1.6.1",
-  "mkdocs-material==9.6.12",
+  "mkdocs-material==9.7.6",
   "latextomd==0.1.6",
   "mkdocstrings[python]==0.29.1",
   "pymdown-extensions==10.15",
