@@ -27,7 +27,7 @@ dependencies = [
   "pyarrow",
   "tigramite",
   "ipywidgets",
-  "networkx==3.4.2",
+  "networkx==3.6.1",
   "puncc",
   "dcor",
 ]
