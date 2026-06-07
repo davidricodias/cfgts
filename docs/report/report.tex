@@ -897,16 +897,6 @@ Tampoco debe identificarse causalidad con dirección de predicción. Es posible 
 
 \textbf{Multicolinealidad.} Un caso especialmente relevante de esta dificultad es la multicolinealidad, que aparece cuando dos o más variables explicativas aportan información muy similar dentro de un modelo de regresión múltiple. Puede manifestarse porque dos variables estén altamente correlacionadas entre sí, o porque una combinación lineal de algunas variables esté casi perfectamente relacionada con otra combinación lineal distinta. El ejemplo más conocido es la \textit{dummy variable trap}: si se incluyen variables indicadoras para todas las categorías de una variable cualitativa junto con un intercepto, una de ellas queda determinada exactamente por las demás y aparece una dependencia lineal perfecta.
 
-\paragraph{Clasificación}\mbox{}
-
-La clasificación de series temporales trata de asignar una etiqueta (\textit{label}) a la serie. Este tipo de problemas se considera de información completa, ya que se dispone de la serie completa para tomar la decisión. Por ejemplo, clasificar una serie temporal de temperatura como \textit{cómoda} o \textit{incómoda}. Entra dentro de la clase de problemas supervisados, ya que se dispone de un conjunto de entrenamiento con series temporales etiquetadas. La teoría estadística de la clasificación de series temporales se basa en la teoría de la clasificación supervisada clásica (métodos como \textit{clasificadores logísticos}, \textit{knn}, etc.), pero adaptada a la naturaleza secuencial de los datos.
-
-Dentro de la tarea de clasificación se pueden distinguir dos subtipos de problemas:
-\begin{itemize}
-    \item Clasificación de series temporales completas, donde se asigna una etiqueta a toda la serie.
-    \item Clasificación de instantes temporales, donde se asigna una etiqueta a un único instante temporal de la serie. Dentro de subtipo se encuentra la tarea de detección de anomalías, donde se asigna una etiqueta de \textit{normal} o \textit{anómalo} a cada instante temporal de la serie.
-\end{itemize}
-
 \paragraph*{Clusterización}\mbox{}
 
 La tarea de clusterización trata de encontrar agrupaciones (\textit{clusters}) de series temporales similares entre sí. Este tipo de problemas se considera de información completa y son problemas no supervisados, ya se basa en usar una función de homogeneidad que agrupe series lo más similares entre sí y lo más distintas entre grupos. Un ejemplo típico en finanzas es clusterizar los movimientos de pares de monedas, y descubrir si ciertos pares de monedas se mueven respecto a una moneda "base", para conocer si se agrupan entorno a los movimiento del dólar, el euro o el yen.
@@ -944,6 +934,23 @@ $$
 donde $\varepsilon$ controla la tolerancia en amplitud y $\delta$ la tolerancia temporal. Esta familia de distancias basadas en edición, junto con EDR (\textit{Edit Distance on Real sequence}) y ERP (\textit{Edit Distance with Real Penalty}), tolera huecos, emparejamientos parciales y discrepancias locales \cite{Ding2008,ChenOzsuOria2005,ChenNg2004,Morse2007}.
 
 Existen además propuestas más especializadas, como TQuEST (\textit{Threshold Query based Similarity Search}), basada en intervalos de cruce de umbral, o SpADe (\textit{Shape-based Pattern Detection}), orientada a detectar patrones con desplazamientos y escalados en tiempo y amplitud \cite{Assfalg2006,Chen2007SpADe}. En la práctica, la elección de la medida de similaridad depende del equilibrio deseado entre robustez frente a desalineaciones, número de parámetros, interpretabilidad y coste computacional \cite{Ding2008}.
+
+\paragraph{Clasificación}\mbox{}
+
+La clasificación de series temporales trata de asignar una etiqueta (\textit{label}) a la serie. Este tipo de problemas se considera de información completa, ya que se dispone de la serie completa para tomar la decisión. Por ejemplo, clasificar una serie temporal de temperatura como \textit{cómoda} o \textit{incómoda}. Entra dentro de la clase de problemas supervisados, ya que se dispone de un conjunto de entrenamiento con series temporales etiquetadas.
+
+Dentro de la tarea de clasificación se pueden distinguir dos subtipos de problemas:
+\begin{itemize}
+    \item Clasificación de series temporales completas, donde se asigna una etiqueta a toda la serie.
+    \item Clasificación de instantes temporales, donde se asigna una etiqueta a un único instante temporal de la serie. Dentro de subtipo se encuentra la tarea de detección de anomalías, donde se asigna una etiqueta de \textit{normal} o \textit{anómalo} a cada instante temporal de la serie.
+\end{itemize}
+
+Las técnicas principales para clasificar series temporales se pueden diferenciar entre \cite{faouzi:hal-03558165}:
+\begin{itemize}
+    \item Basadas en métricas: \textit{knn} con distancia DTW
+    \item Basadas en kernel: \textit{SVM}.
+    \item Basados en deep learning: modelos de redes de neuronas, en cualquiera de sus arquitecturas.
+\end{itemize}
 
 \paragraph*{Segmentación}\mbox{}
 
