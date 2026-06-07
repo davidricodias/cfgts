@@ -137,6 +137,8 @@ hmargin=3cm
 
 % DISEÑO DE FIGURAS.
 \usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,babel}
 \graphicspath{{figures/}}
 
 \captionsetup[figure]{
@@ -957,11 +959,88 @@ Las técnicas principales para clasificar series temporales se pueden diferencia
 También conocido como resumen, tiene por objetivo crear una nueva serie temporal, derivada de la original, usando la menor cantidad de datos posibles y conservando la mayor cantidad de información posible. Se considera un subproblema del problema de la discretización, dado que se busca reducir la cantidad de datos a través de la creación de segmentos o resúmenes de la serie temporal original.
 
 \section{Causalidad \textit{Pearliana}}
-Una de las mejores metáforas sobre la relación de las causas y efectos, y nuestro conocimiento sobre estos, se encuentra en el libro divulgativo \textit{The book of why} del propio Judea Pearl. En él se explica la \textit{La escalera de la causalidad}, una metáfora en la que se según se sube la escalera, más seguros podemos encontrarnos de que las causas y efectos son reales, siendo los peldaños la \textbf{asociación}, la \textbf{intervención} y los \textbf{contrafactuales}; cada peldaño requieren de herramientas matemáticas distintas y responde a preguntas diferentes \cite{pearl2017}.
 
-% Poner de ejemplo un grafo. Citar con (Pearl, Glymour, and Jewell, 2016)
+El estudio de la causalidad permite interpretar los datos (observaciones) más allá de simples relaciones entre variables, dado un modelo causal.
+También ayuda a estimar efectos concretos, como el impacto del tabaco, políticas públicas, etc.
+A diferencia de la estadística clásica, la causalidad \textit{añade} un marco conceptual capaz de describir relaciones de causa y efecto que el lenguaje estadístico estándar no puede expresar por sí solo. El lenguaje causal descrito por \textit{Pearl} amplía las respuestas allí donde las herramientas estadísticas tradicionales no son capaces de llegar.
+
+Una de las mejores metáforas sobre la relación de las causas y efectos, y nuestro conocimiento sobre estos, se encuentra en el libro divulgativo \textit{The book of why} del propio Judea Pearl. En él se explica la \textit{La escalera de la causalidad}, una metáfora en la que se según se sube la escalera, más seguros podemos encontrarnos de que las causas y efectos son reales, siendo los peldaños la \textbf{asociación}, la \textbf{intervención} y los \textbf{contrafactuales}; cada peldaño requiere herramientas matemáticas distintas y responde a preguntas diferentes \cite{pearl2017}.
+
+Para motivar el estudio de la causalidad Pearliana se suele usar la paradoja de Simpson, popularizada por Edward Simpson: a un grupo de pacientes enfermos se les ofrece la posibilidad de probar un nuevo fármaco. Entre quienes toman el medicamento, el porcentaje de recuperación es \textit{menor} que entre quienes no lo toman. Sin embargo, al desagregar los datos por sexo, se observa que se recuperan más hombres que toman el fármaco que hombres que no lo toman, y también se recuperan más mujeres que toman el fármaco que mujeres que no lo toman. En otras palabras, el medicamento parece beneficiar tanto a hombres como a mujeres, pero \textit{perjudicar a toda población} considerada en conjunto \cite{Simpson1951}. El resultado parece absurdo, o incluso imposible, y precisamente por eso se considera una paradoja.
+
+Un ejemplo con datos continuos más relacionado con el campo de la informática: a los usuarios que se les muestra más un anuncio publicitario, se les observa una menor tasa de conversión (por ejemplo, comprar un producto). Sin embargo, al desagregar por edad, se observa que en cada grupo de edad, los usuarios que ven más el anuncio tienen una mayor tasa de conversión. En este caso, la variable de confusión es la edad: los usuarios más jóvenes son más propensos a comprar el producto, independientemente de la cantidad de publicidad; existe un sesgo de variable omitida, que ha provocado que el coeficiente de la regresión tenga signo contrario.
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}[t]{0.44\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{conversion_publicidad_1.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.51\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{conversion_publicidad_2.png}
+    \end{minipage}
+    \caption{Ejemplo de la paradoja de Simpson. Elaboración propia.}
+    \label{fig:simpson_paradox_conversion}
+\end{figure}
+
+\subsection{Grafos causales como lenguaje matemático}
+
+La paradoja de Simpson muestra que, en problemas causales, los datos observados no siempre bastan para tomar decisiones correctas: es necesario incorporar hipótesis sobre el proceso generador de los datos (DPG, \textit{Data Generating Process}). Ese proceso puede expresarse de forma compacta mediante grafos causales dirigidos acíclicos (DAG, \textit{Directed Acyclic Graphs}) \cite{Pearl2016-nx}.
+
+Un grafo $G=(V,E)$ está formado por un conjunto de nodos $V$ (variables) y un conjunto de aristas $E$ (relaciones). En causalidad, las aristas son dirigidas y se interpretan como influencias causales directas. Si existe una flecha $X \to Y$, entonces $X$ es \textit{padre} de $Y$ y $Y$ es \textit{hijo} de $X$.
+
+Un \textbf{camino} es una secuencia de nodos conectados por aristas. Un \textbf{camino dirigido} sigue la orientación de las flechas. Si existe un camino dirigido de $X$ a $Y$, decimos que $X$ es ancestro de $Y$ y $Y$ descendiente de $X$. Cuando no hay caminos dirigidos que vuelvan al nodo de origen, el grafo es acíclico.
+
+Este lenguaje permite distinguir:
+\begin{itemize}
+    \item relaciones causales directas (flechas presentes),
+    \item asociaciones espurias por confusión (caminos de retroceso o \textit{backdoor}),
+    \item y conjuntos de ajuste para estimar efectos causales.
+\end{itemize}
+
+En el ejemplo de conversión, se consideran tres variables:
+\begin{itemize}
+    \item $A$: edad del usuario,
+    \item $P$: exposición publicitaria,
+    \item $C$: conversión (p.ej., compra).
+\end{itemize}
+
+La historia causal compatible con la paradoja de Simpson es:
+\begin{itemize}
+    \item la edad influye en la exposición ($A \to P$),
+    \item la edad influye en la conversión ($A \to C$),
+    \item y la exposición puede influir causalmente en la conversión ($P \to C$).
+\end{itemize}
+
+El DAG correspondiente es:
+
+\begin{figure}[H]
+    \centering
+    \begingroup
+    \shorthandoff{<>}
+    \begin{tikzpicture}[node distance=3.1cm]
+        \node (A) [draw, circle, minimum size=10mm] {$A$};
+        \node (P) [draw, circle, right=of A, minimum size=10mm] {$P$};
+        \node (C) [draw, circle, right=of P, minimum size=10mm] {$C$};
+
+        \draw[-{Latex}, thick] (A) -- (P);
+        \draw[-{Latex}, thick, bend left=22] (A) to (C);
+        \draw[-{Latex}, thick] (P) -- (C);
+    \end{tikzpicture}
+    \endgroup
+    \caption[DAG de conversión publicitaria]{DAG para el ejemplo de conversión publicitaria. $A$: edad, $P$: exposición publicitaria, $C$: conversión.}
+    \label{fig:dag_conversion_publicidad}
+\end{figure}
+
+Este grafo hace explícito un \textit{factor de confusión} entre $P$ y $C$:
+$$
+P \leftarrow A \rightarrow C.
+$$
 
 \section{Instancias contrafactuales}
+
 \subsection{Explicaciones contrafactuales}
 
 \section{Optimización multi-objetivo}
