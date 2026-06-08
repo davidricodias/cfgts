@@ -1009,8 +1009,8 @@ En el ejemplo de conversión, se consideran tres variables:
 
 La historia causal compatible con la paradoja de Simpson es:
 \begin{itemize}
-    \item la edad influye en la exposición ($A \to P$),
-    \item la edad influye en la conversión ($A \to C$),
+    \item la edad influye en la exposición ($A \to P$), ya que los más jóvenes no necesitan tanta publicidad para comprar el producto, y viceversa.
+    \item la edad influye en la conversión ($A \to C$), ya que los más jóvenes son más propensos a comprar el producto, y viceversa.
     \item y la exposición puede influir causalmente en la conversión ($P \to C$).
 \end{itemize}
 
@@ -1036,8 +1036,46 @@ El DAG correspondiente es:
 
 Este grafo hace explícito un \textit{factor de confusión} entre $P$ y $C$:
 $$
-P \leftarrow A \rightarrow C.
+P \leftarrow A \rightarrow C
 $$
+
+\subsection{Modelos causales estructurales}
+
+Un \textbf{modelo causal estructural} (MCE, o SCM \textit{Structural Causal Model}) describe cómo un modelo causal asigna valores a las variables de interés. Consta de dos conjuntos de variables $U$ y $V$, y un conjunto de funciones $\mathbf{f}$:
+\begin{itemize}
+    \item Las variables de $U$ son \textbf{exógenas}: externas al modelo, sin ancestros, representadas como nodos raíz en el grafo.
+    \item Las variables de $V$ son \textbf{endógenas}: cada una recibe su valor de una función $f_i \in \mathbf{f}$ que depende de otras variables del modelo.
+\end{itemize}
+
+Una variable $X$ es \textbf{causa directa} de $Y$ si $X$ aparece en $f_Y$; es \textbf{causa} de $Y$ si lo es de forma directa o a través de otras causas. El grafo asociado al MCE contiene un nodo por variable y una arista dirigida $Y \to X$ siempre que $Y$ aparezca en $f_X$; trabajaremos con MCE cuyo grafo sea un DAG.
+
+El modelo gráfico resulta útil porque, aunque contiene menos información que el MCE completo (no especifica la forma funcional de cada $f_i$), permite razonar sobre la estructura causal de forma intuitiva con solo inspeccionar las aristas.
+
+En el ejemplo de conversión, el MCE es:
+\begin{equation}
+    \begin{cases}
+        A := U_A \\
+        P := f_P(A,\,U_P) \\
+        C := f_C(P,\,A,\,U_C)
+    \end{cases}
+    \label{eq:scm_conversion}
+\end{equation}
+donde $U_A$, $U_P$ y $U_C$ son factores exógenos no observados (características demográficas no capturadas, ruido en la asignación publicitaria e influencias externas sobre la compra). La edad $A$ es exógena: no puede ser causada por $P$ ni por $C$. El grafo asociado coincide con el DAG de la Figura~\ref{fig:dag_conversion_publicidad}.
+
+Gracias al MCE, la pregunta causal queda bien definida: intervenir $do(P=p)$ elimina $f_P$ y fija $P$ exógenamente, bloqueando el camino de confusión $P \leftarrow A \rightarrow C$.
+
+\textbf{Criterio de ajuste por \textit{backdoor}.} Un conjunto de variables $\mathbf{Z}$ satisface el criterio \textit{backdoor} respecto del par $(P, C)$ en un DAG $G$ si:
+\begin{enumerate}
+    \item Ninguna variable de $\mathbf{Z}$ es descendiente de $P$, y
+    \item $\mathbf{Z}$ bloquea todos los caminos de retroceso entre $P$ y $C$, es decir, todos los caminos que comienzan con una arista dirigida hacia $P$.
+\end{enumerate}
+Cuando $\mathbf{Z}$ satisface el criterio \textit{backdoor}, el efecto causal de $P$ sobre $C$ es identificable a partir de datos observacionales mediante la fórmula de ajuste:
+\begin{equation}
+    \mathbb{P}(C \mid do(P=p))
+    = \sum_{a} \mathbb{P}(C \mid P=p,\, A=a)\,\mathbb{P}(A=a).
+    \label{eq:backdoor_scm_conversion}
+\end{equation}
+En el ejemplo, $\mathbf{Z} = \{A\}$ satisface ambas condiciones: la edad no es descendiente de la exposición publicitaria, y bloquea el único camino de retroceso $P \leftarrow A \rightarrow C$. La fórmula promedia la relación exposición-conversión dentro de cada estrato de edad usando la distribución marginal de $A$, recuperando así el efecto causal neto de $P$ sobre $C$ y evitando la inversión de signo característica de la paradoja de Simpson.
 
 \section{Instancias contrafactuales}
 
