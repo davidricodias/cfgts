@@ -169,7 +169,7 @@ dmypy.json
 *.cb2
 *.spl
 *.run.xml
-*.bcf
+*.bcf*
 *.glg
 *.glo
 *.gls
