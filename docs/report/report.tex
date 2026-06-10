@@ -1125,6 +1125,75 @@ La Figura~\ref{fig:dag_conversion_publicidad_intervenido} muestra esta cirugía 
 
 Una de las suposiciones implícitas es que la intervención no tiene \textit{efectos secundarios no especificados}, es decir, que asignar el valor $X=x$ para un individuo no altera directamente las variables posteriores de forma distinta a la recogida en el modelo. Gráficamente correspondaría a que fuera del modelo no existen aristas adicionales que conecten $X$ con otras variables posteriores; cuando existen efectos secundarios, deben especificarse explícitamente en el modelo causal.
 
+\subsection{Mediación}
+
+Con frecuencia una variable no afecta a otra de una única forma, sino por varias vías simultáneas. Una parte del efecto puede ser directa, y otra parte puede transmitirse indirectamente a través de una variable intermedia, denominada variable \textbf{mediadora}. Distinguir entre ambos mecanismos es útil porque permite entender no solo si una intervención funciona, sino también \textit{cómo} funciona.
+
+En el ejemplo de conversión publicitaria, la exposición a publicidad $P$ puede influir directamente sobre la conversión $C$, pero también puede hacerlo de forma indirecta a través de una variable mediadora $M$, como el recuerdo de marca. En ese caso, el efecto total de $P$ sobre $C$ se descompone en una vía directa $P \to C$ y una vía indirecta $P \to M \to C$.
+
+\begin{figure}[H]
+    \centering
+    \begingroup
+    \shorthandoff{<>}
+    \begin{tikzpicture}[node distance=3.1cm]
+        \node (P) [draw, circle, minimum size=10mm] {$P$};
+        \node (M) [draw, circle, right=of P, minimum size=10mm] {$M$};
+        \node (C) [draw, circle, right=of M, minimum size=10mm] {$C$};
+
+        \draw[-{Latex}, thick] (P) -- (M);
+        \draw[-{Latex}, thick] (M) -- (C);
+        \draw[-{Latex}, thick, bend left=25] (P) to (C);
+    \end{tikzpicture}
+    \endgroup
+    \caption[DAG de mediación publicitaria]{Ejemplo de mediación en conversión publicitaria. La exposición $P$ puede afectar a la conversión $C$ de forma directa y también indirecta a través de la variable mediadora $M$, que puede interpretarse como recuerdo de marca.}
+    \label{fig:dag_mediacion_publicidad}
+\end{figure}
+
+En principio, podría parecer que para aislar el efecto directo basta con condicionar sobre la variable mediadora. Siguiendo con el ejemplo, una idea ingenua sería comparar la conversión entre usuarios con distinto nivel de exposición publicitaria pero con el mismo nivel de recuerdo de marca. Sin embargo, este razonamiento deja de ser válido cuando existen variables que confunden la relación entre el mediador y el resultado.
+
+Por ejemplo, supóngase que existe una variable $I$ que representa la intención previa de compra. Los usuarios con mayor afinidad pueden recordar mejor el anuncio y, al mismo tiempo, tener mayor probabilidad de convertir. En ese caso, $I$ actúa como factor de confusión entre $M$ y $C$. Entonces, condicionar sobre $M$ no aísla limpiamente el efecto directo de $P$ sobre $C$, porque puede abrir caminos espurios y mezclar dependencia causal con dependencia inducida por selección.
+
+\begin{figure}[H]
+    \centering
+    \begingroup
+    \shorthandoff{<>}
+    \begin{tikzpicture}[node distance=3.1cm]
+        \node (I) [draw, circle, minimum size=10mm] at (3.1, 1.9) {$I$};
+        \node (P) [draw, circle, minimum size=10mm] {$P$};
+        \node (M) [draw, circle, right=of P, minimum size=10mm] {$M$};
+        \node (C) [draw, circle, right=of M, minimum size=10mm] {$C$};
+
+        \draw[-{Latex}, thick] (P) -- (M);
+        \draw[-{Latex}, thick] (M) -- (C);
+        \draw[-{Latex}, thick, bend left=25] (P) to (C);
+        \draw[-{Latex}, thick] (I) -- (M);
+        \draw[-{Latex}, thick] (I) -- (C);
+    \end{tikzpicture}
+    \endgroup
+    \caption[DAG de mediación con confusión]{Ejemplo de mediación con confusión entre el mediador $M$ y el resultado $C$. La variable $I$ representa intención previa de compra o afinidad con la marca.}
+    \label{fig:dag_mediacion_publicidad_confundido}
+\end{figure}
+
+La dificultad de la mediación consiste en definir qué significa mantener fija la variable mediadora sin introducir sesgos adicionales. La solución causal consiste en no condicionar sobre el mediador, sino \textbf{intervenir} sobre él \cite{Pearl2016-nx}. Si en lugar de restringirnos a usuarios con un mismo valor de $M$, fijamos teóricamente el valor del mediador mediante $do(M=m)$, entonces desaparecen las aristas entrantes a $M$ y se evita que la dependencia espuria pase a través de ellas, incluso cuando las aristas sean desconocidas.
+
+Esto permite definir el \textbf{efecto directo controlado} (\textit{Controlled Direct Effect}, CDE) de cambiar el valor de $P$ desde $p$ hasta $p'$ manteniendo fijo el mediador en $m$:
+
+\begin{equation}
+    \operatorname{CDE}(m)
+    = \mathbb{P}(C = c \mid do(P=p), do(M=m))
+    - \mathbb{P}(C = c \mid do(P=p'), do(M=m))
+    \label{eq:cde_publicidad}
+\end{equation}
+
+Esta definición expresa la idea de comparar dos mundos posibles que solo difieren en el nivel de exposición publicitaria, mientras el mediador se mantiene constante por intervención. Su ventaja frente al condicionamiento es que sigue siendo válida incluso cuando la relación entre el mediador y el resultado está confundida, siempre que las probabilidades intervenidas sean identificables a partir de los datos observados.
+
+En general, el efecto directo puede depender del valor fijado para el mediador. En el ejemplo publicitario, podría ocurrir que la publicidad tenga poco efecto directo cuando el recuerdo de marca ya es alto, pero un efecto mayor cuando dicho recuerdo es bajo. Por tanto, para describir completamente el efecto directo controlado conviene estudiar varios valores relevantes de $m$; fijar el mediador a distintos valores.
+
+Para identificar este efecto a partir de datos observacionales, la estrategia sigue la misma lógica que en el ajuste por \textit{backdoor}. Primero, se intenta eliminar el operador $do(P=p)$ ajustando por un conjunto que bloquee los caminos de retroceso desde $P$ hasta $C$ una vez intervenido el mediador. Después, se intenta eliminar $do(M=m)$ ajustando por un conjunto que bloquee los caminos de retroceso entre $M$ y $C$. Si ambas operaciones son posibles, el efecto directo controlado puede estimarse a partir de probabilidades condicionales ordinarias.
+
+La mediación indirecta es todavía más delicada que la directa, porque no existe una forma simple de ``apagar'' solo el efecto directo sin afectar simultáneamente a otras partes del sistema. En modelos lineales, a veces se identifica el efecto indirecto como la diferencia entre el efecto total y el efecto directo. Sin embargo, en modelos no lineales esta resta puede dejar de tener una interpretación causal clara, especialmente cuando existen interacciones entre la exposición y el mediador.
+
+
 \section{Instancias contrafactuales}
 
 \subsection{Explicaciones contrafactuales}
