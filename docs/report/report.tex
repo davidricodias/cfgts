@@ -1021,16 +1021,22 @@ El DAG correspondiente es:
     \begingroup
     \shorthandoff{<>}
     \begin{tikzpicture}[node distance=3.1cm]
+        \node (UA) [draw, circle, dashed, minimum size=10mm] at (0, 1.9) {$U_A$};
+        \node (UP) [draw, circle, dashed, minimum size=10mm] at (3.1, 1.9) {$U_P$};
+        \node (UC) [draw, circle, dashed, minimum size=10mm] at (6.2, 1.9) {$U_C$};
         \node (A) [draw, circle, minimum size=10mm] {$A$};
         \node (P) [draw, circle, right=of A, minimum size=10mm] {$P$};
         \node (C) [draw, circle, right=of P, minimum size=10mm] {$C$};
 
+        \draw[-{Latex}, thick, dashed] (UA) -- (A);
+        \draw[-{Latex}, thick, dashed] (UP) -- (P);
+        \draw[-{Latex}, thick, dashed] (UC) -- (C);
         \draw[-{Latex}, thick] (A) -- (P);
         \draw[-{Latex}, thick, bend left=22] (A) to (C);
         \draw[-{Latex}, thick] (P) -- (C);
     \end{tikzpicture}
     \endgroup
-    \caption[DAG de conversión publicitaria]{DAG para el ejemplo de conversión publicitaria. $A$: edad, $P$: exposición publicitaria, $C$: conversión.}
+    \caption[DAG de conversión publicitaria]{DAG para el ejemplo de conversión publicitaria. $U_A$, $U_P$ y $U_C$ representan factores exógenos no observados; $A$: edad, $P$: exposición publicitaria, $C$: conversión.}
     \label{fig:dag_conversion_publicidad}
 \end{figure}
 
@@ -1072,7 +1078,7 @@ Gracias al MCE, la pregunta causal queda bien definida: intervenir $do(P=p)$ eli
 Cuando $\mathbf{Z}$ satisface el criterio \textit{backdoor}, el efecto causal de $P$ sobre $C$ es identificable a partir de datos observacionales mediante la fórmula de ajuste:
 \begin{equation}
     \mathbb{P}(C \mid do(P=p))
-    = \sum_{a} \mathbb{P}(C \mid P=p,\, A=a)\,\mathbb{P}(A=a).
+    = \sum_{a} \mathbb{P}(C \mid P=p,\, A=a)\,\mathbb{P}(A=a), a \in \{"18-30", "30-50", "50-80"\}
     \label{eq:backdoor_scm_conversion}
 \end{equation}
 En el ejemplo, $\mathbf{Z} = \{A\}$ satisface ambas condiciones: la edad no es descendiente de la exposición publicitaria, y bloquea el único camino de retroceso $P \leftarrow A \rightarrow C$. La fórmula promedia la relación exposición-conversión dentro de cada estrato de edad usando la distribución marginal de $A$, recuperando así el efecto causal neto de $P$ sobre $C$ y evitando la inversión de signo característica de la paradoja de Simpson.
@@ -1083,15 +1089,39 @@ El objetivo último de muchos estudios estadísticos es predecir los efectos de 
 
 Una mera asociación entre dos variables no significa necesariamente que una de ellas cause a la otra. Esta es una de las razones por las que un experimento controlado aleatorizado (\textit{Randomized Controlled Trial}, RCT) se considera el mejor procedimiento para la investigación causal: en un experimento correctamente aleatorizado, todos los factores que influyen en la variable de resultado o bien son estáticos o bien varían aleatoriamente, excepto uno, de modo que cualquier cambio en la variable de resultado debe atribuirse a ese único factor de entrada.
 
-Desafortunadamente, muchas preguntas de interés no se prestan a experimentos controlados aleatorizados; no es posible controlar que los usuarios de la web recomienden o no a sus amigos el producto.
+Desafortunadamente, muchas preguntas de interés no se prestan a experimentos controlados aleatorizados; no es posible encerrar a los usuarios de la web en una sala y asignarles aleatoriamente una cantidad de publicidad.
 
-En los casos en que los experimentos controlados aleatorizados no son factibles, se pueden realizar estudios observacionales, en los que simplemente registran los datos sin controlarlos. El problema de este tipo de estudios es que resulta difícil separar lo causal de lo meramente correlacional.
+En los casos en que los experimentos controlados aleatorizados no son factibles, se pueden realizar estudios observacionales, en los que simplemente registran los datos sin controlarlos. El problema de este tipo de estudios es que resulta difícil separar lo causal de lo meramente correlacional. Por eso es necesario contar con un modelo causal previo a la toma de datos.
 
 \textbf{Intervención frente a condicionamiento.} La diferencia entre intervenir sobre una variable y condicionar sobre ella es fundamental. Cuando se interviene sobre una variable en un modelo, se fija su valor: se modifica el sistema y los valores de otras variables cambian como consecuencia. Cuando se condiciona sobre una variable, no se modifica nada; simplemente se restringe la atención al subconjunto de casos en que la variable toma el valor de interés. Lo que cambia en este caso es nuestra percepción del mundo, no el mundo en sí mismo.
 
 Formalmente, esta distinción se refleja en la notación $do$, creada por Pearl. Se distingue entre el caso en que una variable $X$ toma el valor $x$ de forma natural y el caso en que se fija $X = x$ mediante una intervención, denotando este último como $do(X = x)$. Así, $\mathbb{P}(Y = y \mid X = x)$ es la probabilidad de que $Y = y$ condicionada a observar $X = x$, mientras que $\mathbb{P}(Y \mid do(X = x))$ es la probabilidad de $Y = y$ cuando se interviene para hacer $X = x$. En terminología distribucional, $\mathbb{P}(Y = y \mid X = x)$ refleja la distribución poblacional de $Y$ entre los individuos cuyo valor de $X$ es $x$, mientras que $\mathbb{P}(Y = y \mid do(X = x))$ representa la distribución poblacional de $Y$ si el valor de $X$ se fijara en $x$ para \textbf{todos y cada uno} de los individuos de la población. No estamos hablando de un subconjunto de la población, sino de la población completa bajo una intervención.
 
 \textbf{Cirugía sobre el grafo.} Cuando se interviene sobre una variable, se anula su tendencia natural a variar en respuesta a otras variables del sistema. Esto equivale a realizar una \textit{cirugía} sobre el grafo causal: se eliminan todas las aristas dirigidas hacia esa variable. En el ejemplo de conversión, intervenir sobre $P$ para fijarlo en un valor específico implica eliminar la flecha $A \to P$, lo que bloquea el factor de confusión $P \leftarrow A \rightarrow C$ y permite estimar el efecto causal neto de $P$ sobre $C$.
+
+La Figura~\ref{fig:dag_conversion_publicidad_intervenido} muestra esta cirugía sobre el ejemplo anterior. Tras la intervención $do(P=p)$, la exposición publicitaria deja de venir determinada por sus causas habituales y pasa a quedar fijada externamente. Ni $A$ ni $U_P$ influyen ahora sobre $P$.
+
+\begin{figure}[H]
+    \centering
+    \begingroup
+    \shorthandoff{<>}
+    \begin{tikzpicture}[node distance=3.1cm]
+        \node (UA) [draw, circle, dashed, minimum size=10mm] at (0, 1.9) {$U_A$};
+        \node (UC) [draw, circle, dashed, minimum size=10mm] at (6.2, 1.9) {$U_C$};
+        \node (A) [draw, circle, minimum size=10mm] {$A$};
+        \node (P) [draw, circle, fill=gray!15, minimum size=12mm] at (3.1, 0) {$p$};
+        \node (C) [draw, circle, minimum size=10mm] at (6.2, 0) {$C$};
+        \node at (3.1, -0.9) {$do(P=p)$};
+
+        \draw[-{Latex}, thick, dashed] (UA) -- (A);
+        \draw[-{Latex}, thick, dashed] (UC) -- (C);
+        \draw[-{Latex}, thick, bend left=22] (A) to (C);
+        \draw[-{Latex}, thick] (P) -- (C);
+    \end{tikzpicture}
+    \endgroup
+    \caption[DAG intervenido de conversión publicitaria]{Grafo causal intervenido para el ejemplo de conversión publicitaria tras aplicar $do(P=p)$. La intervención elimina las aristas entrantes a $P$ y fija externamente su valor.}
+    \label{fig:dag_conversion_publicidad_intervenido}
+\end{figure}
 
 Una de las suposiciones implícitas es que la intervención no tiene \textit{efectos secundarios no especificados}, es decir, que asignar el valor $X=x$ para un individuo no altera directamente las variables posteriores de forma distinta a la recogida en el modelo. Gráficamente correspondaría a que fuera del modelo no existen aristas adicionales que conecten $X$ con otras variables posteriores; cuando existen efectos secundarios, deben especificarse explícitamente en el modelo causal.
 
