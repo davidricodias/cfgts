@@ -1218,7 +1218,7 @@ El problema que aborda CFGTS puede formularse del siguiente modo. Dado un modelo
     \item Incorporar una puntuación de calidad causal que compare, para cada salida, el cambio esperado según un modelo causal auxiliar con el cambio real inducido por el predictor, agregando después esa consistencia en una puntuación media global.
 \end{enumerate}
 
-Este planteamiento es más restrictivo que la generación de contrafactuales en datos tabulares estáticos. En primer lugar, la plausibilidad no puede contrastarse directamente contra una nube de ejemplos observados porque CFGTS no dispone de los datos de entrenamiento; el objetivo es explotar la información temporal contenida en el modelo. En su lugar, debe reconstruir una región local de interés a partir del propio modelo, la instancia original y el objetivo contrafactual. En segundo lugar, las variables de entrada representan retardos temporales, por lo que una modificación arbitraria puede romper dependencias entre instantes consecutivos aunque el vector resultante siga perteneciendo al espacio de búsqueda, es una regla universal del universo que el futuro no causa el pasado.
+Este planteamiento es más restrictivo que la generación de contrafactuales en datos tabulares estáticos. En primer lugar, la plausibilidad no puede contrastarse directamente contra una nube de ejemplos observados porque CFGTS no dispone de los datos de entrenamiento; el objetivo es explotar la información temporal contenida en el modelo. En su lugar, debe reconstruir una región local de interés a partir del propio modelo, la instancia original y el objetivo contrafactual. En segundo lugar, las variables de entrada representan retardos temporales, por lo que una modificación arbitraria puede romper dependencias entre instantes consecutivos aunque el vector resultante siga perteneciendo al espacio de búsqueda, es una regla universal que el futuro no causa el pasado.
 
 Además, el problema se sitúa con frecuencia en la frontera de la distribución inducida por el modelo. El objetivo $\mathbf{y}^{*}$ puede quedar lejos de la predicción original $\hat{\mathbf{y}}_0 = \hat{f}(\mathbf{x}_0)$ o cerca del borde de las salidas alcanzables mediante perturbaciones locales de $\mathbf{x}_0$. En esas regiones la información es escasa y la respuesta del modelo puede ser heterogénea entre salidas. Por esta razón, CFGTS no se limita a optimizar candidatos contrafactuales: también construye un conjunto de cobertura alrededor del trayecto entre $\hat{\mathbf{y}}_0$ y $\mathbf{y}^{*}$ y lo enriquece con pasos de \textit{forward walking}, es decir ejecutar el modelo hacia delante de forma autorregresiva, con el fin de estimar efectos causales (respecto a $\hat{f}$) más estables sin requerir acceso al conjunto de entrenamiento.
 
@@ -1529,7 +1529,7 @@ La \textbf{discrepancia estelar centrada $L^2$} de una muestra $\{u_1, \ldots, u
 
 \subsection{Formalización del grafo causal y puntuación de calidad}
 
-Este módulo formaliza la Fase~3 del algoritmo para el caso multi-salida: la construcción de un grafo dirigido acíclico (DAG) causal a partir de las variables temporales, la validación de la \textit{whitelist}, la puntuación de consistencia causal por objetivo y su agregación media, y la comparación formal entre una estimación causal basada en el DAG y una regresión lineal plenamente ajustada que, en sistemas dinámicos, bloquea trayectorias mediadas y por tanto cambia el estimando.
+Este módulo formaliza la Fase~3 del algoritmo para el caso multi-salida: la construcción de un grafo dirigido acíclico (DAG) causal a partir de las variables temporales, la validación de la \textit{whitelist}, la puntuación de consistencia causal por objetivo y su agregación media, y la comparación formal entre una estimación causal basada en el DAG y una regresión lineal ajustada que, en sistemas dinámicos, bloquea trayectorias mediadas y por tanto cambia el estimando.
 
 \subsubsection{Grafo dirigido acíclico causal}
 
@@ -1664,7 +1664,7 @@ Las aristas del grafo causal CFGTS se construyen según dos reglas:
 
 \subsubsection{Sesgo dinámico por bloqueo de mediación}
 
-En esta formulación del sesgo del MCO no se identifica con un error aditivo arbitrario respecto de un coeficiente directo, sino con el \textbf{sesgo por bloqueo de trayectorias mediadas} en sistemas dinámicos. Para un horizonte $h+1$ se define el sesgo matricial del MCO plenamente ajustado por
+En esta formulación del sesgo del MCO no se identifica con un error aditivo arbitrario respecto de un coeficiente directo, sino con el \textbf{sesgo por bloqueo de trayectorias mediadas} en sistemas dinámicos. Para un horizonte $h+1$ se define el sesgo matricial del MCO ajustado por
 \begin{equation}
     \mathbf{B}_{\mathrm{MCO}}^{(h+1)} = \mathbf{D}^{(h+1)} - \mathbf{T}^{(h+1)}.
     \label{eq:formal_mco_bias_matrix}
@@ -1680,7 +1680,7 @@ Fijada una salida $d$, la comparación correcta se formula respecto del \textbf{
     \item \textbf{CausalModel} (con DAG y criterio de puerta trasera):
           $$\widehat{\boldsymbol{\beta}}_{\text{causal}}^{(d)} = \boldsymbol{\tau}^{(d)}.$$
           Es el estimador alineado con el efecto total que se quiere puntuar.
-    \item \textbf{LinearRegression} (MCO plenamente ajustado, pero sin usar el DAG):
+    \item \textbf{LinearRegression} (MCO ajustado, pero sin usar el DAG):
           $$\widehat{\boldsymbol{\beta}}_{\text{mco}}^{(d)} = \boldsymbol{\tau}^{(d)} + \mathbf{b}^{(d)},$$
           donde $\mathbf{b}^{(d)} \in \mathbb{R}^{n_{\text{In}}}$ es el vector de sesgo. En sistemas longitudinales, sus componentes recogen precisamente la parte mediada que queda bloqueada al condicionar sobre retardos intermedios.
 \end{itemize}
@@ -1856,7 +1856,7 @@ Para $h+1=2$, la descomposición $\mathbf{T}^{(2)} = \mathbf{D}^{(2)} + \mathbf{
     Sustituyendo en la descomposición anterior,
     $$\mathbf{T}^{(2)} = A_2 + A_1^2.$$
 
-    Para el sesgo del MCO plenamente ajustado, aplicamos el teorema anterior de sesgo de mediación en el mismo horizonte:
+    Para el sesgo del MCO ajustado, aplicamos el teorema anterior de sesgo de mediación en el mismo horizonte:
     $$\mathbf{B}_{\mathrm{MCO}}^{(2)} = -\mathbf{M}^{(2)} = -A_1^2.$$
 \end{proof}
 
@@ -1865,7 +1865,7 @@ Para $h+1=2$, la descomposición $\mathbf{T}^{(2)} = \mathbf{D}^{(2)} + \mathbf{
     $$X_t = \phi_1 X_{t-1} + \phi_2 X_{t-2} + \varepsilon_t,$$
     el efecto total del retardo $2$ es
     $$\tau^{(2)} = \phi_2 + \phi_1^2,$$
-    y el sesgo del MCO plenamente ajustado es
+    y el sesgo del MCO ajustado es
     $$\operatorname{Bias}_{\mathrm{MCO}}^{(2)} = -\phi_1^2.$$
 \end{corollary}
 \begin{proof}[Derivación]
@@ -1928,7 +1928,7 @@ Para $h+1=2$, la descomposición $\mathbf{T}^{(2)} = \mathbf{D}^{(2)} + \mathbf{
         \sum_{i=0}^{n_{\text{In}}-1} b_i^{(d)} \cdot (x'_i - x_i) = 0.$$
 \end{theorem}
 
-Este último resultado caracteriza exactamente cuándo la regresión lineal plenamente ajustada puede igualar a la estimación causal basada en el DAG: solo cuando la contribución total del sesgo sobre la perturbación se anula. En general, la diferencia entre ambos métodos no es un caso de \emph{omitted variable bias}, sino de \textbf{sesgo por bloqueo de mediación}: al condicionar sobre retardos intermedios, MCO reemplaza el efecto total por un efecto directo controlado.
+Este último resultado caracteriza exactamente cuándo la regresión lineal ajustada puede igualar a la estimación causal basada en el DAG: solo cuando la contribución total del sesgo sobre la perturbación se anula. En general, la diferencia entre ambos métodos no es un caso de \emph{omitted variable bias}, sino de \textbf{sesgo por bloqueo de mediación}: al condicionar sobre retardos intermedios, MCO reemplaza el efecto total por un efecto directo controlado.
 
 \paragraph{Resultados agregados multi-salida}
 
@@ -1938,11 +1938,11 @@ Este último resultado caracteriza exactamente cuándo la regresión lineal plen
 \end{theorem}
 
 \begin{theorem}[Dominancia débil agregada del CausalModel]
-    Si $D > 0$, la puntuación media obtenida con CausalModel y ajuste \textit{backdoor} es siempre al menos tan alta como la obtenida con la regresión lineal plenamente ajustada:
+    Si $D > 0$, la puntuación media obtenida con CausalModel y ajuste \textit{backdoor} es siempre al menos tan alta como la obtenida con la regresión lineal ajustada:
     $$s\!\left(\mathbf{x}'; \widehat{\boldsymbol{\beta}}_{\text{mco}}\right) \leq s\!\left(\mathbf{x}'; \widehat{\boldsymbol{\beta}}_{\text{causal}}\right).$$
 \end{theorem}
 
-Es importante recalcar que todos los resultados de esta sección son \textbf{relativos al modelo ajustado} $\hat{f}$: la formalización demuestra que el DAG permite puntuar contrafactuales usando el \emph{efecto total dinámico} inducido por el modelo, mientras que la regresión lineal plenamente ajustada introduce un sesgo exactamente igual a la parte mediada omitida. La formalización no afirma que estos coeficientes coincidan con los efectos estructurales del proceso generador de datos real; afirma únicamente que son los coeficientes correctos para describir, de manera causalmente coherente, el comportamiento del predictor ajustado.
+Es importante recalcar que todos los resultados de esta sección son \textbf{relativos al modelo ajustado} $\hat{f}$: la formalización demuestra que el DAG permite puntuar contrafactuales usando el \emph{efecto total dinámico} inducido por el modelo, mientras que la regresión lineal ajustada introduce un sesgo exactamente igual a la parte mediada omitida. La formalización no afirma que estos coeficientes coincidan con los efectos estructurales del proceso generador de datos real; afirma únicamente que son los coeficientes correctos para describir, de manera causalmente coherente, el comportamiento del predictor ajustado.
 
 
 \section{Entradas del algoritmo}
