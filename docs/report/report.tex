@@ -1193,6 +1193,251 @@ Para identificar este efecto a partir de datos observacionales, la estrategia si
 
 La mediación indirecta es todavía más delicada que la directa, porque no existe una forma simple de ``apagar'' solo el efecto directo sin afectar simultáneamente a otras partes del sistema. En modelos lineales, a veces se identifica el efecto indirecto como la diferencia entre el efecto total y el efecto directo. Sin embargo, en modelos no lineales esta resta puede dejar de tener una interpretación causal clara, especialmente cuando existen interacciones entre la exposición y el mediador.
 
+La inferencia causal formaliza los efectos de mediación mediante \emph{resultados potenciales} \cite{Muthn2014}. Se denota $C(p, M(p^{*}))$ la conversión que se observaría si la exposición publicitaria fuera $P = p$ pero el recuerdo de marca $M$ tomara el valor que habría asumido bajo $P = p^{*}$. Con esta notación el efecto total se descompone como:
+\begin{align}
+    \mathrm{TE}   &= \mathbb{E}[C(1) - C(0)], \label{eq:te_cf} \\
+    \mathrm{PNDE} &= \mathbb{E}[C(1,\,M(0)) - C(0,\,M(0))], \label{eq:pnde} \\
+    \mathrm{TNIE} &= \mathbb{E}[C(1,\,M(1)) - C(1,\,M(0))], \label{eq:tnie}
+\end{align}
+de modo que $\mathrm{TE} = \mathrm{PNDE} + \mathrm{TNIE}$. El \textbf{PNDE} (\textit{Pure Natural Direct Effect}) mide el impacto directo de la publicidad sobre la conversión cuando el recuerdo de marca se fija al nivel que habría tenido \emph{sin} publicidad, es decir, bloqueando la vía $P \to M \to C$. El \textbf{TNIE} (\textit{Total Natural Indirect Effect}) mide el cambio en conversión atribuible únicamente al cambio que la publicidad induce en el recuerdo de marca, manteniendo fijo el nivel de exposición en $P = 1$.
+
+Considerando el modelo lineal sin interacción entre publicidad y recuerdo de marca,
+\begin{align*}
+    C_i &= \beta_0 + \beta_1 M_i + \beta_2 P_i + \varepsilon_{1i}, \\
+    M_i &= \gamma_0 + \gamma_1 P_i + \varepsilon_{2i},
+\end{align*}
+los efectos naturales toman la forma \cite{Muthn2014}:
+\begin{equation}
+    \mathrm{PNDE} = \beta_2, \qquad
+    \mathrm{TNIE} = \beta_1\gamma_1. \label{eq:pnde_tnie_lin}
+\end{equation}
+
+El efecto indirecto es el producto del efecto de la publicidad sobre el recuerdo de marca ($\gamma_1$) y del efecto del recuerdo de marca sobre la conversión ($\beta_1$). La Figura~\ref{fig:dag_mediacion_efectos} ilustra esta descomposición. Esta distinción entre PNDE y TNIE será fundamental en el capítulo de Propuesta, donde los retardos intermedios de un sistema dinámico actúan como mediadores y el sesgo del estimador MCO corresponde exactamente a recuperar el PNDE en lugar del efecto total TE.
+
+\begin{figure}[H]
+    \ffigbox[\FBwidth]{
+        \caption[Descomposición del efecto total en PNDE y TNIE]{Descomposición del efecto total (TE) en efecto directo natural puro (PNDE) y efecto indirecto natural total (TNIE) para el ejemplo de conversión publicitaria sin interacción. La flecha azul continua representa el PNDE: el impacto directo de $P$ sobre $C$ con coeficiente $\beta_2$. Las flechas grises discontinuas representan el TNIE: la cadena $P \xrightarrow{\gamma_1} M \xrightarrow{\beta_1} C$ cuyo producto $\beta_1\gamma_1$ recoge el efecto mediado por el recuerdo de marca. El efecto total es $\mathrm{TE} = \mathrm{PNDE} + \mathrm{TNIE} = \beta_2 + \beta_1\gamma_1$.}
+        \label{fig:dag_mediacion_efectos}
+    }{
+        \begin{tikzpicture}[
+                node distance=32mm,
+                nodo/.style={circle, draw=azulUC3M, very thick, minimum size=12mm, font=\small},
+                pnde/.style={-{Stealth[length=2.6mm]}, very thick, azulUC3M},
+                tnie/.style={-{Stealth[length=2.6mm]}, thick, gray45, densely dashed}
+            ]
+            \node[nodo] (P) {$P$};
+            \node[nodo, right=of P] (M) {$M$};
+            \node[nodo, right=of M] (C) {$C$};
+
+            % TNIE path: P → M → C
+            \draw[tnie] (P) -- node[midway, above, font=\scriptsize] {$\gamma_1$} (M);
+            \draw[tnie] (M) -- node[midway, above, font=\scriptsize] {$\beta_1$} (C);
+
+            % PNDE: direct arc P → C
+            \draw[pnde] (P) to[bend right=38]
+                node[midway, below, font=\scriptsize] {$\beta_2\ (\mathrm{PNDE})$} (C);
+
+            % Annotations
+            \node[font=\scriptsize, gray45, above=4mm of M] {TNIE $= \beta_1\gamma_1$};
+        \end{tikzpicture}
+    }
+\end{figure}
+
+\subsection{Causalidad en series temporales}
+
+Los grafo>s causales y los modelos causales estructurales presentados hasta ahora describen sistemas \emph{estáticos}: cada variable se considera en una única instancia temporal. Cuando los datos provienen de una serie temporal, la misma magnitud se observa repetidamente a lo largo del tiempo y su valor en un instante puede depender de su propio pasado y del de las demás variables (si la serie es multivariada). El mismo formalismo causal se puede extender al caso dinámico, con especial atención a los procesos \emph{autorregresivos}. Combinamos dos perspectivas complementarias: la de los \emph{grafos de series temporales}, que despliegan el proceso instante a instante~\cite{Runge2023}, y la de los \emph{modelos causales recursivos}, que formalizan la factorización de un sistema generado secuencialmente~\cite{Kiiveri_Speed_Carlin_1984}.
+
+\textbf{Modelo causal estructural temporal.} Sea un proceso multivariante $\mathbf{Z}_t = (Z^1_t, \ldots, Z^n_t)^\top$ observado en instantes discretos $t \in \mathbb{Z}$. Un modelo causal estructural temporal asigna a cada variable $Z^j_t$ una ecuación generadora
+\begin{equation}
+    Z^j_t := f^j\!\left(\mathrm{pa}(Z^j_t),\, \varepsilon^j_t\right), \qquad j = 1, \ldots, n,
+    \label{eq:temporal_scm}
+\end{equation}
+donde $f^j$ es el mecanismo que produce la $j$-ésima coordenada, $\mathrm{pa}(Z^j_t)$ es su conjunto de \emph{padres causales} y $\boldsymbol{\varepsilon}_t = (\varepsilon^1_t, \ldots, \varepsilon^n_t)^\top$ son ruidos exógenos mutuamente independientes y a lo largo del tiempo. La diferencia esencial con el caso estático es que los padres pueden situarse en el instante actual o en instantes anteriores, pero \emph{nunca} en el futuro:
+\begin{equation}
+    \mathrm{pa}(Z^j_t) \subseteq \left\{ Z^i_{t-\tau} : 1 \le i \le n,\; 0 \le \tau \le \tau_{\max} \right\} \setminus \{Z^j_t\},
+    \label{eq:parents_window}
+\end{equation}
+donde $\tau_{\max}$ es el retardo máximo del sistema. La restricción $\tau \ge 0$ codifica el principio de que \emph{el futuro no causa el pasado}; los padres con $\tau = 0$ son enlaces \emph{contemporáneos} y los de $\tau \ge 1$ son enlaces \emph{retardados}.
+
+\textbf{Estacionariedad causal.} Supondremos que la estructura causal es \emph{estacionaria}: los mecanismos $f^j$, las distribuciones de los ruidos $\varepsilon^j_t$ y el patrón de padres $\mathrm{pa}(Z^j_t)$ no dependen del instante $t$, sino únicamente de los retardos relativos. Esta hipótesis es la que justifica que un \emph{único} modelo ajustado sobre una ventana deslizante describa la dinámica en cualquier instante.
+
+\textbf{Grafo de series temporales y grafo resumen.} La estructura de la ecuación~\eqref{eq:temporal_scm} se representa mediante el \emph{grafo de series temporales}, un grafo dirigido cuyos nodos son pares (variable, instante) y cuyas aristas conectan cada padre con su hijo:
+\begin{equation}
+    Z^i_{t-\tau} \rightarrow Z^j_t \quad \Longleftrightarrow \quad Z^i_{t-\tau} \in \mathrm{pa}(Z^j_t).
+    \label{eq:ts_edges}
+\end{equation}
+Como las aristas solo avanzan en el tiempo (o permanecen en el mismo instante, en sentido único), el grafo de series temporales desplegado sobre una ventana finita es \emph{acíclico}, lo que lo convierte en un grafo causal admisible al que se aplican directamente los conceptos de las secciones anteriores. La Figura~\ref{fig:ts_graph_var} muestra este despliegue para un sistema autorregresivo bivariante. Si colapsamos todos los instantes en un único nodo por variable obtenemos el grafo de la Figura~\ref{fig:ts_summary_var}: una representación compacta que, a diferencia del grafo desplegado, sí puede contener ciclos y bucles propios, pues recoge la realimentación entre variables a lo largo del tiempo.
+
+\begin{figure}[H]
+    \centering
+    \begingroup
+    \shorthandoff{<>}
+    \begin{tikzpicture}[
+        var/.style={draw, circle, minimum size=12mm, inner sep=1pt, font=\small},
+        auto/.style={-{Latex}, thick},
+        cruz/.style={-{Latex}, thick, gray45}
+    ]
+        % nodos
+        \node (x2) [var] at (0, 1.9)   {$X_{t-2}$};
+        \node (x1) [var] at (3.4, 1.9) {$X_{t-1}$};
+        \node (x0) [var] at (6.8, 1.9) {$X_{t}$};
+        \node (y2) [var] at (0, 0)     {$Y_{t-2}$};
+        \node (y1) [var] at (3.4, 0)   {$Y_{t-1}$};
+        \node (y0) [var] at (6.8, 0)   {$Y_{t}$};
+        \node (xd) at (-1.7, 1.9) {$\cdots$};
+        \node (yd) at (-1.7, 0)   {$\cdots$};
+        % autorregresion retardo 1
+        \draw[auto] (x2) -- (x1);
+        \draw[auto] (x1) -- node[above, font=\scriptsize] {$a_1$} (x0);
+        \draw[auto] (y2) -- (y1);
+        \draw[auto] (y1) -- node[below, font=\scriptsize] {$d_1$} (y0);
+        % autorregresion retardo 2
+        \draw[auto, bend left=26] (x2) to node[above, font=\scriptsize] {$a_2$} (x0);
+        \draw[auto, bend right=26] (y2) to node[below, font=\scriptsize] {$d_2$} (y0);
+        % efectos cruzados retardo 1
+        \draw[cruz] (x1) -- node[pos=0.26, right, font=\scriptsize] {$c$} (y0);
+        \draw[cruz] (y1) -- node[pos=0.26, right, font=\scriptsize] {$b$} (x0);
+        % pasado infinito
+        \draw[auto, dashed, gray75] (xd) -- (x2);
+        \draw[auto, dashed, gray75] (yd) -- (y2);
+    \end{tikzpicture}
+    \endgroup
+    \caption[Grafo de series temporales de un proceso autorregresivo bivariante]{Grafo de series temporales del sistema autorregresivo bivariante de la ecuación~\eqref{eq:var2_bivariate}, con variables $X$ e $Y$ y retardo máximo $\tau_{\max} = 2$. Las aristas negras representan la dinámica autorregresiva propia (retardos $1$ y $2$) y las grises los efectos cruzados retardados $Y_{t-1} \rightarrow X_t$ (coeficiente $b$) y $X_{t-1} \rightarrow Y_t$ (coeficiente $c$). Por estacionariedad causal el patrón se repite idéntico en cada instante; la ausencia de aristas cruzadas a retardo~$2$ refleja los ceros fuera de la diagonal de $A_2$.}
+    \label{fig:ts_graph_var}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begingroup
+    \shorthandoff{<>}
+    \begin{tikzpicture}[
+        var/.style={draw, circle, minimum size=11mm, font=\small},
+        ar/.style={-{Latex}, thick}
+    ]
+        \node (X) [var] at (0,0) {$X$};
+        \node (Y) [var] at (3.6,0) {$Y$};
+        \draw[ar, bend left=18] (X) to node[above, font=\scriptsize] {$\tau=1$} (Y);
+        \draw[ar, bend left=18] (Y) to node[below, font=\scriptsize] {$\tau=1$} (X);
+        \draw[ar] (X) to[out=125, in=55, looseness=6] node[above, font=\scriptsize] {$\tau=1,2$} (X);
+        \draw[ar] (Y) to[out=125, in=55, looseness=6] node[above, font=\scriptsize] {$\tau=1,2$} (Y);
+    \end{tikzpicture}
+    \endgroup
+    \caption[Grafo resumen del proceso autorregresivo bivariante]{Grafo resumen obtenido al colapsar todos los instantes del grafo de la Figura~\ref{fig:ts_graph_var}. A diferencia del grafo desplegado, contiene un ciclo de realimentación $X \rightleftarrows Y$ y bucles propios de autocorrelación; las etiquetas indican los retardos a los que actúa cada enlace. El ciclo es admisible porque, en el grafo desplegado, todos los enlaces que lo forman están retardados.}
+    \label{fig:ts_summary_var}
+\end{figure}
+
+\textbf{Caso autorregresivo lineal.} El caso más sencillo de este tipo de grafos se obtiene al considerar mecanismos $f^j$ lineales. Separando los padres contemporáneos de los retardados, el modelo estructural~\eqref{eq:temporal_scm} se escribe como un \emph{modelo autorregresivo estructural} (SVAR):
+\begin{equation}
+    \mathbf{Z}_t = A_0\,\mathbf{Z}_t + \sum_{\tau=1}^{\tau_{\max}} A_\tau\,\mathbf{Z}_{t-\tau} + \boldsymbol{\varepsilon}_t,
+    \label{eq:svar}
+\end{equation}
+donde la matriz $A_0$ (de diagonal nula) recoge los efectos contemporáneos y cada $A_\tau$ los efectos al retardo $\tau$. Cuando no hay enlaces contemporáneos ($A_0 = 0$) el sistema se reduce a un modelo \emph{vectorial autorregresivo} (VAR) puro,
+\begin{equation}
+    \mathbf{Z}_t = \sum_{\tau=1}^{\ell} A_\tau\,\mathbf{Z}_{t-\tau} + \boldsymbol{\varepsilon}_t,
+    \label{eq:var_p}
+\end{equation}
+que coincide exactamente con la ecuación~\eqref{eq:formal_varp} desarrollada más adelante, identificando el retardo máximo $\tau_{\max}$ con el orden $\ell$ del VAR. La conexión entre coeficientes y aristas es directa: la entrada $(u,v)$ de la matriz de retardo, $[A_\tau]_{uv}$, es el peso de la arista $Z^v_{t-\tau} \rightarrow Z^u_t$. Por tanto, el patrón de ceros de las matrices $A_\tau$ se identifica con las aristas \emph{ausentes} del grafo de series temporales: un cero estructural es una independencia causal.
+
+Como ejemplo, el sistema bivariante de la Figura~\ref{fig:ts_graph_var}, con $\mathbf{Z}_t = (X_t, Y_t)^\top$, corresponde a las ecuaciones
+\begin{equation}
+    \begin{aligned}
+        X_t &:= a_1\,X_{t-1} + a_2\,X_{t-2} + b\,Y_{t-1} + \varepsilon^X_t, \\
+        Y_t &:= c\,X_{t-1} + d_1\,Y_{t-1} + d_2\,Y_{t-2} + \varepsilon^Y_t,
+    \end{aligned}
+    \label{eq:var2_bivariate}
+\end{equation}
+es decir, un VAR(2) con matrices de retardo
+\begin{equation*}
+    A_1 = \begin{pmatrix} a_1 & b \\ c & d_1 \end{pmatrix}, \qquad
+    A_2 = \begin{pmatrix} a_2 & 0 \\ 0 & d_2 \end{pmatrix}.
+\end{equation*}
+Aquí $n = 2$ variables y $\tau_{\max} = 2$ retardos, de modo que predecir el instante actual a partir de la ventana pasada requiere $n \times \tau_{\max} = 4$ entradas ---las coordenadas $X_{t-1}, X_{t-2}, Y_{t-1}, Y_{t-2}$--- para producir las $2$ salidas $X_t, Y_t$.
+
+\textbf{El desdoblamiento como modelo causal recursivo.} Desplegar el proceso sobre una ventana temporal finita produce un grafo dirigido acíclico finito, y todo grafo de este tipo define un \emph{modelo causal recursivo} en el sentido de Kiiveri, Speed y Carlin~\cite{Kiiveri_Speed_Carlin_1984}: existe un orden de las variables (el orden temporal, refinado por el orden contemporáneo) compatible con las aristas, de manera que la densidad conjunta se factoriza como producto de condicionales locales,
+\begin{equation}
+    \mathbb{P}\!\left(\mathbf{z}_{t-\tau_{\max}:\,t}\right) = \prod_{t'}\,\prod_{j=1}^{n} \mathbb{P}\!\left(z^j_{t'} \mid \mathrm{pa}(z^j_{t'})\right).
+    \label{eq:recursive_factorization}
+\end{equation}
+Esta factorización recursiva es la que legitima trasladar al dominio temporal toda la maquinaria causal estática: la \emph{condición de Markov}, los criterios de separación, y los procedimientos de ajuste por puerta trasera (\textit{backdoor}) para identificar efectos a partir de datos observacionales. En el caso lineal, los condicionales de la ecuación~\eqref{eq:recursive_factorization} son exactamente las filas de la ecuación~\eqref{eq:var_p}.
+
+\textbf{Intervenciones y efectos a lo largo del tiempo.} Una intervención $do(Z^j_{t'} = z)$ se modela, igual que en el caso estático, mediante \emph{cirugía} sobre el grafo desplegado: se sustituye la ecuación generadora de $Z^j_{t'}$ por el valor fijado y se eliminan sus aristas entrantes, dejando intactas las demás. Su efecto se propaga entonces hacia los instantes futuros a través de las aristas que salen de $Z^j_{t'}$. En un sistema lineal, el efecto total de $Z^v_{t-\tau}$ sobre $Z^u_t$ se obtiene por el \emph{método de las trayectorias}: sumar, sobre todas las trayectorias dirigidas que conectan ambos nodos, el producto de los coeficientes de sus aristas,
+\begin{equation}
+    \frac{\partial\, \mathbb{E}\!\left[Z^u_t \mid do(Z^v_{t-\tau})\right]}{\partial\, Z^v_{t-\tau}} \;=\; \sum_{\pi\,:\,Z^v_{t-\tau} \rightsquigarrow Z^u_t}\ \prod_{e \in \pi} [\,A_{\tau(e)}\,]_{e}.
+    \label{eq:ts_path_method}
+\end{equation}
+
+\begin{figure}[H]
+    \centering
+    \begingroup
+    \shorthandoff{<>}
+    \begin{tikzpicture}[
+        var/.style   = {draw, circle, minimum size=14mm, inner sep=2pt, font=\small},
+        src/.style   = {draw, circle, minimum size=14mm, inner sep=2pt, font=\small,
+                        fill=blue!15, thick},
+        tgt/.style   = {draw, circle, minimum size=14mm, inner sep=2pt, font=\small,
+                        fill=red!15, thick},
+        ar/.style    = {-{Latex}, thick, gray!60},
+        pi1/.style   = {-{Latex}, very thick, blue!70!black},
+        pi2/.style   = {-{Latex}, very thick, orange!80!black},
+    ]
+        % ---- nodos: columnas separadas 6 cm, filas separadas 2.8 cm ----
+        \node (X2) [var] at (0,   2.8) {$X_{t-2}$};
+        \node (Y2) [src] at (0,   0)   {$Y_{t-2}$};
+        \node (X1) [var] at (6,   2.8) {$X_{t-1}$};
+        \node (Y1) [var] at (6,   0)   {$Y_{t-1}$};
+        \node (Xt) [tgt] at (12,  2.8) {$X_t$};
+        \node (Yt) [var] at (12,  0)   {$Y_t$};
+
+        % ---- aristas lag-1 propias (gris) ----
+        \draw[ar] (X2) -- node[above, font=\scriptsize] {$a_1$} (X1);
+        \draw[ar] (X1) -- node[above, font=\scriptsize] {$a_1$} (Xt);
+        \draw[ar] (Y1) -- node[below, font=\scriptsize] {$d_1$} (Yt);
+
+        % ---- aristas lag-2: curvas por encima / por debajo ----
+        \draw[ar] (X2) to[out=30, in=150]
+            node[above, font=\scriptsize] {$a_2$} (Xt);
+        \draw[ar] (Y2) to[out=-30, in=210]
+            node[below, font=\scriptsize] {$d_2$} (Yt);
+
+        % ---- aristas cruzadas lag-1 (gris) ----
+        \draw[ar] (X2) -- node[above, font=\scriptsize, sloped] {$c$}  (Y1);
+        \draw[ar] (X1) -- node[above, font=\scriptsize, sloped] {$c$}  (Yt);
+
+        % ---- trayectoria π1: Y_{t-2} →^{b} X_{t-1} →^{a_1} X_t (azul) ----
+        \draw[pi1] (Y2) -- node[above, font=\scriptsize, sloped,
+            text=blue!70!black] {$b$} (X1);
+        \draw[pi1] (X1) -- node[above, font=\scriptsize,
+            text=blue!70!black] {$a_1$} (Xt);
+
+        % ---- trayectoria π2: Y_{t-2} →^{d_1} Y_{t-1} →^{b} X_t (naranja) ----
+        \draw[pi2] (Y2) -- node[below, font=\scriptsize,
+            text=orange!80!black] {$d_1$} (Y1);
+        \draw[pi2] (Y1) -- node[above, font=\scriptsize, sloped,
+            text=orange!80!black] {$b$} (Xt);
+
+        % ---- leyenda / fórmula ----
+        \node[align=center, font=\small] at (6, -3.8) {%
+            \textcolor{blue!70!black}{$\pi_1$: $Y_{t-2}\!\xrightarrow{b}\!X_{t-1}\!\xrightarrow{a_1}\!X_t$}
+            \qquad
+            \textcolor{orange!80!black}{$\pi_2$: $Y_{t-2}\!\xrightarrow{d_1}\!Y_{t-1}\!\xrightarrow{b}\!X_t$}\\[6pt]
+            $\displaystyle\frac{\partial\,\mathbb{E}[X_t \mid do(Y_{t-2})]}{\partial\,Y_{t-2}}
+             = b\,a_1 + d_1\,b = b\,(a_1+d_1)$
+        };
+    \end{tikzpicture}
+    \endgroup
+    \caption[Método de las trayectorias: efecto causal total de $Y_{t-2}$ sobre $X_t$]{%
+        Aplicación de la ecuación~\eqref{eq:ts_path_method} al VAR(2) bivariante de la
+        ecuación~\eqref{eq:var2_bivariate}. El nodo fuente $Y_{t-2}$ (azul) y el nodo
+        destino $X_t$ (rojo) están conectados por dos trayectorias dirigidas.
+        La trayectoria \textcolor{blue!70!black}{$\pi_1$} (azul) pasa directamente por
+        $X_{t-1}$ con contribución $b\cdot a_1$; la trayectoria
+        \textcolor{orange!80!black}{$\pi_2$} (naranja) pasa por $Y_{t-1}$ con
+        contribución $d_1\cdot b$. El efecto causal total es la suma de ambas
+        contribuciones: $b(a_1+d_1)$.}
+    \label{fig:ts_path_method_example}
+\end{figure}
+
+Este sumatorio de productos se organiza de forma matricial en las matrices de efecto total $\mathbf{T}^{(h)}$ que se desarrollan formalmente más adelante (ecuación~\eqref{eq:formal_total_lag_effect}). La distinción es importante: el coeficiente de retardo aislado $[A_\tau]_{uv}$ es solo el efecto \emph{directo}, mientras que el efecto total acumula además todas las rutas \emph{mediadas} por instantes intermedios. Una regresión ingenua de $Z^u_t$ sobre $Z^v_{t-\tau}$ no recupera ninguno de los dos de forma limpia, pues mezcla mediación y confusión a través del pasado común; esta es precisamente la brecha que motiva un tratamiento causal explícito de los efectos directos y mediados.
 
 \section{Instancias contrafactuales}
 
