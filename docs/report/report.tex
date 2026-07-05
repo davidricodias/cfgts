@@ -1193,6 +1193,8 @@ Para identificar este efecto a partir de datos observacionales, la estrategia si
 
 La mediación indirecta es todavía más delicada que la directa, porque no existe una forma simple de ``apagar'' solo el efecto directo sin afectar simultáneamente a otras partes del sistema. En modelos lineales, a veces se identifica el efecto indirecto como la diferencia entre el efecto total y el efecto directo. Sin embargo, en modelos no lineales esta resta puede dejar de tener una interpretación causal clara, especialmente cuando existen interacciones entre la exposición y el mediador.
 
+\subsubsection{Efecto total y mediación}
+
 La inferencia causal formaliza los efectos de mediación mediante \emph{resultados potenciales} \cite{Muthn2014}. Se denota $C(p, M(p^{*}))$ la conversión que se observaría si la exposición publicitaria fuera $P = p$ pero el recuerdo de marca $M$ tomara el valor que habría asumido bajo $P = p^{*}$. Con esta notación el efecto total se descompone como:
 \begin{align}
     \mathrm{TE}   &= \mathbb{E}[C(1) - C(0)], \label{eq:te_cf} \\
@@ -2061,6 +2063,110 @@ Estas tres propiedades implican que la relación de causalidad temporal es un \t
 \end{theorem}
 
 \paragraph{Efectos dinámicos totales y sesgo de mediación}
+
+Conviene volver a explicar, paso a paso, el origen de las matrices de efecto total $\mathbf{T}^{(h)}$, directo $\mathbf{D}^{(h+1)}$ y mediado $\mathbf{M}^{(h+1)}$, y por qué una regresión por  MCO y la estimación basada en el DAG producen estimandos distintos en un sistema dinámico.
+
+\textbf{Paso 1. Grafo causal desplegado en el tiempo.} Un sistema dinámico lineal como el de la ecuación~\eqref{eq:formal_varp} puede ``desplegarse'' en un grafo dirigido acíclico cuyos nodos son pares (variable, instante) y cuyas aristas son exactamente los coeficientes de retardo. La entrada $(u, v)$ de la matriz $A_k$ es el peso de la arista que va del nodo $(v,\, t-k)$ al nodo $(u,\, t)$. Cada matriz de retardo $A_k$ describe, por tanto, las aristas que saltan exactamente $k$ instantes hacia el futuro. La Figura~\ref{fig:dag_desplegado} muestra este despliegue para un sistema con dos variables, $X$ e $Y$, y tres retardos.
+
+\begin{figure}[H]
+    \ffigbox[\FBwidth]{
+        \caption[Grafo causal para serie temporal bivariante con dos retardos]{Grafo causal temporal para un sistema con dos variables, $X$ e $Y$ ---es decir, $\mathbf{Z}_t = (X_t,\, Y_t)^\top$---, y dos retardos ($n_{\text{In}} = 4$, $D = 2$). Cada nodo es un par (variable, instante) y los nodos de salida $X_t$ e $Y_t$ aparecen resaltados en azul. \textbf{Aristas azules continuas (regla~a):} toda variable de entrada apunta a cada salida. \textbf{Aristas grises discontinuas (regla~b):} toda variable de retardo mayor apunta a toda variable de retardo menor, respetando la causalidad temporal; son las 4 aristas temporales entre columnas de entrada ($X_{t-2} \to X_{t-1}$, $X_{t-2} \to Y_{t-1}$, $Y_{t-2} \to X_{t-1}$, $Y_{t-2} \to Y_{t-1}$) que materializan las trayectorias mediadas y permiten al criterio de \textit{backdoor} identificar el efecto total sin bloquear dichas trayectorias. El grafo contiene en total $8 + 4 = 12$ aristas dirigidas y no presenta ciclos.}
+        \label{fig:dag_desplegado}
+    }{
+        \begin{tikzpicture}[
+                x=55mm, y=18mm,
+                nodo/.style={circle, draw=azulUC3M, very thick, minimum size=13mm, inner sep=0pt, font=\small},
+                salida/.style={circle, draw=azulUC3M, line width=1.4pt, fill=azulUC3M!15, minimum size=13mm, inner sep=0pt, font=\small},
+                ra/.style={-{Stealth[length=2.2mm]}, thick, azulUC3M},
+                rb/.style={-{Stealth[length=2.2mm]}, semithick, gray45, densely dashed}
+            ]
+            % Nodes: two lags × two variables + two outputs
+            \node[nodo]   (x2) at (0, 1)  {$X_{t-2}$};
+            \node[nodo]   (y2) at (0,-1)  {$Y_{t-2}$};
+            \node[nodo]   (x1) at (1, 1)  {$X_{t-1}$};
+            \node[nodo]   (y1) at (1,-1)  {$Y_{t-1}$};
+            \node[salida] (x0) at (2, 1)  {$X_{t}$};
+            \node[salida] (y0) at (2,-1)  {$Y_{t}$};
+
+            % Rule (b): higher-lag → lower-lag among inputs (4 edges)
+            \draw[rb] (x2) -- node[midway, above, font=\scriptsize] {$[A_1]_{XX}$} (x1);
+            \draw[rb] (y2) -- node[midway, below, font=\scriptsize] {$[A_1]_{YY}$} (y1);
+            \draw[rb] (x2) to[bend right=22] node[pos=0.38, right, font=\scriptsize] {$[A_1]_{YX}$} (y1);
+            \draw[rb] (y2) to[bend left=22]  node[pos=0.38, left,  font=\scriptsize] {$[A_1]_{XY}$} (x1);
+
+            % Rule (a): every input → X_t (4 edges)
+            \draw[ra] (x1) -- node[midway, above, font=\scriptsize] {$[A_1]_{XX}$} (x0);
+            \draw[ra] (y1) to[bend right=22] node[pos=0.55, right, font=\scriptsize] {$[A_1]_{XY}$} (x0);
+            \draw[ra] (x2) to[bend left=30]  node[pos=0.45, above, font=\scriptsize] {$[A_2]_{XX}$} (x0);
+            \draw[ra] (y2) to[bend right=18] node[pos=0.62, right, font=\scriptsize] {$[A_2]_{XY}$} (x0);
+
+            % Rule (a): every input → Y_t (4 edges)
+            \draw[ra] (y1) -- node[midway, below, font=\scriptsize] {$[A_1]_{YY}$} (y0);
+            \draw[ra] (x1) to[bend left=22]  node[pos=0.55, left,  font=\scriptsize] {$[A_1]_{YX}$} (y0);
+            \draw[ra] (y2) to[bend right=30] node[pos=0.45, below, font=\scriptsize] {$[A_2]_{YY}$} (y0);
+            \draw[ra] (x2) to[bend left=18]  node[pos=0.62, left,  font=\scriptsize] {$[A_2]_{YX}$} (y0);
+        \end{tikzpicture}
+    }
+\end{figure}
+
+\textbf{Paso 2. Efecto directo: una sola arista.} El efecto directo a horizonte $h+1$ es la contribución de la única arista de retardo $h+1$, sin pasos intermedios: $\mathbf{D}^{(h+1)} = A_{h+1}$. Gráficamente es la flecha que conecta $(v,\, t-(h+1))$ con $(u,\, t)$ de un solo salto.
+
+\textbf{Paso 3. Efecto total: suma sobre todas las trayectorias.} En un grafo lineal, el efecto que se transmite a lo largo de una trayectoria dirigida es el \emph{producto} de los pesos de sus aristas (véase \ref{fig:dag_mediacion_efectos}), y el efecto total entre dos nodos es la \emph{suma} sobre todas las trayectorias dirigidas que los conectan. El caso base $\mathbf{T}^{(0)} = I_n$ codifica que, a horizonte cero, cada variable solo se afecta a sí misma con peso~$1$. La recursión de la ecuación~\eqref{eq:formal_total_lag_effect} clasifica cada trayectoria por su \emph{última} arista: si esa última arista tiene retardo $j+1$ (coeficiente $A_{j+1}$, aplicado por la izquierda por ser el último paso antes de llegar a $t$), el tramo restante hasta el instante intermedio acumula todas las maneras de recorrer el horizonte $h-j$, que es justamente $\mathbf{T}^{(h-j)}$.
+
+\textbf{Paso 4. Efecto mediado y descomposición.} El efecto mediado $\mathbf{M}^{(h+1)}$ es la misma suma del efecto total pero \emph{sin} su último término (el directo): recoge todas las trayectorias que pasan por al menos un nodo intermedio. Separando el término directo del resto de la suma se obtiene la identidad
+$$\mathbf{T}^{(h+1)} = \underbrace{\mathbf{D}^{(h+1)}}_{\text{trayectorias directas}} + \underbrace{\mathbf{M}^{(h+1)}}_{\text{trayectorias mediadas}}$$
+La Figura~\ref{fig:efecto_total_h2} ilustra el caso de dos retardos, donde la única ruta mediada $\mathbf{Z}_{t-2} \to \mathbf{Z}_{t-1} \to \mathbf{Z}_t$ aporta $A_1^2$, de modo que $\mathbf{T}^{(2)} = A_2 + A_1^2$.
+
+\begin{figure}[H]
+    \ffigbox[\FBwidth]{
+        \caption[Descomposición del efecto total a dos retardos]{Las dos rutas dirigidas de $\mathbf{Z}_{t-2}$ a $\mathbf{Z}_t$ en un sistema VAR(2): la arista directa de retardo~$2$ (efecto directo $\mathbf{D}^{(2)} = A_2$, en azul) y la ruta mediada que atraviesa el instante intermedio $t-1$ (efecto mediado $\mathbf{M}^{(2)} = A_1^2$, discontinua). El efecto total es su suma: $\mathbf{T}^{(2)} = A_2 + A_1^2$.}
+        \label{fig:efecto_total_h2}
+    }{
+        \begin{tikzpicture}[
+                node distance=30mm,
+                nodo/.style={circle, draw=azulUC3M, very thick, minimum size=13mm, inner sep=1pt, font=\small},
+                directa/.style={-{Stealth[length=2.6mm]}, very thick, azulUC3M},
+                mediada/.style={-{Stealth[length=2.6mm]}, thick, gray45, densely dashed}
+            ]
+            \node[nodo] (z2) {$\mathbf{Z}_{t-2}$};
+            \node[nodo, right=of z2] (z1) {$\mathbf{Z}_{t-1}$};
+            \node[nodo, right=of z1] (z0) {$\mathbf{Z}_{t}$};
+
+            \draw[mediada] (z2) -- node[midway, above] {$A_1$} (z1);
+            \draw[mediada] (z1) -- node[midway, above] {$A_1$} (z0);
+            \draw[directa] (z2) to[bend right=42] node[midway, below] {$A_2$} (z0);
+        \end{tikzpicture}
+    }
+\end{figure}
+
+\textbf{Paso 5. Por qué MCO y el grafo causal divergen.} El estimador causal apunta al \emph{efecto total} $\boldsymbol{\tau}^{(d)}$, por lo que ajusta solo por confusores y \emph{no} condiciona sobre los retardos intermedios que se encuentran \emph{sobre} las trayectorias causales: conserva las contribuciones mediadas. La regresión MCO, en cambio, regresa la salida sobre \emph{todos} los retardos simultáneamente; el coeficiente de cada retardo se interpreta entonces manteniendo fijos los demás, incluidos los retardos intermedios. Pero fijar un mediador \emph{bloquea} la trayectoria que pasa por él (la misma lógica del operador $\mathrm{do}(\cdot)$ de la subsección sobre mediación), de modo que el MCO recupera únicamente la arista directa $\mathbf{D}^{(h+1)} = A_{h+1}$. La Figura~\ref{fig:mco_bloqueo} muestra este bloqueo.
+
+\begin{figure}[H]
+    \ffigbox[\FBwidth]{
+        \caption[Bloqueo de la mediación por el MCO ajustado]{Al ajustar por todos los retardos, el MCO condiciona sobre el mediador $\mathbf{Z}_{t-1}$ (nodo sombreado). Condicionar sobre el mediador \emph{bloquea} la ruta mediada (aristas punteadas), de modo que el MCO solo recupera la arista directa $A_2$. Estima así el efecto directo $\mathbf{D}^{(2)} = A_2$ en lugar del efecto total, con un sesgo $\mathbf{B}_{\mathrm{MCO}}^{(2)} = -\mathbf{M}^{(2)} = -A_1^2$.}
+        \label{fig:mco_bloqueo}
+    }{
+        \begin{tikzpicture}[
+                node distance=30mm,
+                nodo/.style={circle, draw=azulUC3M, very thick, minimum size=13mm, inner sep=1pt, font=\small},
+                cond/.style={circle, draw=azulUC3M, very thick, fill=gray75, minimum size=13mm, inner sep=1pt, font=\small},
+                directa/.style={-{Stealth[length=2.6mm]}, very thick, azulUC3M},
+                bloqueada/.style={-{Stealth[length=2.6mm]}, thick, gray75, densely dotted}
+            ]
+            \node[nodo] (z2) {$\mathbf{Z}_{t-2}$};
+            \node[cond, right=of z2] (z1) {$\mathbf{Z}_{t-1}$};
+            \node[nodo, right=of z1] (z0) {$\mathbf{Z}_{t}$};
+
+            \draw[bloqueada] (z2) -- node[midway, above] {$A_1$} (z1);
+            \draw[bloqueada] (z1) -- node[midway, above] {$A_1$} (z0);
+            \draw[directa] (z2) to[bend right=42] node[midway, below] {$A_2$} (z0);
+        \end{tikzpicture}
+    }
+\end{figure}
+
+\textbf{Paso 6. El sesgo es exactamente la parte mediada.} La descomposición del Paso~4 resulta en
+$$\mathbf{B}_{\mathrm{MCO}}^{(h+1)} = \mathbf{D}^{(h+1)} - \mathbf{T}^{(h+1)} = \mathbf{D}^{(h+1)} - \bigl(\mathbf{D}^{(h+1)} + \mathbf{M}^{(h+1)}\bigr) = -\mathbf{M}^{(h+1)}$$
+El sesgo al estimar por MCO es la contribución mediada omitida con signo negativo. En el caso de dos retardos, el MCO estima $A_2$ mientras que el efecto total es $A_2 + A_1^2$.
 
 \begin{theorem}[Descomposición en efecto directo y mediado]
     Para todo horizonte $h+1 \geq 1$:
