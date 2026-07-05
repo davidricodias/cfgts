@@ -2599,7 +2599,7 @@ La clase \texttt{CFGTS} expone un constructor con los parámetros descritos en l
 \begin{table}[H]
     \ttabbox[\FBwidth]
     {\caption{Parámetros del constructor de la clase CFGTS}\label{tab:params}}
-    {\begin{tabular}{|p{3.5cm}|p{3.2cm}|p{2cm}|p{4.5cm}|}
+    {\begin{tabular}{|p{4cm}|p{3.2cm}|p{1.5cm}|p{4.5cm}|}
             \hline
             \textbf{Parámetro}             & \textbf{Tipo}             & \textbf{Defecto} & \textbf{Descripción}                                                                  \\
             \hline
@@ -2607,7 +2607,8 @@ La clase \texttt{CFGTS} expone un constructor con los parámetros descritos en l
             \hline
             \texttt{instance}              & \texttt{DataFrame}        & ---              & Instancia original $\mathbf{x}_0$ (una fila)                                          \\
             \hline
-            \texttt{counterfactual\_value} & \texttt{DataFrame}        & ---              & Vector objetivo $\mathbf{y}^{*}$                                                      \\
+            \texttt{counterfactual
+            \_value} & \texttt{DataFrame}        & ---              & Vector objetivo $\mathbf{y}^{*}$                                                      \\
             \hline
             \texttt{whitelist}             & \texttt{list[str] | None} & \texttt{None}    & Variables modificables $W$. Si es \texttt{None}, todas las variables son modificables \\
             \hline
