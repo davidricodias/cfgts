@@ -2297,6 +2297,15 @@ Este último resultado caracteriza exactamente cuándo la regresión lineal ajus
 
 Es importante recalcar que todos los resultados de esta sección son \textbf{relativos al modelo ajustado} $\hat{f}$: la formalización demuestra que el DAG permite puntuar contrafactuales usando el \emph{efecto total dinámico} inducido por el modelo, mientras que la regresión lineal ajustada introduce un sesgo exactamente igual a la parte mediada omitida. La formalización no afirma que estos coeficientes coincidan con los efectos estructurales del proceso generador de datos real; afirma únicamente que son los coeficientes correctos para describir, de manera causalmente coherente, el comportamiento del predictor ajustado.
 
+\paragraph{Alcance más allá del caso lineal}
+
+Los teoremas de dominancia anteriores se enuncian bajo la hipótesis de que cada componente $f_d$ es lineal. Conviene precisar qué ocurre cuando el modelo ajustado $\hat{f}$ es arbitrario (un \textit{Random Forest}, una red neuronal, etc.).
+
+En primer lugar, las propiedades que garantizan que la puntuación está \textbf{bien definida} ($s_d \in (0, 1]$, que vale $1$ en la instancia original y que el cambio esperado es lineal en la perturbación) se demuestran para $\hat{f}$ \emph{arbitrario}, sin hipótesis de linealidad. El algoritmo, por tanto, opera correctamente con cualquier modelo.
+
+En segundo lugar, la \emph{dirección} de la ventaja del modelo causal sobre la regresión MCO tampoco depende de la linealidad: el argumento es que condicionar sobre retardos intermedios \textbf{bloquea las trayectorias mediadas}, de modo que un ajuste MCO estima un efecto directo controlado en lugar del efecto total. Este es un resultado causal de identificación, válido sea cual sea la forma funcional del sistema.
+
+La no linealidad impide una \emph{desigualdad estricta universal punto a punto}, por dos motivos: (i) el efecto total deja de tener forma cerrada matricial: no existe un coeficiente $A_\tau$ constante, sino una cantidad que depende del punto $\mathbf{x}$ y de la dirección de la perturbación; y (ii) la puntuación compara contra el cambio real $\Delta y_d^{\text{real}} = f_d(\mathbf{x}') - f_d(\mathbf{x})$, que es no lineal, por lo que para perturbaciones grandes, ninguna estimación lineal de coeficientes lo reproduce exactamente y, en casos patológicos, el vector sesgado del MCO podría quedar circunstancialmente más cerca del cambio real que el efecto total.
 
 \section{Entradas del algoritmo}
 
