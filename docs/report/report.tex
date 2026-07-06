@@ -3237,8 +3237,362 @@ Los índices recorrerán conjuntos finitos; en la notación matemática escribir
     Esto prueba que, para el objetivo $d$, ninguna muestra del conjunto de cobertura es descartada.
 \end{proof}
 
-\paragraph{Cierre de la sección.}
-Los resultados anteriores muestran que el intervalo de cobertura está bien definido, contiene los valores de predicción relevantes, induce una normalización correcta al intervalo unitario y preserva la estructura necesaria para medir uniformidad mediante la discrepancia estelar centrada $L^2$.
+El intervalo de cobertura está bien definido, contiene los valores de predicción relevantes, induce una normalización correcta al intervalo unitario y preserva la estructura necesaria para medir uniformidad mediante la discrepancia estelar centrada $L^2$.
+
+\section*{E.3 Grafo causal temporal}
+
+En esta sección se demuestran los teoremas relativos al grafo causal temporal, la puntuación de consistencia causal y la comparación formal entre el estimador causal basado en el DAG y la regresión lineal ajustada. La notación es la misma que en la sección de formalización correspondiente del capítulo de Propuesta.
+
+\paragraph*{Notación de trabajo}\mbox{}\\
+A lo largo de esta sección se fijan las siguientes convenciones:
+\begin{itemize}
+    \item $n_{\text{In}}, D \in \mathbb{N}$ con $D > 0$. Los vértices del grafo CFGTS son los índices $\{0, \ldots, n_{\text{In}} + D - 1\}$: la entrada $X_i$ se identifica con el índice $i$ (de modo que $0 \leq i < n_{\text{In}}$) y la salida $Y_d$ con el índice $n_{\text{In}} + d$ (de modo que $n_{\text{In}} \leq n_{\text{In}} + d < n_{\text{In}} + D$).
+    \item Una variable temporal se describe por un par $(\text{id}_{\text{base}}, \text{lag}) \in \mathbb{N} \times \mathbb{N}$. La relación de causalidad temporal $\mathrm{tf}_1 \xrightarrow{t} \mathrm{tf}_2$ equivale a $\mathrm{lag}(\mathrm{tf}_1) > \mathrm{lag}(\mathrm{tf}_2)$.
+    \item $\mathbf{x}, \mathbf{x}' : \{0, \ldots, n_{\text{In}}-1\} \to \mathbb{R}$ denotan la instancia original y un candidato contrafactual, vistos como familias de coordenadas; $f_d : \mathbb{R}^{n_{\text{In}}} \to \mathbb{R}$ es la $d$-ésima salida del modelo ajustado.
+    \item $\boldsymbol{\beta}^{(d)} \in \mathbb{R}^{n_{\text{In}}}$ es el vector de efectos causales estimados para la salida $d$; $\varepsilon > 0$ es la constante de regularización.
+    \item Se define el cambio esperado y el cambio real por objetivo $d$:
+          $$\Delta y_d^{\text{esp}}\!\left(\boldsymbol{\beta}^{(d)}\right) = \sum_{i=0}^{n_{\text{In}}-1} \beta_i^{(d)}(x'_i - x_i), \qquad \Delta y_d^{\text{real}} = f_d(\mathbf{x}') - f_d(\mathbf{x}),$$
+          la puntuación de consistencia causal por objetivo
+          $$s_d\!\left(\mathbf{x}'; \boldsymbol{\beta}^{(d)}\right) = 1 - \frac{\left|\Delta y_d^{\text{esp}} - \Delta y_d^{\text{real}}\right|}{\left|\Delta y_d^{\text{esp}}\right| + \left|\Delta y_d^{\text{real}}\right| + \varepsilon},$$
+          y la puntuación media sobre las $D$ salidas
+          $$s\!\left(\mathbf{x}'; \boldsymbol{\beta}\right) = \frac{1}{D}\sum_{d=0}^{D-1} s_d\!\left(\mathbf{x}'; \boldsymbol{\beta}^{(d)}\right).$$
+    \item Cuando una salida $d$ y su vector $\boldsymbol{\beta}^{(d)}$ permanezcan fijos escribiremos simplemente $\Delta y_d^{\text{esp}}$ y $s_d(\mathbf{x}')$.
+\end{itemize}
+
+\paragraph*{Propiedades del grafo causal}
+
+\paragraph*{Demostración del teorema ``Ausencia de auto-bucles en el grafo CFGTS''}
+\begin{proof}
+    Procedemos por contradicción. Supongamos que existe un vértice $v$ con $(v, v) \in E$. Por la definición de las aristas CFGTS, la pertenencia $(v,v) \in E$ se descompone en exactamente dos casos.
+
+    \textit{Caso~(a) (arista entrada~$\to$~salida).} Existen $i \in \{0, \ldots, n_{\text{In}}-1\}$ y $d \in \{0, \ldots, D-1\}$ con $v = X_i$ y $v = Y_d$. Igualando los índices de un mismo vértice se obtiene $i = n_{\text{In}} + d$. Pero el índice de $X_i$ cumple $i < n_{\text{In}}$, mientras que el de $Y_d$ cumple $n_{\text{In}} \leq n_{\text{In}} + d$; encadenando ambas desigualdades,
+    $$i < n_{\text{In}} \leq n_{\text{In}} + d = i,$$
+    es decir, $i < i$, lo cual es imposible.
+
+    \textit{Caso~(b) (arista temporal entrada~$\to$~entrada).} Existen índices $i \neq j$ en $\{0, \ldots, n_{\text{In}}-1\}$ con $v = X_i$ y $v = X_j$. Igualando los índices del vértice común se obtiene $i = j$, en contradicción directa con la hipótesis $i \neq j$.
+
+    Ambos casos conducen a una contradicción, de modo que ningún vértice admite un auto-bucle.
+\end{proof}
+
+\paragraph*{Propiedades de la causalidad temporal}
+
+\paragraph*{Demostración del teorema ``Irreflexividad de la causalidad temporal''}
+\begin{proof}
+    Supongamos, por contradicción, que $\mathrm{tf} \xrightarrow{t} \mathrm{tf}$. Por definición de la causalidad temporal, esto significa
+    $$\mathrm{lag}(\mathrm{tf}) > \mathrm{lag}(\mathrm{tf}).$$
+    Pero ningún número natural es estrictamente mayor que sí mismo. Contradicción. Por tanto, $\neg\,(\mathrm{tf} \xrightarrow{t} \mathrm{tf})$.
+\end{proof}
+
+\paragraph*{Demostración del teorema ``Asimetría de la causalidad temporal''}
+\begin{proof}
+    Supongamos que $\mathrm{tf}_1 \xrightarrow{t} \mathrm{tf}_2$, es decir, $\mathrm{lag}(\mathrm{tf}_1) > \mathrm{lag}(\mathrm{tf}_2)$. Esta desigualdad implica $\mathrm{lag}(\mathrm{tf}_2) < \mathrm{lag}(\mathrm{tf}_1)$, y en particular
+    $$\mathrm{lag}(\mathrm{tf}_2) \ngtr \mathrm{lag}(\mathrm{tf}_1).$$
+    Por tanto, $\neg\,(\mathrm{tf}_2 \xrightarrow{t} \mathrm{tf}_1)$.
+\end{proof}
+
+\paragraph*{Demostración del teorema ``Transitividad de la causalidad temporal''}
+\begin{proof}
+    Supongamos $\mathrm{tf}_1 \xrightarrow{t} \mathrm{tf}_2$ y $\mathrm{tf}_2 \xrightarrow{t} \mathrm{tf}_3$, es decir,
+    $$\mathrm{lag}(\mathrm{tf}_1) > \mathrm{lag}(\mathrm{tf}_2) \qquad \text{y} \qquad \mathrm{lag}(\mathrm{tf}_2) > \mathrm{lag}(\mathrm{tf}_3).$$
+    Por transitividad del orden estricto sobre $\mathbb{N}$,
+    $$\mathrm{lag}(\mathrm{tf}_1) > \mathrm{lag}(\mathrm{tf}_3),$$
+    es decir, $\mathrm{tf}_1 \xrightarrow{t} \mathrm{tf}_3$.
+\end{proof}
+
+\paragraph*{Propiedades de la whitelist}
+
+\paragraph*{Demostración del teorema ``Whitelist universal''}
+\begin{proof}
+    Sea $W = \{0, \ldots, n_{\text{In}}-1\}$ y $\mathbf{x}'$ cualquier candidato contrafactual. Para todo índice $i$ se tiene $i \in W$, de modo que no existe ningún $i \notin W$. La condición de respeto a la \textit{whitelist}, que exige $x'_i = x_i$ para todo $i \notin W$, se satisface vacuamente. Por tanto, todo $\mathbf{x}'$ respeta $W$.
+\end{proof}
+
+\paragraph*{Demostración del teorema ``Reflexividad del respeto a la whitelist''}
+\begin{proof}
+    Sea $\mathbf{x}' = \mathbf{x}$ y $W$ cualquier \textit{whitelist}. Para todo $i \notin W$, se tiene $x'_i = x_i$ porque $\mathbf{x}' = \mathbf{x}$. Por tanto, $\mathbf{x}$ respeta $W$ respecto de sí mismo.
+\end{proof}
+
+\paragraph*{Propiedades de la puntuación causal por objetivo}
+
+Para simplificar la escritura, fijamos una salida $d$ y denotamos $a = \Delta y_d^{\text{esp}}$ y $b = \Delta y_d^{\text{real}}$, de modo que
+$$s_d(\mathbf{x}') = 1 - \frac{|a - b|}{|a| + |b| + \varepsilon}.$$
+
+\paragraph*{Demostración del teorema ``Cota superior por objetivo''}
+\begin{proof}
+    El numerador satisface $|a - b| \geq 0$ y el denominador cumple $|a| + |b| + \varepsilon \geq \varepsilon > 0$. Por tanto, la fracción es no negativa y
+    $$s_d(\mathbf{x}') = 1 - \frac{|a - b|}{|a| + |b| + \varepsilon} \leq 1 - 0 = 1.$$
+\end{proof}
+
+\paragraph*{Demostración del teorema ``Positividad estricta por objetivo''}
+\begin{proof}
+    Probamos primero la desigualdad triangular $|a - b| \leq |a| + |b|$ distinguiendo el signo de $a - b$:
+    \begin{itemize}
+        \item Si $a - b \leq 0$, entonces $|a - b| = -(a - b) = b - a$. Usando $b \leq |b|$ y $-a \leq |a|$ se obtiene $b - a \leq |a| + |b|$.
+        \item Si $a - b > 0$, entonces $|a - b| = a - b$. Usando $a \leq |a|$ y $-b \leq |b|$ se obtiene $a - b \leq |a| + |b|$.
+    \end{itemize}
+    En ambos casos $|a - b| \leq |a| + |b|$. El denominador es estrictamente positivo, $|a| + |b| + \varepsilon > 0$; sumando $\varepsilon > 0$ a la cota anterior,
+    $$|a - b| \leq |a| + |b| < |a| + |b| + \varepsilon.$$
+    Como el numerador es estrictamente menor que un denominador positivo, el cociente es menor que la unidad,
+    $$\frac{|a - b|}{|a| + |b| + \varepsilon} < 1,$$
+    y por tanto $s_d(\mathbf{x}') = 1 - \dfrac{|a - b|}{|a| + |b| + \varepsilon} > 0$.
+\end{proof}
+
+\paragraph*{Demostración del teorema ``Puntuación máxima por alineación perfecta''}
+\begin{proof}
+    Si $a = b$, entonces $a - b = 0$, y por tanto $|a - b| = 0$. En consecuencia,
+    $$s_d(\mathbf{x}') = 1 - \frac{0}{|a| + |b| + \varepsilon} = 1 - 0 = 1.$$
+\end{proof}
+
+\paragraph*{Demostración del teorema ``Puntuación de la instancia original''}
+\begin{proof}
+    Si $\mathbf{x}' = \mathbf{x}$, entonces $x'_i - x_i = 0$ para todo $i \in \{0, \ldots, n_{\text{In}}-1\}$. Por tanto,
+    $$a = \Delta y_d^{\text{esp}} = \sum_{i=0}^{n_{\text{In}}-1} \beta_i^{(d)} \cdot 0 = 0.$$
+    Análogamente, $b = \Delta y_d^{\text{real}} = f_d(\mathbf{x}) - f_d(\mathbf{x}) = 0$. Como $a = b = 0$, por el teorema de puntuación máxima por alineación perfecta, $s_d(\mathbf{x}') = 1$.
+\end{proof}
+
+\paragraph*{Demostración del teorema ``Desalineación implica puntuación sub-óptima''}
+\begin{proof}
+    Si $a \neq b$, entonces $a - b \neq 0$, y por ser el valor absoluto de un real no nulo, $|a - b| > 0$. El denominador satisface $|a| + |b| + \varepsilon > 0$. En consecuencia, el cociente es estrictamente positivo y
+    $$s_d(\mathbf{x}') = 1 - \frac{|a - b|}{|a| + |b| + \varepsilon} < 1.$$
+\end{proof}
+
+\paragraph*{Propiedades de la puntuación media}
+
+\paragraph*{Demostración del teorema ``Cota superior de la puntuación media''}
+\begin{proof}
+    Para cada salida $d \in \{0, \ldots, D-1\}$, el teorema de cota superior por objetivo garantiza $s_d(\mathbf{x}') \leq 1$. Sumando sobre todas las salidas,
+    $$\sum_{d=0}^{D-1} s_d(\mathbf{x}') \leq \sum_{d=0}^{D-1} 1 = D.$$
+    Dividiendo por $D > 0$, se concluye $s(\mathbf{x}') = \dfrac{1}{D}\sum_{d=0}^{D-1} s_d(\mathbf{x}') \leq 1$.
+\end{proof}
+
+\paragraph*{Demostración del teorema ``Puntuación media de la instancia original''}
+\begin{proof}
+    Si $\mathbf{x}' = \mathbf{x}$, el teorema de puntuación de la instancia original garantiza $s_d(\mathbf{x}') = 1$ para todo $d \in \{0, \ldots, D-1\}$. Por tanto,
+    $$\sum_{d=0}^{D-1} s_d(\mathbf{x}') = D,$$
+    y como $D > 0$, $s(\mathbf{x}') = D/D = 1$.
+\end{proof}
+
+\paragraph*{Demostración del teorema ``Positividad de la puntuación media''}
+\begin{proof}
+    Por el teorema de positividad estricta por objetivo, cada sumando es estrictamente positivo: $s_d(\mathbf{x}') > 0$ para todo $d \in \{0, \ldots, D-1\}$. Como $D > 0$, el índice $d = 0$ está bien definido y $s_0(\mathbf{x}') > 0$. Al ser todos los sumandos no negativos, un único término acota inferiormente la suma,
+    $$0 < s_0(\mathbf{x}') \leq \sum_{d=0}^{D-1} s_d(\mathbf{x}'),$$
+    de modo que el numerador es estrictamente positivo. Como además el denominador $D$ es positivo, el cociente de dos cantidades positivas es positivo:
+    $$s(\mathbf{x}') = \frac{1}{D}\sum_{d=0}^{D-1} s_d(\mathbf{x}') > 0.$$
+\end{proof}
+
+\paragraph*{Propiedades del cambio esperado}
+
+\paragraph*{Demostración del teorema ``Linealidad del cambio esperado''}
+\begin{proof}
+    Por hipótesis, $x''_i - x_i = (x'_i - x_i) + (x''_i - x'_i)$ para todo $i$. Entonces,
+    \begin{align*}
+        \Delta y_d^{\text{esp}}(\mathbf{x}, \mathbf{x}'')
+         & = \sum_{i=0}^{n_{\text{In}}-1} \beta_i^{(d)} \cdot (x''_i - x_i)                                                     \\
+         & = \sum_{i=0}^{n_{\text{In}}-1} \beta_i^{(d)} \cdot \bigl[(x'_i - x_i) + (x''_i - x'_i)\bigr]                        \\
+         & = \sum_{i=0}^{n_{\text{In}}-1} \beta_i^{(d)} (x'_i - x_i) + \sum_{i=0}^{n_{\text{In}}-1} \beta_i^{(d)} (x''_i - x'_i) \\
+         & = \Delta y_d^{\text{esp}}(\mathbf{x}, \mathbf{x}') + \Delta y_d^{\text{esp}}(\mathbf{x}', \mathbf{x}''),
+    \end{align*}
+    donde se ha usado la distributividad de la multiplicación respecto de la suma.
+\end{proof}
+
+\paragraph*{Demostración del teorema ``Cambio esperado nulo fuera del soporte''}
+\begin{proof}
+    Sea $S \subseteq \{0, \ldots, n_{\text{In}}-1\}$ tal que $\beta_i^{(d)} = 0$ para $i \notin S$ y $x'_i = x_i$ para $i \in S$. Para cada índice $i$ se dan dos casos:
+    \begin{itemize}
+        \item Si $i \in S$: $x'_i - x_i = 0$, luego $\beta_i^{(d)} \cdot (x'_i - x_i) = 0$.
+        \item Si $i \notin S$: $\beta_i^{(d)} = 0$, luego $\beta_i^{(d)} \cdot (x'_i - x_i) = 0 \cdot (x'_i - x_i) = 0$.
+    \end{itemize}
+    En ambos casos el sumando es nulo. Por tanto, $\Delta y_d^{\text{esp}} = \sum_{i=0}^{n_{\text{In}}-1} \beta_i^{(d)} \cdot (x'_i - x_i) = 0$.
+\end{proof}
+
+\paragraph*{Demostración del teorema ``Reducción por whitelist''}
+\begin{proof}
+    Como $W \subseteq \{0, \ldots, n_{\text{In}}-1\}$, basta comprobar que los términos del índice completo que no están en $W$ no aportan nada a la suma. En efecto, si $\mathbf{x}'$ respeta la \textit{whitelist} $W$, para todo $i \notin W$ se tiene $x'_i = x_i$, luego
+    $$\beta_i^{(d)} \cdot (x'_i - x_i) = \beta_i^{(d)} \cdot 0 = 0.$$
+    Por consiguiente, restringir la suma sobre la familia completa de índices al subconjunto $W$ no altera su valor:
+    $$\Delta y_d^{\text{esp}} = \sum_{i=0}^{n_{\text{In}}-1} \beta_i^{(d)} \cdot (x'_i - x_i) = \sum_{i \in W} \beta_i^{(d)} \cdot (x'_i - x_i).$$
+\end{proof}
+
+\paragraph*{Propiedades para modelos lineales}
+
+Para esta parte fijamos una salida $d$ y suponemos que $f_d$ es lineal con pesos $\mathbf{w}^{(d)} \in \mathbb{R}^{n_{\text{In}}}$ e intercepto $b_d \in \mathbb{R}$:
+$$f_d(\mathbf{x}) = \sum_{i=0}^{n_{\text{In}}-1} w_i^{(d)} x_i + b_d.$$
+Recordamos asimismo el error de predicción entre dos vectores de coeficientes $\boldsymbol{\gamma}, \boldsymbol{\theta} \in \mathbb{R}^{n_{\text{In}}}$,
+$$E_d(\boldsymbol{\gamma}, \boldsymbol{\theta}, \mathbf{x}, \mathbf{x}') = \sum_{i=0}^{n_{\text{In}}-1} (\gamma_i - \theta_i)(x'_i - x_i),$$
+y la noción de consistencia con el DAG respecto del conjunto de padres $P \subseteq \{0, \ldots, n_{\text{In}}-1\}$: el vector $\boldsymbol{\beta}^{(d)}$ es consistente con $(P, \mathbf{w}^{(d)})$ si $\beta_i^{(d)} = w_i^{(d)}$ para $i \in P$ y $\beta_i^{(d)} = 0$ para $i \notin P$.
+
+\paragraph*{Demostración del teorema ``Coincidencia de deltas para modelo lineal''}
+\begin{proof}
+    Partimos de la definición del cambio real y desarrollamos la forma lineal de $f_d$:
+    \begin{align*}
+        \Delta y_d^{\text{real}}
+         & = f_d(\mathbf{x}') - f_d(\mathbf{x})                                                                                  \\
+         & = \left(\sum_{i=0}^{n_{\text{In}}-1} w_i^{(d)} x'_i + b_d\right) - \left(\sum_{i=0}^{n_{\text{In}}-1} w_i^{(d)} x_i + b_d\right) \\
+         & = \sum_{i=0}^{n_{\text{In}}-1} w_i^{(d)} x'_i - \sum_{i=0}^{n_{\text{In}}-1} w_i^{(d)} x_i                                  \\
+         & = \sum_{i=0}^{n_{\text{In}}-1} w_i^{(d)} (x'_i - x_i),
+    \end{align*}
+    donde los interceptos $b_d$ se cancelan y los sumatorios se combinan término a término. Por otro lado, la definición del cambio esperado junto con la hipótesis $\boldsymbol{\beta}^{(d)} = \mathbf{w}^{(d)}$ da
+    $$\Delta y_d^{\text{esp}} = \sum_{i=0}^{n_{\text{In}}-1} \beta_i^{(d)} (x'_i - x_i) = \sum_{i=0}^{n_{\text{In}}-1} w_i^{(d)} (x'_i - x_i).$$
+    Ambas expresiones son idénticas, luego $\Delta y_d^{\text{esp}} = \Delta y_d^{\text{real}}$.
+\end{proof}
+
+\paragraph*{Demostración del teorema ``Puntuación perfecta para modelo lineal calibrado''}
+\begin{proof}
+    Escribimos $a = \Delta y_d^{\text{esp}}$ y $b = \Delta y_d^{\text{real}}$. Por el teorema de coincidencia de deltas, como $\boldsymbol{\beta}^{(d)} = \mathbf{w}^{(d)}$ y $f_d$ es lineal, se tiene $a = b$. Sustituyendo en la definición de la puntuación, el numerador es $|a - b| = 0$ y el denominador $|a| + |b| + \varepsilon > 0$, de modo que
+    $$s_d(\mathbf{x}') = 1 - \frac{|a - b|}{|a| + |b| + \varepsilon} = 1 - \frac{0}{|a| + |b| + \varepsilon} = 1.$$
+\end{proof}
+
+\paragraph*{Demostración del teorema ``Descomposición de la discrepancia''}
+\begin{proof}
+    Por el teorema de coincidencia de deltas, el cambio real admite la forma lineal $\Delta y_d^{\text{real}} = \sum_{i=0}^{n_{\text{In}}-1} w_i^{(d)} (x'_i - x_i)$. Restando esta expresión de la definición del cambio esperado para $\boldsymbol{\beta}^{(d)}$ y agrupando término a término,
+    \begin{align*}
+        \Delta y_d^{\text{esp}}\!\left(\boldsymbol{\beta}^{(d)}\right) - \Delta y_d^{\text{real}}
+         & = \sum_{i=0}^{n_{\text{In}}-1} \beta_i^{(d)} (x'_i - x_i) - \sum_{i=0}^{n_{\text{In}}-1} w_i^{(d)} (x'_i - x_i) \\
+         & = \sum_{i=0}^{n_{\text{In}}-1} \bigl(\beta_i^{(d)} - w_i^{(d)}\bigr) (x'_i - x_i)                              \\
+         & = E_d(\boldsymbol{\beta}^{(d)}, \mathbf{w}^{(d)}, \mathbf{x}, \mathbf{x}'),
+    \end{align*}
+    donde la última igualdad es exactamente la definición del error de predicción.
+\end{proof}
+
+\paragraph*{Demostración del teorema ``Error nulo con efectos consistentes con el DAG''}
+\begin{proof}
+    Sea $P$ el conjunto de padres. Por las hipótesis de consistencia con el DAG y de dispersión del modelo ($w_i^{(d)} = 0$ para $i \notin P$), para cada índice $i$:
+    \begin{itemize}
+        \item Si $i \in P$: $\beta_i^{(d)} = w_i^{(d)}$ por la condición de coincidencia en padres, luego $\beta_i^{(d)} - w_i^{(d)} = 0$.
+        \item Si $i \notin P$: $\beta_i^{(d)} = 0$ por la condición de cero fuera de padres, y $w_i^{(d)} = 0$ por hipótesis, luego $\beta_i^{(d)} - w_i^{(d)} = 0$.
+    \end{itemize}
+    Como todos los factores $(\beta_i^{(d)} - w_i^{(d)})$ son nulos,
+    $$E_d(\boldsymbol{\beta}^{(d)}, \mathbf{w}^{(d)}, \mathbf{x}, \mathbf{x}') = \sum_{i=0}^{n_{\text{In}}-1} (\beta_i^{(d)} - w_i^{(d)})(x'_i - x_i) = 0.$$
+\end{proof}
+
+\paragraph*{Demostración del teorema ``Puntuación máxima con efectos consistentes con el DAG''}
+\begin{proof}
+    Escribimos $a = \Delta y_d^{\text{esp}}$ y $b = \Delta y_d^{\text{real}}$. Por el teorema anterior el error de predicción es nulo, $E_d = 0$, y por el teorema de descomposición de la discrepancia, $a - b = E_d = 0$, esto es, $a = b$. Sustituyendo en la definición de la puntuación, el numerador $|a - b| = 0$ produce
+    $$s_d(\mathbf{x}') = 1 - \frac{0}{|a| + |b| + \varepsilon} = 1.$$
+\end{proof}
+
+\paragraph*{Demostración del teorema ``Error no nulo implica puntuación sub-óptima''}
+\begin{proof}
+    Escribimos $a = \Delta y_d^{\text{esp}}$ y $b = \Delta y_d^{\text{real}}$. Por el teorema de descomposición de la discrepancia, $a - b = E_d$; como por hipótesis $E_d \neq 0$, se tiene $a \neq b$, luego $a - b \neq 0$ y $|a - b| > 0$. El denominador cumple $|a| + |b| + \varepsilon \geq \varepsilon > 0$, de modo que el cociente de un numerador positivo entre un denominador positivo es estrictamente positivo y
+    $$s_d(\mathbf{x}') = 1 - \frac{|a - b|}{|a| + |b| + \varepsilon} < 1.$$
+\end{proof}
+
+\paragraph*{Demostración del teorema ``Dominancia del DAG sobre efectos mal calibrados''}
+\begin{proof}
+    Para los efectos $\boldsymbol{\beta}_{\text{dag}}$, consistentes con el DAG, el teorema de error nulo da $E_d = 0$; por el teorema de descomposición de la discrepancia, $\Delta y_d^{\text{esp}} = \Delta y_d^{\text{real}}$, y el numerador nulo de la puntuación da $s_{d, \boldsymbol{\beta}_{\text{dag}}}(\mathbf{x}') = 1$. Para $\boldsymbol{\beta}_{\text{otro}}$, cuyo error de predicción respecto de $f_d$ es no nulo, el mismo teorema de descomposición da $\Delta y_d^{\text{esp}} \neq \Delta y_d^{\text{real}}$, luego $|\Delta y_d^{\text{esp}} - \Delta y_d^{\text{real}}| > 0$ y la puntuación es estrictamente menor que la unidad, $s_{d, \boldsymbol{\beta}_{\text{otro}}}(\mathbf{x}') < 1$. Combinando ambas,
+    $$s_{d, \boldsymbol{\beta}_{\text{otro}}}(\mathbf{x}') < 1 = s_{d, \boldsymbol{\beta}_{\text{dag}}}(\mathbf{x}').$$
+\end{proof}
+
+\paragraph*{Efectos dinámicos totales y sesgo de mediación}
+
+Para las demostraciones de esta parte fijamos $p, n \in \mathbb{N}$ con $n > 0$, un sistema de retardos $A : \{1, \ldots, p\} \to \mathbb{R}^{n \times n}$ y la convención $A_q = 0$ para $q > p$. El efecto total está definido por $\mathbf{T}^{(0)} = I_n$ y
+$$\mathbf{T}^{(h+1)} = \sum_{j=0}^{h} A_{j+1}\,\mathbf{T}^{(h-j)}.$$
+El efecto directo y el mediado son
+$$\mathbf{D}^{(h+1)} = A_{h+1}, \qquad \mathbf{M}^{(h+1)} = \sum_{j=0}^{h-1} A_{j+1}\,\mathbf{T}^{(h-j)}.$$
+
+\paragraph*{Demostración del teorema ``Descomposición en efecto directo y mediado''}
+\begin{proof}
+    Por la definición recursiva,
+    $$\mathbf{T}^{(h+1)} = \sum_{j=0}^{h} A_{j+1}\,\mathbf{T}^{(h-j)}.$$
+    Separamos el término correspondiente a $j = h$:
+    $$\mathbf{T}^{(h+1)} = A_{h+1}\,\mathbf{T}^{(h-h)} + \sum_{j=0}^{h-1} A_{j+1}\,\mathbf{T}^{(h-j)}.$$
+    Como $h - h = 0$ y $\mathbf{T}^{(0)} = I_n$, el primer sumando es $A_{h+1} \cdot I_n = A_{h+1} = \mathbf{D}^{(h+1)}$. El segundo sumando es precisamente $\mathbf{M}^{(h+1)}$ por definición. Por tanto,
+    $$\mathbf{T}^{(h+1)} = \mathbf{D}^{(h+1)} + \mathbf{M}^{(h+1)}.$$
+\end{proof}
+
+\paragraph*{Demostración del teorema ``Sesgo del MCO ajustado''}
+\begin{proof}
+    Por definición del sesgo,
+    $$\mathbf{B}_{\mathrm{MCO}}^{(h+1)} = \mathbf{D}^{(h+1)} - \mathbf{T}^{(h+1)}.$$
+    Sustituyendo el resultado del teorema de descomposición,
+    $$\mathbf{B}_{\mathrm{MCO}}^{(h+1)} = \mathbf{D}^{(h+1)} - \bigl(\mathbf{D}^{(h+1)} + \mathbf{M}^{(h+1)}\bigr) = -\mathbf{M}^{(h+1)}.$$
+\end{proof}
+
+\paragraph*{CausalModel vs LinearRegression por objetivo}
+
+En esta parte fijamos una salida $d$ y suponemos que $f_d$ es lineal con vector de coeficientes igual al efecto total $\boldsymbol{\tau}^{(d)} \in \mathbb{R}^{n_{\text{In}}}$ e intercepto $b_d$; es decir, los pesos internos del modelo son $\mathbf{w}^{(d)} = \boldsymbol{\tau}^{(d)}$. Se comparan los dos estimadores
+$$\widehat{\boldsymbol{\beta}}^{(d)}_{\text{mco}} = \boldsymbol{\tau}^{(d)} + \mathbf{b}^{(d)}, \qquad \widehat{\boldsymbol{\beta}}^{(d)}_{\text{causal}} = \boldsymbol{\tau}^{(d)},$$
+donde $\mathbf{b}^{(d)} \in \mathbb{R}^{n_{\text{In}}}$ es el vector de sesgo del MCO ajustado.
+
+\paragraph*{Demostración del teorema ``Error de predicción del MCO''}
+\begin{proof}
+    Por definición, $\widehat{\boldsymbol{\beta}}_{\text{mco}}^{(d)} = \boldsymbol{\tau}^{(d)} + \mathbf{b}^{(d)}$. Para cada índice $i$,
+    $$\widehat{\beta}_{i,\text{mco}}^{(d)} - \tau_i^{(d)} = \tau_i^{(d)} + b_i^{(d)} - \tau_i^{(d)} = b_i^{(d)}.$$
+    En consecuencia,
+    \begin{align*}
+        E_d\!\left(\widehat{\boldsymbol{\beta}}^{(d)}_{\text{mco}}, \boldsymbol{\tau}^{(d)}, \mathbf{x}, \mathbf{x}'\right)
+         & = \sum_{i=0}^{n_{\text{In}}-1} \bigl(\widehat{\beta}_{i,\text{mco}}^{(d)} - \tau_i^{(d)}\bigr)(x'_i - x_i) \\
+         & = \sum_{i=0}^{n_{\text{In}}-1} b_i^{(d)} \cdot (x'_i - x_i).
+    \end{align*}
+\end{proof}
+
+\paragraph*{Demostración del teorema ``Error nulo del backdoor''}
+\begin{proof}
+    Por definición, $\widehat{\boldsymbol{\beta}}_{\text{causal}}^{(d)} = \boldsymbol{\tau}^{(d)}$. Para cada índice $i$,
+    $$\widehat{\beta}_{i,\text{causal}}^{(d)} - \tau_i^{(d)} = \tau_i^{(d)} - \tau_i^{(d)} = 0.$$
+    Por tanto,
+    $$E_d\!\left(\widehat{\boldsymbol{\beta}}^{(d)}_{\text{causal}}, \boldsymbol{\tau}^{(d)}, \mathbf{x}, \mathbf{x}'\right) = \sum_{i=0}^{n_{\text{In}}-1} 0 \cdot (x'_i - x_i) = 0.$$
+\end{proof}
+
+\paragraph*{Demostración del teorema ``Puntuación máxima del CausalModel''}
+\begin{proof}
+    El estimador causal coincide con los coeficientes internos del modelo, $\widehat{\boldsymbol{\beta}}^{(d)}_{\text{causal}} = \boldsymbol{\tau}^{(d)} = \mathbf{w}^{(d)}$. Calculando el cambio esperado desde su definición y usando la forma lineal del cambio real,
+    $$\Delta y_d^{\text{esp}}\!\left(\widehat{\boldsymbol{\beta}}^{(d)}_{\text{causal}}\right) = \sum_{i=0}^{n_{\text{In}}-1} \tau_i^{(d)} (x'_i - x_i) = \sum_{i=0}^{n_{\text{In}}-1} w_i^{(d)} (x'_i - x_i) = \Delta y_d^{\text{real}}.$$
+    Con $a = \Delta y_d^{\text{esp}}$ y $b = \Delta y_d^{\text{real}}$, esto es $a = b$; el numerador de la puntuación es $|a - b| = 0$ y, en consecuencia,
+    $$s_d\!\left(\mathbf{x}'; \widehat{\boldsymbol{\beta}}^{(d)}_{\text{causal}}\right) = 1 - \frac{0}{|a| + |b| + \varepsilon} = 1.$$
+\end{proof}
+
+\paragraph*{Demostración del teorema ``Dominancia estricta: perturbación de una sola variable''}
+\begin{proof}
+    Por hipótesis, $x'_i = x_i$ para todo $i \neq j$, con $x'_j \neq x_j$ y $b_j^{(d)} \neq 0$. Por el teorema de error de predicción del MCO,
+    $$E_d = \sum_{i=0}^{n_{\text{In}}-1} b_i^{(d)} (x'_i - x_i).$$
+    Como $x'_i - x_i = 0$ salvo para $i = j$, todos los sumandos se anulan excepto ese, de modo que $E_d = b_j^{(d)} (x'_j - x_j)$. Al ser producto de dos factores no nulos, $E_d \neq 0$. Por el teorema de descomposición de la discrepancia, $\Delta y_d^{\text{esp}} - \Delta y_d^{\text{real}} = E_d \neq 0$, luego $|\Delta y_d^{\text{esp}} - \Delta y_d^{\text{real}}| > 0$ y
+    $$s_d\!\left(\mathbf{x}'; \widehat{\boldsymbol{\beta}}^{(d)}_{\text{mco}}\right) < 1 = s_d\!\left(\mathbf{x}'; \widehat{\boldsymbol{\beta}}^{(d)}_{\text{causal}}\right),$$
+    donde la igualdad de la derecha es el teorema de puntuación máxima del CausalModel.
+\end{proof}
+
+\paragraph*{Demostración del teorema ``Dominancia estricta: contrafactual general''}
+\begin{proof}
+    Por hipótesis, $\sum_{i=0}^{n_{\text{In}}-1} b_i^{(d)} (x'_i - x_i) \neq 0$. Por el teorema de error de predicción del MCO, el error es exactamente $E_d = \sum_{i=0}^{n_{\text{In}}-1} b_i^{(d)} (x'_i - x_i)$, luego $E_d \neq 0$. Por el teorema de descomposición de la discrepancia, $\Delta y_d^{\text{esp}} - \Delta y_d^{\text{real}} = E_d \neq 0$, de donde $|\Delta y_d^{\text{esp}} - \Delta y_d^{\text{real}}| > 0$ y
+    $$s_d\!\left(\mathbf{x}'; \widehat{\boldsymbol{\beta}}^{(d)}_{\text{mco}}\right) < 1 = s_d\!\left(\mathbf{x}'; \widehat{\boldsymbol{\beta}}^{(d)}_{\text{causal}}\right),$$
+    donde la igualdad de la derecha es el teorema de puntuación máxima del CausalModel.
+\end{proof}
+
+\paragraph*{Demostración del teorema ``Dominancia débil: siempre''}
+\begin{proof}
+    Por el teorema de puntuación máxima del CausalModel, $s_d\!\left(\mathbf{x}'; \widehat{\boldsymbol{\beta}}^{(d)}_{\text{causal}}\right) = 1$. Para el MCO partimos de la definición de la puntuación: el numerador $|\Delta y_d^{\text{esp}} - \Delta y_d^{\text{real}}| \geq 0$ y el denominador $|\Delta y_d^{\text{esp}}| + |\Delta y_d^{\text{real}}| + \varepsilon > 0$ hacen la fracción no negativa, de modo que
+    $$s_d\!\left(\mathbf{x}'; \widehat{\boldsymbol{\beta}}^{(d)}_{\text{mco}}\right) = 1 - \frac{|\Delta y_d^{\text{esp}} - \Delta y_d^{\text{real}}|}{|\Delta y_d^{\text{esp}}| + |\Delta y_d^{\text{real}}| + \varepsilon} \leq 1 = s_d\!\left(\mathbf{x}'; \widehat{\boldsymbol{\beta}}^{(d)}_{\text{causal}}\right).$$
+\end{proof}
+
+\paragraph*{Demostración del teorema ``Condición necesaria y suficiente de igualdad''}
+\begin{proof}
+    Escribimos $a = \Delta y_d^{\text{esp}}\!\left(\widehat{\boldsymbol{\beta}}^{(d)}_{\text{mco}}\right)$ y $b = \Delta y_d^{\text{real}}$. Por el teorema de puntuación máxima del CausalModel, $s_d\!\left(\mathbf{x}'; \widehat{\boldsymbol{\beta}}^{(d)}_{\text{causal}}\right) = 1$, de modo que la igualdad de puntuaciones equivale a $s_d\!\left(\mathbf{x}'; \widehat{\boldsymbol{\beta}}^{(d)}_{\text{mco}}\right) = 1$.
+
+    \noindent$(\Rightarrow)$ Supongamos $s_d\!\left(\mathbf{x}'; \widehat{\boldsymbol{\beta}}^{(d)}_{\text{mco}}\right) = 1$ y, por reducción al absurdo, que $\sum_{i} b_i^{(d)} (x'_i - x_i) \neq 0$. Por el teorema de error de predicción del MCO, $E_d = \sum_{i} b_i^{(d)} (x'_i - x_i) \neq 0$, y por el teorema de descomposición de la discrepancia, $a - b = E_d \neq 0$. Entonces $|a - b| > 0$, la fracción es estrictamente positiva y $s_d\!\left(\mathbf{x}'; \widehat{\boldsymbol{\beta}}^{(d)}_{\text{mco}}\right) < 1$, en contradicción con la hipótesis. Por tanto,
+    $$\sum_{i=0}^{n_{\text{In}}-1} b_i^{(d)} (x'_i - x_i) = 0.$$
+
+    \noindent$(\Leftarrow)$ Supongamos que $\sum_{i} b_i^{(d)} (x'_i - x_i) = 0$. Por el teorema de error de predicción del MCO, $E_d = 0$, y por el teorema de descomposición de la discrepancia, $a - b = E_d = 0$, esto es $a = b$. Sustituyendo en la puntuación, $|a - b| = 0$ y
+    $$s_d\!\left(\mathbf{x}'; \widehat{\boldsymbol{\beta}}^{(d)}_{\text{mco}}\right) = 1 - \frac{0}{|a| + |b| + \varepsilon} = 1 = s_d\!\left(\mathbf{x}'; \widehat{\boldsymbol{\beta}}^{(d)}_{\text{causal}}\right).$$
+\end{proof}
+
+\paragraph*{Resultados agregados multi-salida}
+
+\paragraph*{Demostración del teorema ``Puntuación media máxima del CausalModel''}
+\begin{proof}
+    Por el teorema de puntuación máxima del CausalModel, $s_d\!\left(\mathbf{x}'; \widehat{\boldsymbol{\beta}}^{(d)}_{\text{causal}}\right) = 1$ para cada $d \in \{0, \ldots, D-1\}$. Sustituyendo en la definición de la puntuación media,
+    $$s\!\left(\mathbf{x}'; \widehat{\boldsymbol{\beta}}_{\text{causal}}\right) = \frac{1}{D}\sum_{d=0}^{D-1} s_d\!\left(\mathbf{x}'; \widehat{\boldsymbol{\beta}}^{(d)}_{\text{causal}}\right) = \frac{1}{D}\sum_{d=0}^{D-1} 1 = \frac{D}{D} = 1,$$
+    donde la última igualdad usa $D > 0$.
+\end{proof}
+
+\paragraph*{Demostración del teorema ``Dominancia débil agregada del CausalModel''}
+\begin{proof}
+    Por el teorema de dominancia débil, para cada salida $d \in \{0, \ldots, D-1\}$,
+    $$s_d\!\left(\mathbf{x}'; \widehat{\boldsymbol{\beta}}^{(d)}_{\text{mco}}\right) \leq s_d\!\left(\mathbf{x}'; \widehat{\boldsymbol{\beta}}^{(d)}_{\text{causal}}\right).$$
+    Sumando estas $D$ desigualdades término a término,
+    $$\sum_{d=0}^{D-1} s_d\!\left(\mathbf{x}'; \widehat{\boldsymbol{\beta}}^{(d)}_{\text{mco}}\right) \leq \sum_{d=0}^{D-1} s_d\!\left(\mathbf{x}'; \widehat{\boldsymbol{\beta}}^{(d)}_{\text{causal}}\right).$$
+    Multiplicando ambos miembros por $\tfrac{1}{D} > 0$, que preserva el sentido de la desigualdad, y aplicando la definición de la puntuación media,
+    $$s\!\left(\mathbf{x}'; \widehat{\boldsymbol{\beta}}_{\text{mco}}\right) \leq s\!\left(\mathbf{x}'; \widehat{\boldsymbol{\beta}}_{\text{causal}}\right).$$
+\end{proof}
+
 
 % Si tu trabajo incluye anexos, puedes descomentar las siguientes líneas
 % DECLARACIÓN DE USO DE IA GENERATIVA EN EL TRABAJO DE FIN DE GRADO
