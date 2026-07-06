@@ -1491,13 +1491,40 @@ Se define:
 \end{itemize}
 
 
-\section{Formalización}
 
-Para el desarrollo del algoritmo CFGTS primero se presenta mediante una formalización de propiedades principales. Cada componente del algoritmo (objetivo contrafactual, objetivo de cobertura, grafo causal y puntuación de calidad) se describe por separado. Cada subsección incluye definiciones y demostraciones (que se desarrolla en el Anexo E), las cuales servirán de base para la implementación del algoritmo.
+\section{Entradas del algoritmo}
 
-\subsection{Formalización del objetivo contrafactual}
+El algoritmo recibe como entrada la tupla:
+$$\langle \hat{f},\; \mathbf{x}_0,\; \mathbf{y}^{*},\; W,\; r_{\min},\; r_{\max},\; n_{\text{walk}} \rangle$$
 
-Este módulo formaliza la Fase~1 del algoritmo: la generación de candidatos contrafactuales mediante optimización bi-objetivo.
+donde $\hat{f}$ debe ser un modelo ya ajustado (\textit{fitted}), $\mathbf{x}_0$ es una única observación (una fila), $\mathbf{y}^{*}$ es el vector de salidas deseado para la explicación contrafactual y $n_{\text{walk}}$ controla el enriquecimiento temporal usado durante la validación causal.
+
+\section{Salidas del algoritmo}
+
+El algoritmo produce un conjunto de instancias contrafactuales:
+$$\mathcal{C} = \{(\mathbf{x}'_k,\; \hat{\mathbf{y}}'_k,\; s_k)\}_{k=1}^{K}$$
+
+donde para cada contrafactual $k$:
+\begin{itemize}
+    \item $\mathbf{x}'_k \in \mathbb{R}^{n_{\text{In}}}$ es el vector de variables modificado.
+    \item $\hat{\mathbf{y}}'_k = \hat{f}(\mathbf{x}'_k) \in \mathbb{R}^{D}$ es el vector de predicciones del modelo para dicho contrafactual.
+    \item $s_k \in (0, 1]$ es la puntuación media de calidad causal del contrafactual a través de las $D$ salidas.
+\end{itemize}
+
+
+\section{Algoritmo de explicación contrafactual}
+
+El algoritmo CFGTS se ejecuta en tres fases secuenciales:
+\begin{itemize}
+    \item Generación de candidatos contrafactuales mediante optimización multi-objetivo.
+    \item Generación de un conjunto de cobertura para enriquecer el espacio muestral.
+    \item Evaluación causal de cada contrafactual generado.
+\end{itemize}
+Para cada fase se presenta, en primer lugar, la formalización matemática de sus definiciones y objetivos; a continuación, el algoritmo que los materializa; y, por último, las propiedades demostradas que justifican su comportamiento, cuyas demostraciones se desarrollan en el Anexo E.
+
+\subsection{Fase 1: Generación de candidatos contrafactuales}
+
+Esta subsección formaliza y resuelve la Fase~1 del algoritmo: la generación de candidatos contrafactuales mediante optimización bi-objetivo.
 
 \subsubsection{Espacio de características y modelo}
 
@@ -1570,9 +1597,33 @@ Se definen las dos funciones objetivo a minimizar simultáneamente:
     El \textbf{problema contrafactual} consiste en encontrar $\mathbf{x}'$ que sea simultáneamente un contrafactual válido y Pareto-óptimo.
 \end{definition}
 
+\subsubsection{Algoritmo}
+
+Identificando la instancia genérica $\mathbf{x}$ con la instancia concreta $\mathbf{x}_0$, el problema contrafactual se resuelve mediante optimización bi-objetivo sobre $J_1$ (ecuación~\eqref{eq:formal_j1}) y $J_2$ (ecuación~\eqref{eq:formal_j2}) mediante un algoritmo de tipo \textit{Tree-structured Parzen Estimator} (TPE), obteniendo un frente de Pareto:
+$$\mathcal{P} = \{\mathbf{x}' \in \mathcal{F}(r_{\min}, r_{\max}) : \mathbf{x}' \text{ es Pareto-óptimo respecto de } J_1 \text{ y } J_2\}$$
+Las soluciones del frente de Pareto $\mathcal{P}$ constituyen el conjunto inicial de candidatos contrafactuales $\mathcal{C}_0$, según el Algoritmo~\ref{alg:counterfactual}.
+
+\begin{algorithm}[H]
+    \caption{Generación de candidatos contrafactuales}
+    \label{alg:counterfactual}
+    \KwIn{$\hat{f}$, $\mathbf{x}_0$, $\mathbf{y}^{*}$, $r_{\min}$, $r_{\max}$}
+    \KwOut{$\mathcal{C}_0$: conjunto de candidatos contrafactuales}
+    Inicializar estudio de optimización bi-objetivo\;
+    Muestrear $\mathbf{x}' \sim \text{TPE}([r_{\min}, r_{\max}]^{n_{\text{In}}})$\;
+    Calcular $J_1(\mathbf{x}')$ según (\ref{eq:formal_j1})\;
+    Calcular $J_2(\mathbf{x}')$ según (\ref{eq:formal_j2})\;
+    Registrar $(\mathbf{x}', J_1, J_2)$ en el estudio\;
+
+    $\mathcal{C}_0 \leftarrow$ soluciones del frente de Pareto\;
+    \ForEach{$\mathbf{x}'_k \in \mathcal{C}_0$}{
+        $\hat{y}'_k \leftarrow \hat{f}(\mathbf{x}'_k)$\;
+    }
+    \Return{$\mathcal{C}_0$}
+\end{algorithm}
+
 \subsubsection{Propiedades demostradas}
 
-A continuación se enuncian las propiedades principales demostradas para esta formalización.
+Las siguientes propiedades garantizan que $J_1$, $J_2$, la región factible y la noción de contrafactual válido usadas por el Algoritmo~\ref{alg:counterfactual} están bien definidas y se comportan como cabría esperar; en particular, explican por qué el algoritmo recupera trivialmente la instancia original cuando esta ya satisface el objetivo, y por qué el frente de Pareto que exploran los optimizadores no puede contener contradicciones internas.
 
 \paragraph{Propiedades de las funciones objetivo}
 
@@ -1638,9 +1689,9 @@ Es decir, restringir los límites de búsqueda produce una región factible más
     Es decir, escalar simultáneamente cada componente del modelo y del valor objetivo por un mismo factor no cambia el error relativo.
 \end{theorem}
 
-\subsection{Formalización del objetivo de cobertura}
+\subsection{Fase 2: Generación del conjunto de cobertura}
 
-Este módulo formaliza la Fase~2 del algoritmo: la generación del conjunto de cobertura mediante la minimización de la discrepancia estelar centrada $L^2$ para un modelo multi-salida $\hat{f}: \mathbb{R}^{n_{\text{In}}} \to \mathbb{R}^{D}$.
+Esta subsección formaliza y resuelve la Fase~2 del algoritmo: la generación del conjunto de cobertura mediante la minimización de la discrepancia estelar centrada $L^2$ para un modelo multi-salida $\hat{f}: \mathbb{R}^{n_{\text{In}}} \to \mathbb{R}^{D}$. Disponer de un conjunto de muestras con suficiente diversidad en el espacio de salida es necesario para poder estimar, en la Fase~3, los efectos de cada variable sobre todas las salidas del modelo.
 
 \subsubsection{Intervalo de cobertura}
 
@@ -1715,6 +1766,31 @@ La \textbf{discrepancia estelar centrada $L^2$} de una muestra $\{u_1, \ldots, u
     Es decir, ningún otro conjunto factible logra menor discrepancia media sobre las $D$ salidas.
 \end{definition}
 
+\subsubsection{Algoritmo}
+
+Instanciando el intervalo de cobertura de la ecuación~\eqref{eq:formal_coverage_interval} con $\hat{\mathbf{y}} = \hat{\mathbf{y}}_0 = \hat{f}(\mathbf{x}_0)$ y $\hat{\mathbf{y}}' = \mathbf{y}^{*}$, cada componente $d$ tiene diámetro $3|\hat{y}_{0,d} - y^{*}_d|$ (Teorema~\ref{thm:cov_diameter}). Dada una muestra de predicciones por componente $\{z_{1,d}, \ldots, z_{N,d}\} \subset \mathbb{R}$, se filtran los puntos dentro del intervalo, se normalizan mediante $\varphi_{a_d,b_d}$ (ecuación~\eqref{eq:formal_rescale}) y se evalúa la discrepancia estelar centrada $L^2$ (ecuación~\eqref{eq:formal_discrepancy}, con los núcleos~\eqref{eq:formal_disc_kernel} y~\eqref{eq:formal_pair_kernel}). Si ninguna predicción cae dentro del intervalo de una componente, se asigna una penalización grande a esa componente. La generación del conjunto de cobertura se formula entonces como la minimización del objetivo medio de cobertura $\operatorname{MeanCov}(\mathcal{S})$, resuelta igualmente mediante TPE, según el Algoritmo~\ref{alg:coverage}.
+
+\begin{algorithm}[H]
+    \caption{Generación del conjunto de cobertura}
+    \label{alg:coverage}
+    \KwIn{$\hat{f}$, $\mathbf{x}_0$, $\mathbf{y}^{*}$, $r_{\min}$, $r_{\max}$, $N$}
+    \KwOut{$\mathcal{S}$: conjunto de cobertura}
+    $\hat{\mathbf{y}}_0 \leftarrow \hat{f}(\mathbf{x}_0)$\;
+    \For{$d \leftarrow 1$ \KwTo $D$}{
+        $\Delta y_d \leftarrow |\hat{y}_{0,d} - y^{*}_d|$\;
+        $a_d \leftarrow \min(\hat{y}_{0,d}, y^{*}_d) - \Delta y_d$\;
+        $b_d \leftarrow \max(\hat{y}_{0,d}, y^{*}_d) + \Delta y_d$\;
+    }
+    Inicializar estudio de optimización mono-objetivo\;
+    Muestrear $N$ puntos $\{\mathbf{x}^{(1)}, \ldots, \mathbf{x}^{(N)}\} \sim \text{TPE}([r_{\min}, r_{\max}]^{n_{\text{In}}})$\;
+    $z_{i,d} \leftarrow f_d(\mathbf{x}^{(i)})$ para $i = 1, \ldots, N$ y $d = 1, \ldots, D$\;
+    Calcular $\operatorname{MeanCov}(\mathcal{S})$ según (\ref{eq:formal_discrepancy})\;
+    Registrar la discrepancia media en el estudio\;
+
+    $\mathcal{S} \leftarrow$ mejor conjunto de $N$ muestras encontrado\;
+    \Return{$\mathcal{S}$}
+\end{algorithm}
+
 \subsubsection{Propiedades demostradas}
 
 \paragraph{Propiedades del intervalo de cobertura}
@@ -1774,9 +1850,9 @@ La \textbf{discrepancia estelar centrada $L^2$} de una muestra $\{u_1, \ldots, u
     Para un objetivo fijo $d$, si todas las $m$ predicciones caen dentro del intervalo de cobertura correspondiente, es decir, $f_d(\mathbf{x}_k) \in [a_d, b_d]$ para todo $k$, entonces existe una biyección entre los índices del conjunto de cobertura y los índices filtrados de esa componente. En particular, $p_d = m$ y no se descarta ninguna muestra para el objetivo $d$.
 \end{theorem}
 
-\subsection{Formalización del grafo causal y puntuación de calidad}
+\subsection{Fase 3: Evaluación causal de contrafactuales}
 
-Este módulo formaliza la Fase~3 del algoritmo para el caso multi-salida: la construcción de un grafo dirigido acíclico (DAG) causal a partir de las variables temporales, la validación de la \textit{whitelist}, la puntuación de consistencia causal por objetivo y su agregación media, y la comparación formal entre una estimación causal basada en el DAG y una regresión lineal ajustada que, en sistemas dinámicos, bloquea trayectorias mediadas y por tanto cambia el estimando.
+Esta subsección formaliza y resuelve la Fase~3 del algoritmo: la construcción de un grafo dirigido acíclico (DAG) a partir de las variables temporales, la validación de la \textit{whitelist}, la puntuación de consistencia causal por objetivo y su agregación media, y la comparación formal entre una estimación causal basada en el DAG y una regresión lineal ajustada que, en sistemas dinámicos, bloquea trayectorias mediadas y por tanto cambia el estimando. Esta fase recibe como entrada los candidatos contrafactuales $\mathcal{C}_0$ de la Fase~1 y el conjunto de cobertura $\mathcal{S}$ de la Fase~2, y asigna a cada contrafactual $\mathbf{x}'_k$ una puntuación por componente $s_{k,d} \in (0, 1]$ y una puntuación media $s_k \in (0, 1]$.
 
 \subsubsection{Grafo dirigido acíclico causal}
 
@@ -1934,7 +2010,38 @@ Fijada una salida $d$, la comparación correcta se formula respecto del \textbf{
           donde $\mathbf{b}^{(d)} \in \mathbb{R}^{n_{\text{In}}}$ es el vector de sesgo. En sistemas longitudinales, sus componentes recogen precisamente la parte mediada que queda bloqueada al condicionar sobre retardos intermedios.
 \end{itemize}
 
+\subsubsection{Algoritmo}
+
+A partir del conjunto de datos $\mathcal{D} = \mathcal{C}_0 \cup \mathcal{S}$ se construye el grafo causal $\mathcal{G} = (V, E)$ según las reglas de construcción anteriores y, sobre él, se estima $\widehat{\boldsymbol{\beta}}^{(d)}$ mediante DAG con el criterio de puerta trasera, para cada salida $d$ y cada variable de entrada $X_j$. A continuación, para cada contrafactual $\mathbf{x}'_k \in \mathcal{C}_0$ y cada salida $d$ se calculan el cambio esperado y el cambio real (ecuaciones~\eqref{eq:formal_expected_delta} y~\eqref{eq:formal_actual_delta}) y la puntuación de consistencia causal $s_{k,d}$ (ecuación~\eqref{eq:formal_causal_score}), agregada finalmente en la puntuación media $s_k$. El Algoritmo~\ref{alg:scoring} resume este procedimiento; el Teorema~\ref{thm:dag_dominates} y sus generalizaciones multi-salida justifican por qué estimar $\widehat{\boldsymbol{\beta}}^{(d)}$ mediante el criterio de puerta trasera sobre $\mathcal{G}$, en lugar de una regresión lineal ingenua sobre todos los retardos, produce puntuaciones al menos tan altas.
+
+\begin{algorithm}[H]
+    \caption{Evaluación causal de contrafactuales}
+    \label{alg:scoring}
+    \KwIn{$\mathcal{C}_0$, $\mathcal{S}$, $\hat{f}$, $\mathbf{x}_0$}
+    \KwOut{$\mathcal{C}$: contrafactuales con puntuación}
+    $\mathcal{D} \leftarrow \mathcal{C}_0 \cup \mathcal{S}$\;
+    Construir grafo causal $\mathcal{G}$ a partir de las variables de $\mathcal{D}$\;
+    $\hat{\mathbf{y}}_0 \leftarrow \hat{f}(\mathbf{x}_0)$\;
+    \For{$d \leftarrow 1$ \KwTo $D$}{
+        \ForEach{variable $X_j$, $j = 1, \ldots, n_{\text{In}}$}{
+            Estimar $\widehat{\beta}_j^{(d)}$ por regresión lineal con criterio de puerta trasera sobre $\mathcal{G}$\;
+        }
+    }
+    \ForEach{$\mathbf{x}'_k \in \mathcal{C}_0$}{
+        \For{$d \leftarrow 1$ \KwTo $D$}{
+            $\Delta y^{\text{esperado}}_{k,d} \leftarrow \sum_{j=1}^{n_{\text{In}}} \widehat{\beta}_j^{(d)} \cdot (x'_{k,j} - x_{0,j})$\;
+            $\Delta y^{\text{real}}_{k,d} \leftarrow f_d(\mathbf{x}'_k) - \hat{y}_{0,d}$\;
+            $s_{k,d} \leftarrow 1 - \dfrac{|\Delta y^{\text{esperado}}_{k,d} - \Delta y^{\text{real}}_{k,d}|}{|\Delta y^{\text{esperado}}_{k,d}| + |\Delta y^{\text{real}}_{k,d}| + \varepsilon}$\;
+        }
+        $s_k \leftarrow \dfrac{1}{D}\sum_{d=1}^{D} s_{k,d}$\;
+    }
+    $\mathcal{C} \leftarrow \{(\mathbf{x}'_k, \hat{f}(\mathbf{x}'_k), s_k)\}_{k=1}^{K}$\;
+    \Return{$\mathcal{C}$}
+\end{algorithm}
+
 \subsubsection{Propiedades demostradas}
+
+Las siguientes propiedades garantizan que el grafo causal está bien construido, que la puntuación de consistencia causal usada por el Algoritmo~\ref{alg:scoring} está bien definida y acotada, y que dicha puntuación favorece sistemáticamente al estimador basado en el DAG frente a una regresión lineal que ignora la estructura temporal.
 
 \paragraph{Propiedades del grafo causal}
 
@@ -2306,212 +2413,6 @@ En primer lugar, las propiedades que garantizan que la puntuación está \textbf
 En segundo lugar, la \emph{dirección} de la ventaja del modelo causal sobre la regresión MCO tampoco depende de la linealidad: el argumento es que condicionar sobre retardos intermedios \textbf{bloquea las trayectorias mediadas}, de modo que un ajuste MCO estima un efecto directo controlado en lugar del efecto total. Este es un resultado causal de identificación, válido sea cual sea la forma funcional del sistema.
 
 La no linealidad impide una \emph{desigualdad estricta universal punto a punto}, por dos motivos: (i) el efecto total deja de tener forma cerrada matricial: no existe un coeficiente $A_\tau$ constante, sino una cantidad que depende del punto $\mathbf{x}$ y de la dirección de la perturbación; y (ii) la puntuación compara contra el cambio real $\Delta y_d^{\text{real}} = f_d(\mathbf{x}') - f_d(\mathbf{x})$, que es no lineal, por lo que para perturbaciones grandes, ninguna estimación lineal de coeficientes lo reproduce exactamente y, en casos patológicos, el vector sesgado del MCO podría quedar circunstancialmente más cerca del cambio real que el efecto total.
-
-\section{Entradas del algoritmo}
-
-El algoritmo recibe como entrada la tupla:
-$$\langle \hat{f},\; \mathbf{x}_0,\; \mathbf{y}^{*},\; W,\; r_{\min},\; r_{\max},\; n_{\text{walk}} \rangle$$
-
-donde $\hat{f}$ debe ser un modelo ya ajustado (\textit{fitted}), $\mathbf{x}_0$ es una única observación (una fila), $\mathbf{y}^{*}$ es el vector de salidas deseado para la explicación contrafactual y $n_{\text{walk}}$ controla el enriquecimiento temporal usado durante la validación causal.
-
-\section{Salidas del algoritmo}
-
-El algoritmo produce un conjunto de instancias contrafactuales:
-$$\mathcal{C} = \{(\mathbf{x}'_k,\; \hat{\mathbf{y}}'_k,\; s_k)\}_{k=1}^{K}$$
-
-donde para cada contrafactual $k$:
-\begin{itemize}
-    \item $\mathbf{x}'_k \in \mathbb{R}^{n_{\text{In}}}$ es el vector de variables modificado.
-    \item $\hat{\mathbf{y}}'_k = \hat{f}(\mathbf{x}'_k) \in \mathbb{R}^{D}$ es el vector de predicciones del modelo para dicho contrafactual.
-    \item $s_k \in (0, 1]$ es la puntuación media de calidad causal del contrafactual a través de las $D$ salidas.
-\end{itemize}
-
-\section{Algoritmo de explicación contrafactual}
-
-El algoritmo CFGTS se ejecuta en tres fases secuenciales, formalizadas a continuación.
-
-\subsection{Fase 1: Generación de candidatos contrafactuales}
-
-La generación de candidatos se formula como un problema de optimización bi-objetivo. Para cada candidato $\mathbf{x}' \in [r_{\min}, r_{\max}]^{n_{\text{In}}}$ y un objetivo contrafactual $\mathbf{y}^{*} \in \mathbb{R}^{D}$ se definen dos funciones objetivo a minimizar simultáneamente:
-
-\begin{equation}
-    f_1(\mathbf{x}') = \sum_{k=1}^{D} \frac{|y^{*}_k - f_k(\mathbf{x}')|}{|y^{*}_k|}
-    \label{eq:obj1}
-\end{equation}
-
-\begin{equation}
-    f_2(\mathbf{x}') = \|\mathbf{x}' - \mathbf{x}_0\|_2
-    \label{eq:obj2}
-\end{equation}
-
-La primera función (\ref{eq:obj1}) agrega el error relativo de las $D$ salidas del modelo respecto del objetivo deseado. La segunda función (\ref{eq:obj2}) mide la distancia euclídea entre el candidato y la instancia original, promoviendo contrafactuales cercanos a la observación real.
-
-El problema de optimización bi-objetivo se resuelve mediante un algoritmo de tipo \textit{Tree-structured Parzen Estimator} (TPE), obteniendo un frente de Pareto:
-$$\mathcal{P} = \{\mathbf{x}' : \nexists\; \mathbf{x}'' \text{ tal que } f_i(\mathbf{x}'') \leq f_i(\mathbf{x}')\; \forall i \text{ y } f_j(\mathbf{x}'') < f_j(\mathbf{x}')\; \text{para algún } j\}$$
-
-Las soluciones del frente de Pareto $\mathcal{P}$ constituyen el conjunto inicial de candidatos contrafactuales $\mathcal{C}_0$.
-
-\begin{algorithm}[H]
-    \caption{Generación de candidatos contrafactuales}
-    \label{alg:counterfactual}
-    \KwIn{$\hat{f}$, $\mathbf{x}_0$, $\mathbf{y}^{*}$, $r_{\min}$, $r_{\max}$}
-    \KwOut{$\mathcal{C}_0$: conjunto de candidatos contrafactuales}
-    Inicializar estudio de optimización bi-objetivo\;
-    Muestrear $\mathbf{x}' \sim \text{TPE}([r_{\min}, r_{\max}]^{n_{\text{In}}})$\;
-    Calcular $f_1(\mathbf{x}')$ según (\ref{eq:obj1})\;
-    Calcular $f_2(\mathbf{x}')$ según (\ref{eq:obj2})\;
-    Registrar $(\mathbf{x}', f_1, f_2)$ en el estudio\;
-
-    $\mathcal{C}_0 \leftarrow$ soluciones del frente de Pareto\;
-    \ForEach{$\mathbf{x}'_k \in \mathcal{C}_0$}{
-        $\hat{y}'_k \leftarrow \hat{f}(\mathbf{x}'_k)$\;
-    }
-    \Return{$\mathcal{C}_0$}
-\end{algorithm}
-
-\subsection{Fase 2: Generación del conjunto de cobertura}
-
-Para poder estimar los efectos causales de cada variable sobre todas las salidas del modelo, es necesario disponer de un conjunto de muestras con suficiente diversidad en el espacio de salida multi-dimensional. Para ello se genera un \textit{conjunto de cobertura} $\mathcal{S}$ cuyas predicciones cubran uniformemente, para cada componente $d \in \{1, \ldots, D\}$, un intervalo alrededor de $\hat{y}_{0,d}$ y $y^{*}_d$.
-
-Para cada componente $d$ se define el intervalo de cobertura:
-\begin{equation}
-    \mathcal{I}_d = \left[\min(\hat{y}_{0,d}, y^{*}_d) - \Delta y_d,\;\; \max(\hat{y}_{0,d}, y^{*}_d) + \Delta y_d\right]
-    \label{eq:interval}
-\end{equation}
-con $\Delta y_d = |\hat{y}_{0,d} - y^{*}_d|$, de modo que cada intervalo tiene diámetro $3\Delta y_d$.
-
-Para medir la uniformidad de las predicciones dentro de cada $\mathcal{I}_d$, se emplea la discrepancia estelar centrada $L^2$ adaptada a muestras que pueden tener elementos fuera del intervalo. Dada una muestra de predicciones por componente $\{z_{1,d}, \ldots, z_{N,d}\} \subset \mathbb{R}$ y los extremos del intervalo $[a_d, b_d]$, se define:
-
-\begin{enumerate}
-    \item Se filtran los puntos dentro del intervalo: $\mathcal{Z}_d = \{z_{i,d} : a_d \leq z_{i,d} \leq b_d\}$, con $n_d = |\mathcal{Z}_d|$.
-    \item Se normalizan a $[0,1]$: $\tilde{z}_{i,d} = (z_{i,d} - a_d)/(b_d - a_d)$.
-    \item Se calcula la discrepancia centrada por componente:
-\end{enumerate}
-
-\begin{equation}
-    D_d^{2}(\mathcal{Z}_d) = \left(\frac{13}{12}\right) - \frac{2}{n_d}\sum_{i=1}^{n_d}\left(1 + \frac{1}{2}|\tilde{z}_{i,d} - \tfrac{1}{2}| - \frac{1}{2}|\tilde{z}_{i,d} - \tfrac{1}{2}|^2\right) + \frac{1}{n_d^2}\sum_{i=1}^{n_d}\sum_{j=1}^{n_d} g(\tilde{z}_{i,d}, \tilde{z}_{j,d})
-    \label{eq:discrepancy}
-\end{equation}
-
-donde:
-\begin{equation}
-    g(u, v) = 1 + \frac{1}{2}|u - \tfrac{1}{2}| + \frac{1}{2}|v - \tfrac{1}{2}| - \frac{1}{2}|u - v|
-\end{equation}
-
-Si $n_d = 0$ (ningún punto dentro del intervalo de la componente $d$), se asigna una penalización grande a esa componente.
-
-La generación del conjunto de cobertura se formula como la minimización de la discrepancia media entre las $D$ salidas:
-\begin{equation}
-    \mathcal{S}^{*} = \arg\min_{\mathcal{S}} \frac{1}{D}\sum_{d=1}^{D} D_d^{2}(\mathcal{Z}_d)
-    \label{eq:coverage_opt}
-\end{equation}
-
-donde $\mathcal{S} \subset [r_{\min}, r_{\max}]^{n_{\text{In}}}$ es un conjunto de $N$ muestras. Esta optimización se resuelve igualmente mediante TPE.
-
-\begin{algorithm}[H]
-    \caption{Generación del conjunto de cobertura}
-    \label{alg:coverage}
-    \KwIn{$\hat{f}$, $\mathbf{x}_0$, $\mathbf{y}^{*}$, $r_{\min}$, $r_{\max}$, $N$}
-    \KwOut{$\mathcal{S}$: conjunto de cobertura}
-    $\hat{\mathbf{y}}_0 \leftarrow \hat{f}(\mathbf{x}_0)$\;
-    \For{$d \leftarrow 1$ \KwTo $D$}{
-        $\Delta y_d \leftarrow |\hat{y}_{0,d} - y^{*}_d|$\;
-        $a_d \leftarrow \min(\hat{y}_{0,d}, y^{*}_d) - \Delta y_d$\;
-        $b_d \leftarrow \max(\hat{y}_{0,d}, y^{*}_d) + \Delta y_d$\;
-    }
-    Inicializar estudio de optimización mono-objetivo\;
-    Muestrear $N$ puntos $\{\mathbf{x}^{(1)}, \ldots, \mathbf{x}^{(N)}\} \sim \text{TPE}([r_{\min}, r_{\max}]^{n_{\text{In}}})$\;
-    $z_{i,d} \leftarrow f_d(\mathbf{x}^{(i)})$ para $i = 1, \ldots, N$ y $d = 1, \ldots, D$\;
-    Calcular $\frac{1}{D}\sum_{d=1}^{D} D_d^{2}(\mathcal{Z}_d)$ según (\ref{eq:discrepancy}) y (\ref{eq:coverage_opt})\;
-    Registrar la discrepancia media en el estudio\;
-
-    $\mathcal{S} \leftarrow$ mejor conjunto de $N$ muestras encontrado\;
-    \Return{$\mathcal{S}$}
-\end{algorithm}
-
-\subsection{Fase 3: Evaluación causal de contrafactuales}
-
-Una vez generados los candidatos contrafactuales $\mathcal{C}_0$ y el conjunto de cobertura $\mathcal{S}$, se construye un modelo causal para evaluar la calidad de cada contrafactual. Esta fase asigna una puntuación por componente $s_{k,d} \in (0, 1]$ y una puntuación media $s_k \in (0, 1]$ a cada contrafactual $\mathbf{x}'_k$.
-
-\subsubsection{Construcción del grafo causal}
-
-Se construye un grafo dirigido acíclico (DAG) $\mathcal{G} = (V, E)$ donde:
-\begin{itemize}
-    \item $V = \{X_1, \ldots, X_{n_{\text{In}}}, Y_1, \ldots, Y_D\}$ es el conjunto de nodos (variables explicativas más una salida por componente objetivo).
-    \item $E$ contiene dos tipos de aristas:
-          \begin{enumerate}
-              \item \textbf{Aristas de tratamiento}: $X_i \rightarrow Y_d$ para todo $i \in \{1, \ldots, n_{\text{In}}\}$ y todo $d \in \{1, \ldots, D\}$.
-              \item \textbf{Aristas temporales}: si las variables siguen una estructura de retardos temporales $X^{(b)}_{t-\ell}$ donde $b$ denota la variable base y $\ell$ el retardo, se añade $X^{(b_1)}_{t-\ell_1} \rightarrow X^{(b_2)}_{t-\ell_2}$ para todo $\ell_1 > \ell_2$, respetando la causalidad temporal.
-          \end{enumerate}
-\end{itemize}
-
-\subsubsection{Estimación de efectos causales}
-
-Sobre el conjunto de datos $\mathcal{D} = \mathcal{C}_0 \cup \mathcal{S}$, se estima el efecto causal de cada variable $X_j$ sobre cada salida $Y_d$ utilizando el criterio de puerta trasera (\textit{backdoor criterion}). Para cada par $(j, d)$ con $j \in \{1, \ldots, n_{\text{In}}\}$ y $d \in \{1, \ldots, D\}$, se identifica el estimando causal y se estima mediante regresión lineal, obteniendo el coeficiente causal por objetivo:
-\begin{equation}
-    \beta_j^{(d)} = \mathbb{E}\left[\frac{\partial Y_d}{\partial X_j} \bigg| \text{do}(X_j)\right]
-    \label{eq:causal_effect}
-\end{equation}
-
-\subsubsection{Puntuación de calidad causal}
-
-Para cada contrafactual $\mathbf{x}'_k$ y cada salida $d$, se calcula el cambio esperado según el modelo causal y el cambio real observado:
-
-\begin{equation}
-    \Delta y^{\text{esperado}}_{k,d} = \sum_{j=1}^{n_{\text{In}}} \beta_j^{(d)} \cdot (x'_{k,j} - x_{0,j})
-    \label{eq:expected_delta}
-\end{equation}
-
-\begin{equation}
-    \Delta y^{\text{real}}_{k,d} = f_d(\mathbf{x}'_k) - f_d(\mathbf{x}_0)
-    \label{eq:actual_delta}
-\end{equation}
-
-La puntuación de calidad causal por componente se define como:
-\begin{equation}
-    \boxed{s_{k,d} = 1 - \frac{|\Delta y^{\text{esperado}}_{k,d} - \Delta y^{\text{real}}_{k,d}|}{|\Delta y^{\text{esperado}}_{k,d}| + |\Delta y^{\text{real}}_{k,d}| + \varepsilon}}
-    \label{eq:score}
-\end{equation}
-
-y la puntuación final del contrafactual es la media entre objetivos:
-\begin{equation}
-    s_k = \frac{1}{D}\sum_{d=1}^{D} s_{k,d}
-    \label{eq:score_mean}
-\end{equation}
-
-con $\varepsilon = 10^{-10}$ para estabilidad numérica. Esta métrica satisface las siguientes propiedades:
-
-\begin{itemize}
-    \item $s_{k,d} \in (0, 1]$ para toda componente $d$, y por tanto $s_k \in (0, 1]$.
-    \item $s_{k,d} = 1$ cuando $\Delta y^{\text{esperado}}_{k,d} = \Delta y^{\text{real}}_{k,d}$ (alineación causal perfecta en la salida $d$).
-    \item Si $\mathbf{x}'_k = \mathbf{x}_0$, entonces $s_{k,d} = 1$ para todo $d$ y, por consiguiente, $s_k = 1$.
-    \item La puntuación media $s_k$ resume la consistencia causal global del contrafactual a través de las $D$ salidas.
-\end{itemize}
-
-\begin{algorithm}[H]
-    \caption{Evaluación causal de contrafactuales}
-    \label{alg:scoring}
-    \KwIn{$\mathcal{C}_0$, $\mathcal{S}$, $\hat{f}$, $\mathbf{x}_0$}
-    \KwOut{$\mathcal{C}$: contrafactuales con puntuación}
-    $\mathcal{D} \leftarrow \mathcal{C}_0 \cup \mathcal{S}$\;
-    Construir grafo causal $\mathcal{G}$ a partir de las variables de $\mathcal{D}$\;
-    $\hat{\mathbf{y}}_0 \leftarrow \hat{f}(\mathbf{x}_0)$\;
-    \For{$d \leftarrow 1$ \KwTo $D$}{
-        \ForEach{variable $X_j$, $j = 1, \ldots, n_{\text{In}}$}{
-            Estimar $\beta_j^{(d)}$ por regresión lineal con criterio de puerta trasera sobre $\mathcal{G}$\;
-        }
-    }
-    \ForEach{$\mathbf{x}'_k \in \mathcal{C}_0$}{
-        \For{$d \leftarrow 1$ \KwTo $D$}{
-            $\Delta y^{\text{esperado}}_{k,d} \leftarrow \sum_{j=1}^{n_{\text{In}}} \beta_j^{(d)} \cdot (x'_{k,j} - x_{0,j})$\;
-            $\Delta y^{\text{real}}_{k,d} \leftarrow f_d(\mathbf{x}'_k) - \hat{y}_{0,d}$\;
-            $s_{k,d} \leftarrow 1 - \dfrac{|\Delta y^{\text{esperado}}_{k,d} - \Delta y^{\text{real}}_{k,d}|}{|\Delta y^{\text{esperado}}_{k,d}| + |\Delta y^{\text{real}}_{k,d}| + \varepsilon}$\;
-        }
-        $s_k \leftarrow \dfrac{1}{D}\sum_{d=1}^{D} s_{k,d}$\;
-    }
-    $\mathcal{C} \leftarrow \{(\mathbf{x}'_k, \hat{f}(\mathbf{x}'_k), s_k)\}_{k=1}^{K}$\;
-    \Return{$\mathcal{C}$}
-\end{algorithm}
 
 \subsection{Algoritmo completo}
 
