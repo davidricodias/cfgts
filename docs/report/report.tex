@@ -2683,6 +2683,48 @@ En el ejemplo anterior se observan los siguientes aspectos relevantes:
 
 \chapter{Planificación}
 
+En este trabajo se ha combinado investigación teórica en estadística, causalidad \textit{pearliana} y series temporales con la práctica del diseño de un algoritmo, su formalización y su implementación como paquete de software. El proyecto se inició en enero de 2025, con una estimación de entrega en septiembre de 2025; esta estimación rápidamente demostró ser insuficiente con las obligaciones profesionales y la dificultad técnica del trabajo.
+
+El trabajo se desarrolló de forma continuada, aunque no siempre con la misma intensidad, hasta su entrega en septiembre de 2026. Al tratarse de un periodo superior al año y medio, se ha podido compaginar el trabajo con otras obligaciones académicas y profesionales, que han impedido terminar el trabajo antes, dedicando bloques de tiempo relativamente cortos por día pero manteniendo fases de trabajo largas, lo que ha permitido detenerse a reformular partes del planteamiento (como por ejemplo la definición final de la puntuación de consistencia causal y su comparación frente a la regresión por MCO) sin comprometer la fecha de entrega.
+
+El trabajo se organizó en 5 fases secuenciales y con períodos solapados; la investigación teórica y la formalización matemática se retomaron puntualmente durante la fase de implementación para resolver agujeros teóricos que solo se hicieron evidentes al programar el algoritmo:
+
+\begin{itemize}
+    \item \textbf{Fase 1: Investigación y fundamentos teóricos.} La fase 1 se dedicó a construir una base sólida de conocimiento en los campos necesarios para abordar el problema: estadística y probabilidad, causalidad \textit{pearliana} (grafos causales, modelos causales estructurales, intervenciones y mediación), series temporales (modelos autorregresivos, similaridad, clasificación) y el estado del arte en generación de explicaciones contrafactuales, tanto en datos tabulares como en series temporales. Esta fase destaca por dedicarse a revisar bibliografía especializada, mucha más de lo que originalmente se esperaba, y estudiar las limitaciones de los métodos existentes (en esencia el método \textit{LIME}) cuando se aplican a datos en series temporales. Se perfiló la motivación y el planteamiento del problema que después darían forma a los primeros capítulos de la memoria. Esta fase transcurrió aproximadamente desde enero de 2025 hasta septiembre de 2025, concentrándose especialmente en los primeros meses del proyecto.
+
+    \item \textbf{Fase 2: Diseño y formalización matemática del algoritmo.} Una vez asentados la mayoría de fundamentos teóricos, se procedió a diseñar \texttt{CFGTS} como algoritmo de dos fases: generación de candidatos mediante optimización bi-objetivo y evaluación causal. Esta fase se centró en formalizar cada componente: las funciones objetivo $J_1$ y $J_2$, la noción de dominancia y optimalidad de Pareto, el grafo causal temporal y la puntuación de consistencia causal, así como la comparación entre el estimador basado en el DAG y una regresión lineal ajustada (LIME). El atento lector notará la mención de solo dos fases: el paso del algoritmo relativo a la generación de un conjunto de cobertura y el uso de la discrepancia estelar centrada $L^2$ se añadió después, al comprobar la falta de estabilidad numérica de las soluciones; un algoritmo sin implementar nunca hubiese podido mostrar la necesidad de este paso. De esta fase surgieron los enunciados y las demostraciones que conforman el Anexo E, un trabajo que exigió varias (en ocasiones demasiadas) iteraciones para refinar las hipótesis de cada teorema y evitar afirmaciones poco defendibles (por ejemplo acotar la dominancia del modelo causal al caso lineal). Esta fase se extendió aproximadamente desde mayo de 2025 hasta noviembre de 2025.
+
+    \item \textbf{Fase 3: Implementación del paquete \texttt{cfgts}.} Esta fase consistió en materializar el algoritmo formalizado como un paquete de Python distribuible. Se desarrolló la clase principal \texttt{CFGTS}. También se incorporaron aspectos de calidad de software: tipado estático (\texttt{mypy}), pruebas automatizadas y la configuración del \textit{wheel} con \texttt{Hatchling}. Esta fase se desarrolló de forma intermitente entre julio de 2025 y abril de 2026, alternando periodos de programación intensiva con semanas de menor dedicación por coincidir con otras obligaciones o por necesitar refinar la parte teórica del algoritmo.
+
+    \item \textbf{Fase 4: Experimentación y resultados.} Con el paquete ya publicado en \texttt{pypi}, esta fase se dedicó a diseñar y ejecutar experimentos sobre conjuntos de datos sintéticos y reales, comparando la puntuación de consistencia causal obtenida mediante el modelo causal frente a una regresión lineal tipo LIME. También incluyó la elaboración de las figuras y tablas de resultados que se incorporan al capítulo correspondiente de la memoria. Se desarrolló entre marzo de 2026 y julio de 2026.
+
+    \item \textbf{Fase 5: Redacción de la memoria y revisión final.} La última fase se dedicó a la elaboración del documento \LaTeX completo. Esta fase se extendió desde enero de 2026 hasta la entrega final en septiembre de 2026. Confome se materializaban ciertos resultados del algoritmo se plasmaban directamente en la memoria.
+\end{itemize}
+
+En la Tabla~\ref{tab:planificacion} se resume la planificación descrita, indicando la fecha de inicio y fin estimadas de cada fase.
+
+\begin{table}[H]
+    \ttabbox[\FBwidth]
+    {\caption{Planificación del proyecto}\label{tab:planificacion}}
+    {\begin{tabular}{|p{1.6cm}|p{6.4cm}|p{2.2cm}|p{2.2cm}|}
+            \hline
+            \textbf{Fase} & \textbf{Tarea realizada}                        & \textbf{Fecha inicio} & \textbf{Fecha fin} \\
+            \hline
+            Fase 1        & Investigación y fundamentos teóricos            & 01/2025                & 09/2025            \\
+            \hline
+            Fase 2        & Diseño y formalización matemática del algoritmo & 05/2025                & 11/2025            \\
+            \hline
+            Fase 3        & Implementación del paquete \texttt{cfgts}       & 07/2025                & 04/2026            \\
+            \hline
+            Fase 4        & Experimentación y resultados                    & 03/2026                & 07/2026            \\
+            \hline
+            Fase 5        & Redacción de la memoria y revisión final        & 01/2026                & 09/2026            \\
+            \hline
+        \end{tabular}}
+\end{table}
+
+En cuanto a la dedicación diaria, las Fases~1 y 2 se llevaron a cabo con una carga aproximada de entre media hora y 2h diarias, que pude compatibilizar con otras actividades académicas y laborales. Fue necesario dedicar gran parte del tiempo a profundizar en los fundamentos teóricos y a depurar la formalización sin "inventarse" resultados, pues los temas a tratar salen bastante del conocimiento del Grado. La Fase~3, al tratarse de la implementación del software, tuvo una dedicación más irregular: periodos de baja actividad se alternaron con semanas de entre cuatro y seis horas diarias (sobre todo usando los períodos de vacaciones para poder avanzar el trabajo). La Fase~4 exigió períodos más largos pero espaciados en el tiempo, al requerir ejecuciones repetidas de los experimentos y ajustes en la configuración de los mismos. Por último, la Fase~5 ha sido la de mayor concentración de horas por día, con sesiones de 1 a 2 horas diarias entre semana y 5-8h en los fines de semana, dado que la redacción de la memoria, la revisión de la notación entre capítulos y la elaboración de los anexos de demostraciones son tareas que se benefician de sesiones de trabajo largas y continuas.
+
 \chapter{Presupuesto}
 
 \chapter{Conclusiones}
