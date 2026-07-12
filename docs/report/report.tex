@@ -1481,7 +1481,7 @@ Este sumatorio de productos se organiza de forma matricial en las matrices de ef
 
 \chapter{Análisis del problema}
 
-El problema que aborda CFGTS puede formularse del siguiente modo: dado un modelo autorregresivo multi-salida ya ajustado $\hat{f}: \mathbb{R}^{n_{\text{In}}} \rightarrow \mathbb{R}^{D}$, una única instancia original $\mathbf{x}_0$ y un objetivo contrafactual $\mathbf{y}^{*} \in \mathbb{R}^{D}$, se desea encontrar las perturbaciones de $\mathbf{x}_0$ que satisfagan simultáneamente cuatro requisitos:
+El problema que aborda \texttt{CFGTS} puede formularse del siguiente modo: dado un modelo autorregresivo multi-salida ya ajustado $\hat{f}: \mathbb{R}^{n_{\text{In}}} \rightarrow \mathbb{R}^{D}$, una única instancia original $\mathbf{x}_0$ y un objetivo contrafactual $\mathbf{y}^{*} \in \mathbb{R}^{D}$, se desea encontrar las perturbaciones de $\mathbf{x}_0$ que satisfagan simultáneamente cuatro requisitos:
 
 \begin{enumerate}
     \item No depender del conjunto de entrenamiento original, ya que el escenario de uso asume acceso únicamente a un modelo ya ajustado (\textit{fitted}) y a una observación individual.
@@ -1490,15 +1490,15 @@ El problema que aborda CFGTS puede formularse del siguiente modo: dado un modelo
     \item Incorporar una puntuación de calidad causal que compare, para cada salida, el cambio esperado según un modelo causal auxiliar con el cambio real inducido por el predictor, agregando después esa consistencia en una puntuación media global.
 \end{enumerate}
 
-Este planteamiento es más restrictivo que la generación de contrafactuales en datos tabulares estáticos. En primer lugar, la plausibilidad no puede contrastarse directamente contra una nube de ejemplos observados porque CFGTS no dispone de los datos de entrenamiento; el objetivo es explotar la información temporal contenida en el modelo. En su lugar, debe reconstruir una región local de interés a partir del propio modelo, la instancia original y el objetivo contrafactual. En segundo lugar, las variables de entrada representan retardos temporales, por lo que una modificación arbitraria puede romper dependencias entre instantes consecutivos aunque el vector resultante siga perteneciendo al espacio de búsqueda, es una regla universal que el futuro no causa el pasado.
+Este planteamiento es más restrictivo que la generación de contrafactuales en datos tabulares estáticos. En primer lugar, la plausibilidad no puede contrastarse directamente contra una nube de ejemplos observados porque \texttt{CFGTS} no dispone de los datos de entrenamiento; el objetivo es explotar la información temporal contenida en el modelo. En su lugar, debe reconstruir una región local de interés a partir del propio modelo, la instancia original y el objetivo contrafactual. En segundo lugar, las variables de entrada representan retardos temporales, por lo que una modificación arbitraria puede romper dependencias entre instantes consecutivos aunque el vector resultante siga perteneciendo al espacio de búsqueda, es una regla universal que el futuro no causa el pasado.
 
-Además, el problema se sitúa con frecuencia en la frontera de la distribución inducida por el modelo. El objetivo $\mathbf{y}^{*}$ puede quedar lejos de la predicción original $\hat{\mathbf{y}}_0 = \hat{f}(\mathbf{x}_0)$ o cerca del borde de las salidas alcanzables mediante perturbaciones locales de $\mathbf{x}_0$. En esas regiones la información es escasa y la respuesta del modelo puede ser heterogénea entre salidas. Por esta razón, CFGTS no se limita a optimizar candidatos contrafactuales: también construye un conjunto de cobertura alrededor del trayecto entre $\hat{\mathbf{y}}_0$ y $\mathbf{y}^{*}$ y lo enriquece con pasos de \textit{forward walking}, es decir ejecutar el modelo hacia delante de forma autorregresiva, con el fin de estimar efectos causales (respecto a $\hat{f}$) más estables sin requerir acceso al conjunto de entrenamiento.
+Además, el problema se sitúa con frecuencia en la frontera de la distribución inducida por el modelo. El objetivo $\mathbf{y}^{*}$ puede quedar lejos de la predicción original $\hat{\mathbf{y}}_0 = \hat{f}(\mathbf{x}_0)$ o cerca del borde de las salidas alcanzables mediante perturbaciones locales de $\mathbf{x}_0$. En esas regiones la información es escasa y la respuesta del modelo puede ser heterogénea entre salidas. Por esta razón, \texttt{CFGTS} no se limita a optimizar candidatos contrafactuales: también construye un conjunto de cobertura alrededor del trayecto entre $\hat{\mathbf{y}}_0$ y $\mathbf{y}^{*}$ y lo enriquece con pasos de \textit{forward walking}, es decir ejecutar el modelo hacia delante de forma autorregresiva, con el fin de estimar efectos causales (respecto a $\hat{f}$) más estables sin requerir acceso al conjunto de entrenamiento.
 
 \chapter{Propuesta}
 
-En este capítulo se presenta CFGTS (\textit{CounterFactual Generation for Time Series}), un algoritmo de generación de explicaciones contrafactuales para modelos predictivos de series temporales. El algoritmo se estructura en tres fases secuenciales: (1) generación de candidatos contrafactuales mediante optimización multi-objetivo, (2) generación de un conjunto de cobertura para enriquecer el espacio muestral, y (3) evaluación causal de cada contrafactual generado.
+En este capítulo se presenta \texttt{CFGTS} (\textit{CounterFactual Generation for Time Series}), un algoritmo de generación de explicaciones contrafactuales para modelos predictivos de series temporales. El algoritmo se estructura en tres fases secuenciales: (1) generación de candidatos contrafactuales mediante optimización multi-objetivo, (2) generación de un conjunto de cobertura para enriquecer el espacio muestral, y (3) evaluación causal de cada contrafactual generado.
 
-Conceptualmente, CFGTS opera en dos espacios acoplados. En el espacio de entrada busca perturbaciones plausibles de la instancia original; en el espacio de salida construye una vecindad alrededor de la predicción original y del objetivo contrafactual, y sobre esa vecindad estima un modelo causal auxiliar. La calidad final de cada contrafactual se mide por el grado de alineación entre el cambio esperado según ese modelo causal y el cambio realmente inducido por el predictor en todas sus salidas.
+Conceptualmente, \texttt{CFGTS} opera en dos espacios acoplados. En el espacio de entrada busca perturbaciones plausibles de la instancia original; en el espacio de salida construye una vecindad alrededor de la predicción original y del objetivo contrafactual, y sobre esa vecindad estima un modelo causal auxiliar. La calidad final de cada contrafactual se mide por el grado de alineación entre el cambio esperado según ese modelo causal y el cambio realmente inducido por el predictor en todas sus salidas.
 
 
 \section{Notación}
@@ -1539,7 +1539,7 @@ donde para cada contrafactual $k$:
 
 \section{Algoritmo de explicación contrafactual}
 
-El algoritmo CFGTS se ejecuta en tres fases secuenciales:
+El algoritmo \texttt{CFGTS} se ejecuta en tres fases secuenciales:
 \begin{itemize}
     \item Generación de candidatos contrafactuales mediante optimización multi-objetivo.
     \item Generación de un conjunto de cobertura para enriquecer el espacio muestral.
@@ -1780,7 +1780,7 @@ La \textbf{discrepancia estelar centrada $L^2$} de una muestra $\{u_1, \ldots, u
 \end{definition}
 
 \begin{definition}[Objetivo medio de cobertura]
-    El objetivo global minimizado por CFGTS es la media de las discrepancias de cobertura a través de las $D$ salidas:
+    El objetivo global minimizado por \texttt{CFGTS} es la media de las discrepancias de cobertura a través de las $D$ salidas:
     $$\operatorname{MeanCov}(\mathcal{S}) = \frac{1}{D}\sum_{d=0}^{D-1} \operatorname{Cov}_d(\mathcal{S})$$
     Esta definición corresponde a la media de las discrepancias por componente.
 \end{definition}
@@ -1887,7 +1887,7 @@ Esta subsección formaliza y resuelve la Fase~3 del algoritmo: la construcción 
     donde $(i, j) \in E$ se interpreta como ``$i$ influye causalmente en $j$''.
 \end{definition}
 
-El conjunto de vértices del grafo CFGTS está formado por $n_{\text{In}} + D$ nodos: $n_{\text{In}}$ variables de entrada $X_0, \ldots, X_{n_{\text{In}}-1}$ y $D$ variables de salida $Y_0, \ldots, Y_{D-1}$.
+El conjunto de vértices del grafo \texttt{CFGTS} está formado por $n_{\text{In}} + D$ nodos: $n_{\text{In}}$ variables de entrada $X_0, \ldots, X_{n_{\text{In}}-1}$ y $D$ variables de salida $Y_0, \ldots, Y_{D-1}$.
 
 \subsubsection{Estructura temporal}
 
@@ -1901,7 +1901,7 @@ Cada variable explicativa puede tener una estructura temporal asociada, descrita
 
 \subsubsection{Construcción del grafo CFGTS}
 
-Las aristas del grafo causal CFGTS se construyen según dos reglas:
+Las aristas del grafo causal \texttt{CFGTS} se construyen según dos reglas:
 \begin{enumerate}
     \item \textbf{Aristas hacia todas las salidas}: toda variable de entrada $X_i$ se conecta con cada salida $Y_d$:
           $$\forall\, i \in \{0, \ldots, n_{\text{In}}-1\},\; \forall\, d \in \{0, \ldots, D-1\},\quad (X_i, Y_d) \in E$$
@@ -2071,7 +2071,7 @@ Las siguientes propiedades garantizan que el grafo causal está bien construido,
 \paragraph{Propiedades del grafo causal}
 
 \begin{theorem}[Ausencia de auto-bucles en el grafo CFGTS]
-    El grafo causal construido por CFGTS no contiene auto-bucles:
+    El grafo causal construido por \texttt{CFGTS} no contiene auto-bucles:
     $$\forall\, v,\quad (v, v) \notin E$$
 \end{theorem}
 \begin{proof}[Argumento]
@@ -2462,12 +2462,12 @@ El algoritmo descrito en las secciones anteriores se ha materializado en \texttt
 
 \subsection{Principios de diseño}
 
-La implementación de CFGTS se rige por los siguientes principios:
+La implementación de \texttt{CFGTS} se rige por los siguientes principios:
 
 \begin{enumerate}
     \item \textbf{API de clase única.} Todo el algoritmo se encapsula en una única clase pública, \texttt{CFGTS}. El usuario interactúa exclusivamente con el constructor ---donde se especifican el modelo, la instancia y los parámetros de configuración--- y con el método \texttt{run()}, que ejecuta las tres fases del algoritmo y el paso auxiliar de \textit{forward walking} de forma secuencial.
 
-    \item \textbf{Modelo pre-ajustado de scikit-learn.} El parámetro principal es un modelo de regresión que implemente la interfaz \texttt{RegressorMixin} de scikit-learn. El modelo \textbf{debe estar previamente ajustado} (\textit{fitted}): durante la instanciación, CFGTS invoca \texttt{check\_is\_fitted()} de scikit-learn y lanza una excepción si el modelo no ha sido entrenado. Esta decisión permite que CFGTS sea agnóstico al tipo de regresor utilizado (regresión lineal, \textit{Random Forest}, redes neuronales envueltas en scikit-learn, etc.), siempre que exponga el método \texttt{predict()}. Cuando el problema tiene varias salidas, el modelo puede ser nativamente multi-salida o estar envuelto, por ejemplo, en \texttt{MultiOutputRegressor}.
+    \item \textbf{Modelo pre-ajustado de scikit-learn.} El parámetro principal es un modelo de regresión que implemente la interfaz \texttt{RegressorMixin} de scikit-learn. El modelo \textbf{debe estar previamente ajustado} (\textit{fitted}): durante la instanciación, \texttt{CFGTS} invoca \texttt{check\_is\_fitted()} de scikit-learn y lanza una excepción si el modelo no ha sido entrenado. Esta decisión permite que \texttt{CFGTS} sea agnóstico al tipo de regresor utilizado (regresión lineal, \textit{Random Forest}, redes neuronales envueltas en scikit-learn, etc.), siempre que exponga el método \texttt{predict()}. Cuando el problema tiene varias salidas, el modelo puede ser nativamente multi-salida o estar envuelto, por ejemplo, en \texttt{MultiOutputRegressor}.
 
     \item \textbf{Polars como estructura de datos principal.} Tanto la instancia de entrada como el valor contrafactual objetivo se representan mediante \texttt{DataFrame} de Polars. Esta elección se justifica por las ventajas de rendimiento de Polars frente a pandas ---ejecución \textit{lazy}, paralelismo nativo y menor consumo de memoria--- especialmente relevantes cuando el número de variables explicativas es elevado.
 
@@ -2496,7 +2496,7 @@ La Tabla~\ref{tab:dependencies} resume las dependencias externas y su función d
 
 \begin{table}[H]
     \ttabbox[\FBwidth]
-    {\caption{Dependencias principales de CFGTS y su función}\label{tab:dependencies}}
+    {\caption{Dependencias principales de \texttt{CFGTS} y su función}\label{tab:dependencies}}
     {\begin{tabular}{|p{3cm}|p{9cm}|}
             \hline
             \textbf{Biblioteca} & \textbf{Función}                                                                                  \\
@@ -2563,7 +2563,7 @@ Internamente, cada fase se implementa como un método privado:
 
 \subsection{Instalación}
 
-CFGTS requiere Python~3.11 o superior. La instalación se realiza mediante \texttt{pip}:
+\texttt{CFGTS} requiere Python~3.11 o superior. La instalación se realiza mediante \texttt{pip}:
 
 \begin{lstlisting}[language=bash, caption={Instalación de CFGTS}]
 pip install cfgts
@@ -2585,9 +2585,9 @@ El proyecto utiliza \texttt{uv} como gestor de dependencias, \texttt{just} como 
 
 \subsection{Uso}
 
-El Código~\ref{lst:usage} muestra un ejemplo completo de uso de CFGTS con un modelo multi-salida y variables temporales con retardos. La convención de nombres \texttt{X\_t}, \texttt{X\_t-1}, \texttt{Y\_t-1}, etc., es utilizada por el algoritmo para inferir automáticamente las aristas temporales del grafo causal.
+El Código~\ref{lst:usage} muestra un ejemplo completo de uso de \texttt{CFGTS} con un modelo multi-salida y variables temporales con retardos. La convención de nombres \texttt{X\_t}, \texttt{X\_t-1}, \texttt{Y\_t-1}, etc., es utilizada por el algoritmo para inferir automáticamente las aristas temporales del grafo causal.
 
-\begin{lstlisting}[language=Python, caption={Ejemplo de uso de CFGTS con series temporales}, label={lst:usage}]
+\begin{lstlisting}[language=Python, caption={Ejemplo de uso de \texttt{CFGTS} con series temporales}, label={lst:usage}]
 from polars import DataFrame
 from sklearn.linear_model import LinearRegression
 from sklearn.multioutput import MultiOutputRegressor
@@ -2637,7 +2637,7 @@ print(cfgts.counterfactuals)
 En el ejemplo anterior se observan los siguientes aspectos relevantes:
 
 \begin{itemize}
-    \item El modelo se entrena con datos tabulares donde las entradas son variables temporales retardadas y las salidas corresponden al instante actual. CFGTS no impone restricciones sobre el tipo de regresor: cualquier estimador de scikit-learn que implemente \texttt{predict()} y produzca una salida de dimensión $D$ es compatible.
+    \item El modelo se entrena con datos tabulares donde las entradas son variables temporales retardadas y las salidas corresponden al instante actual. \texttt{CFGTS} no impone restricciones sobre el tipo de regresor: cualquier estimador de scikit-learn que implemente \texttt{predict()} y produzca una salida de dimensión $D$ es compatible.
     \item El parámetro \texttt{whitelist} restringe las variables que el optimizador puede modificar. En el ejemplo del Código~\ref{lst:usage}, solo se permiten cambios en los retardos más recientes \texttt{X\_t-1} y \texttt{Y\_t-1}, pero podrían incluirse otros retardos si el caso de uso lo requiere.
     \item Los parámetros \texttt{range\_min} y \texttt{range\_max} delimitan el espacio de búsqueda para todas las variables, correspondiendo a $r_{\min}$ y $r_{\max}$ de la formalización.
     \item Los parámetros \texttt{timeout} y \texttt{n\_walk\_steps} controlan, respectivamente, el tiempo máximo de las fases de optimización y el horizonte usado para generar observaciones adicionales en la validación causal.
@@ -3172,7 +3172,7 @@ En esta sección se demuestran los teoremas relativos al grafo causal temporal, 
 \paragraph*{Notación de trabajo}\mbox{}\\
 A lo largo de esta sección se fijan las siguientes convenciones:
 \begin{itemize}
-    \item $n_{\text{In}}, D \in \mathbb{N}$ con $D > 0$. Los vértices del grafo CFGTS son los índices $\{0, \ldots, n_{\text{In}} + D - 1\}$: la entrada $X_i$ se identifica con el índice $i$ (de modo que $0 \leq i < n_{\text{In}}$) y la salida $Y_d$ con el índice $n_{\text{In}} + d$ (de modo que $n_{\text{In}} \leq n_{\text{In}} + d < n_{\text{In}} + D$).
+    \item $n_{\text{In}}, D \in \mathbb{N}$ con $D > 0$. Los vértices del grafo de \texttt{CFGTS} son los índices $\{0, \ldots, n_{\text{In}} + D - 1\}$: la entrada $X_i$ se identifica con el índice $i$ (de modo que $0 \leq i < n_{\text{In}}$) y la salida $Y_d$ con el índice $n_{\text{In}} + d$ (de modo que $n_{\text{In}} \leq n_{\text{In}} + d < n_{\text{In}} + D$).
     \item Una variable temporal se describe por un par $(\text{id}_{\text{base}}, \text{lag}) \in \mathbb{N} \times \mathbb{N}$. La relación de causalidad temporal $\mathrm{tf}_1 \xrightarrow{t} \mathrm{tf}_2$ equivale a $\mathrm{lag}(\mathrm{tf}_1) > \mathrm{lag}(\mathrm{tf}_2)$.
     \item $\mathbf{x}, \mathbf{x}' : \{0, \ldots, n_{\text{In}}-1\} \to \mathbb{R}$ denotan la instancia original y un candidato contrafactual, vistos como familias de coordenadas; $f_d : \mathbb{R}^{n_{\text{In}}} \to \mathbb{R}$ es la $d$-ésima salida del modelo ajustado.
     \item $\boldsymbol{\beta}^{(d)} \in \mathbb{R}^{n_{\text{In}}}$ es el vector de efectos causales estimados para la salida $d$; $\varepsilon > 0$ es la constante de regularización.
