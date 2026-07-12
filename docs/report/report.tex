@@ -225,6 +225,31 @@ hmargin=3cm
         \color{azulUC3M}
         \begin{center}
 
+        \begin{figure}[H] %incluimos el logotipo de la Universidad
+            \makebox[\textwidth][c]{\includegraphics[width=16cm]{logo_UC3M.png}}
+        \end{figure}
+        \vspace{2.5cm}
+        \begin{Large}
+            Grado Universitario en Ingeniería Informática\\
+             2025-2026\\ %Indica el curso académico
+            \vspace{2cm}
+            \textsl{Trabajo Fin de Grado}
+            \bigskip
+
+        \end{Large}
+            {\Huge ``Propuesta de algoritmo de explicación contrafactual para el análisis de modelos predictivos de series temporales''}\\
+            \vspace*{0.5cm}
+            \rule{10.5cm}{0.1mm}\\
+            \vspace*{0.9cm}
+            {\LARGE José David Rico Días}\\
+            \vspace*{1cm}
+        \begin{Large}
+            Tutor\\
+            Antonio Berlanga de Jesús\\
+            Colmenarejo, Septiembre 2026\\
+        \end{Large}
+
+
         \end{center}
         \vfill
         \color{black}
@@ -1997,7 +2022,7 @@ En esta formulación del sesgo del MCO no se identifica con un error aditivo arb
 
 En otras palabras, la regresión lineal ajustada por todos los retardos estima el \emph{efecto directo} y no el \emph{efecto total}; la diferencia entre ambos es exactamente la contribución mediada omitida.
 
-\subsubsection{CausalModel vs LinearRegression}
+\subsubsection{CausalModel vs Naive LIME}
 
 Fijada una salida $d$, la comparación correcta se formula respecto del \textbf{efecto total} $\boldsymbol{\tau}^{(d)}$, no respecto del coeficiente directo condicionado. En la implementación Python se consideran dos estimadores alternativos:
 
@@ -2005,7 +2030,7 @@ Fijada una salida $d$, la comparación correcta se formula respecto del \textbf{
     \item \textbf{CausalModel} (con DAG y criterio de puerta trasera):
           $$\widehat{\boldsymbol{\beta}}_{\text{causal}}^{(d)} = \boldsymbol{\tau}^{(d)}.$$
           Es el estimador alineado con el efecto total que se quiere puntuar.
-    \item \textbf{LinearRegression} (MCO ajustado, pero sin usar el DAG):
+    \item \textbf{Naive LIME} (MCO ajustado, pero sin usar el DAG):
           $$\widehat{\boldsymbol{\beta}}_{\text{mco}}^{(d)} = \boldsymbol{\tau}^{(d)} + \mathbf{b}^{(d)},$$
           donde $\mathbf{b}^{(d)} \in \mathbb{R}^{n_{\text{In}}}$ es el vector de sesgo. En sistemas longitudinales, sus componentes recogen precisamente la parte mediada que queda bloqueada al condicionar sobre retardos intermedios.
 \end{itemize}
@@ -2344,7 +2369,7 @@ Para $h+1=2$, la descomposición $\mathbf{T}^{(2)} = \mathbf{D}^{(2)} + \mathbf{
     $$\operatorname{Bias}_{\mathrm{MCO}}^{(2)} = -\phi_1^2.$$
 \end{proof}
 
-\paragraph{CausalModel vs LinearRegression por objetivo}
+\paragraph{CausalModel vs Naive LIME por objetivo}
 
 \begin{theorem}[Error de predicción del MCO]
     Fijada una salida $d$, el error de predicción de los coeficientes MCO respecto del efecto total es exactamente la contribución del sesgo sobre la perturbación:
@@ -3408,7 +3433,7 @@ $$\mathbf{D}^{(h+1)} = A_{h+1}, \qquad \mathbf{M}^{(h+1)} = \sum_{j=0}^{h-1} A_{
     $$\mathbf{B}_{\mathrm{MCO}}^{(h+1)} = \mathbf{D}^{(h+1)} - \bigl(\mathbf{D}^{(h+1)} + \mathbf{M}^{(h+1)}\bigr) = -\mathbf{M}^{(h+1)}.$$
 \end{proof}
 
-\paragraph*{CausalModel vs LinearRegression por objetivo}
+\paragraph*{CausalModel vs Naive LIME por objetivo}
 
 En esta parte fijamos una salida $d$ y suponemos que $f_d$ es lineal con vector de coeficientes igual al efecto total $\boldsymbol{\tau}^{(d)} \in \mathbb{R}^{n_{\text{In}}}$ e intercepto $b_d$; es decir, los pesos internos del modelo son $\mathbf{w}^{(d)} = \boldsymbol{\tau}^{(d)}$. Se comparan los dos estimadores
 $$\widehat{\boldsymbol{\beta}}^{(d)}_{\text{mco}} = \boldsymbol{\tau}^{(d)} + \mathbf{b}^{(d)}, \qquad \widehat{\boldsymbol{\beta}}^{(d)}_{\text{causal}} = \boldsymbol{\tau}^{(d)},$$
@@ -3536,12 +3561,13 @@ TODO
 TODO
 \chapter* {Anexo G. Declaración de originalidad}
 
-TODO: complete
+Yo, José David Rico Días declaro que el TFG 'Propuesta de algoritmo de explicación contrafactual para el análisis de modelos predictivos de series temporales' es totalmente original mío, que no ha sido presentado en ninguna otra universidad como TFG y que todas las fuentes que han sido utilizadas han sido adecuadamente citadas y aparecen en las referencias bibiográficas.
+
+Colmenarejo, septiembre de 2026
 
 Firma:
 \begin{figure}[H]
     \includegraphics[width=0.3\linewidth]{firma.png}
 \end{figure}
-
 
 \end{document}
