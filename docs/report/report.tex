@@ -347,8 +347,8 @@ TODO
 
 La motivación de este trabajo surge desde dos perspectivas:
 \begin{itemize}
-    \item Un problema que me encontré durante una etapa de trabajo en \textit{Santander Corporate and Investment Banking}: dados los movimientos diarios en rendimiento de un portfolio de deuda, explicar qué tipo de porfolio tendríamos que haber tenido ayer para que el movimiento hubiese sido cero, en vez del movimiento finalmente observado. Los instrumentos de deuda presentan autocorrelación y correlación cruzada. Es necesario predecir los movimientos de ambos instrumentos, y explicar qué movimientos en los instrumentos de deuda en los días anteriores podrían haber llevado a un movimiento cero en el día actual. Este problema se puede formular como un problema de generación de explicaciones contrafactuales para modelos predictivos de series temporales.
-    \item El Trabajo de Fin de Grado que realicé en el Grado en Administración de Empresas, el cual implementó un modelo de series temporales para predecir los movimientos del libro de órdenes de varias empresas cotizadas. El libro de órdenes es un vector de precios, volúmenes, y número de agentes en competencia, para un instrumento financiero. Una de las incógnitas que los investigadores en microestructura de mercados intentan activamente resolver, es \textit{¿En qué estado tendría que haber estado el libro de órdenes para que el precio no hubiese cambiado?} Este problema igualmente se puede formular como un problema de generación de explicaciones contrafactuales para modelos predictivos de series temporales.
+    \item Un problema que me encontré durante una etapa de trabajo en \textit{Santander Corporate and Investment Banking}: dados los movimientos diarios en rendimiento de un portfolio de deuda, explicar qué tipo de portfolio tendríamos que haber tenido ayer para que el movimiento hubiese sido cero, en vez del movimiento finalmente observado. Los instrumentos de deuda presentan autocorrelación y correlación cruzada. Es necesario predecir los movimientos de ambos instrumentos, y explicar qué movimientos en los instrumentos de deuda en los días anteriores podrían haber llevado a un movimiento cero en el día actual. Este problema se puede formular como un problema de generación de explicaciones contrafactuales para modelos predictivos de series temporales.
+    \item El Trabajo de Fin de Grado que realicé en el Grado en Administración de Empresas, el cual implementó un modelo de series temporales para predecir los movimientos del libro de órdenes de varias empresas cotizadas. El libro de órdenes es un vector de precios, volúmenes, y número de agentes en competencia, para un instrumento financiero. Una de las incógnitas que los investigadores en microestructura de mercados intentan activamente resolver es \textit{¿En qué estado tendría que haber estado el libro de órdenes para que el precio no hubiese cambiado?} Este problema igualmente se puede formular como un problema de generación de explicaciones contrafactuales para modelos predictivos de series temporales.
 \end{itemize}
 
 Ambas motivaciones nacen de un interés personal, pero la generación de contrafactuales en caso particular de las series temporales no solo tiene aplicaciones en finanzas, pues como veremos a lo largo de este trabajo las técnicas de generación de contrafactuales son aplicables en múltiples domininios, mientras exista un modelo y una predicción que explicar. Las buenas explicaciones contrafactuales son plausibles, aumentan nuestra confianza en el modelo y amplían nuestro conocimiento sobre el fenómeno que se modela, lo que es especialmente relevante en dominios de alto impacto como la medicina, la justicia o las finanzas.
@@ -392,7 +392,7 @@ p_X(x)=\mathbb{P}(X=x),
 \sum_{x\in\mathcal{X}} p_X(x)=1.
 $$
 
-\textbf{Variable continua.} Si $X$ es contínua, entonces debe existir un $f_X$ tal que
+\textbf{Variable continua.} Si $X$ es continua, entonces debe existir un $f_X$ tal que
 $$
 \mathbb{P}(a\leq X\leq b)=\int_a^b f_X(x)\,dx,
 \qquad
@@ -1012,7 +1012,7 @@ Un ejemplo con datos continuos más relacionado con el campo de la informática:
 
 \subsection{Grafos causales como lenguaje matemático}
 
-La paradoja de Simpson muestra que, en problemas causales, los datos observados no siempre bastan para tomar decisiones correctas: es necesario incorporar hipótesis sobre el proceso generador de los datos (DPG, \textit{Data Generating Process}). Ese proceso puede expresarse de forma compacta mediante grafos causales dirigidos acíclicos (DAG, \textit{Directed Acyclic Graphs}) \cite{Pearl2016-nx}.
+La paradoja de Simpson muestra que, en problemas causales, los datos observados no siempre bastan para tomar decisiones correctas: es necesario incorporar hipótesis sobre el proceso generador de los datos (\textit{DGP}, \textit{Data Generating Process}). Ese proceso puede expresarse de forma compacta mediante grafos causales dirigidos acíclicos (DAG, \textit{Directed Acyclic Graphs}) \cite{Pearl2016-nx}.
 
 Un grafo $G=(V,E)$ está formado por un conjunto de nodos $V$ (variables) y un conjunto de aristas $E$ (relaciones). En causalidad, las aristas son dirigidas y se interpretan como influencias causales directas. Si existe una flecha $X \to Y$, entonces $X$ es \textit{padre} de $Y$ y $Y$ es \textit{hijo} de $X$.
 
@@ -1466,18 +1466,94 @@ Esta factorización recursiva es la que legitima trasladar al dominio temporal t
 
 Este sumatorio de productos se organiza de forma matricial en las matrices de efecto total $\mathbf{T}^{(h)}$ que se desarrollan formalmente más adelante (ecuación~\eqref{eq:formal_total_lag_effect}). La distinción es importante: el coeficiente de retardo aislado $[A_\tau]_{uv}$ es solo el efecto \emph{directo}, mientras que el efecto total acumula además todas las rutas \emph{mediadas} por instantes intermedios. Una regresión ingenua de $Z^u_t$ sobre $Z^v_{t-\tau}$ no recupera ninguno de los dos de forma limpia, pues mezcla mediación y confusión a través del pasado común; esta es precisamente la brecha que motiva un tratamiento causal explícito de los efectos directos y mediados.
 
-\section{Instancias contrafactuales}
+\section{Explicabilidad en IA}
 
-\subsection{Explicaciones contrafactuales}
+La innovación en los métodos de inteligencia artificial ha venido acompañada de un mayor poder de predicción en dominios cada vez más diversos, pero igualmente este mayor poder de predicción ha provocado una mayor complejidad de los métodos y modelos. A diferencia de los modelos estadísticos puros, gobernados por ecuaciones, los métodos de IA se caracterizan por aprender mapas entre conjuntos de datos de acuerdo a un algoritmo. Existen mapas que son fácilmente explicables, como los árboles de decisión, y otros en los que es imposible dar una explicación directa, como las redes de neuronas. Muchos métodos de IA dan lugar al conocido como "problema de la caja negra", es decir, el modelo es una caja negra que admite entradas y proporciona salidas, sin que podamos saber fácilmente porqué.
 
-\section{Optimización multi-objetivo}
+El problema de la caja negra es estudiado en profundidad por el campo de la IA explicable (\textit{XAI}, \textit{Explainable AI}). La XAI permite obtener nuevas interpretaciones sobre los resultados y funcionamientos de modelos, que a priori no son explicables.
+
+La \textit{interpretabilidad} es el grado en el que un ser humano es capaz de entender la causa de una decisión \cite{Miller2019}, y es el término más básico en explicabilidad: una persona es capaz de entender el \textit{porqué} de un resultado. Esta definición además permite dar un grado de interpretabilidad a los modelos, los modelos más interpretables son más fáciles de entender, y viceversa.
+
+La importancia de la interpretabilidad de los modelos radica en que, aunque tengamos modelos con métricas perfectas, sólo la intepretabilidad de los resultados permite que las personas confíen en las respuestas; por ejemplo en el campo sanitario es tan importante conocer el porqué de una enfermedad como saber qué enfermedad tiene un paciente. En segundo lugar, recurrir a modelos (ya sean IA o de cualquier tipo) para dar solución a cierto problema (por ejemplo clasificar si un anuncio aumentará el número de clicks) solo permite responder al \textbf{qué} (aumento de clicks) pero no al \textbf{porqué} (qué elementos del anuncio provocan mayores clicks), y en muchas ocasiones es más importante el \textbf{porqué}. Otras razones por las que la interpretabilidad es necesaria son:
+\begin{itemize}
+    \item Curiosidad: la necesidad humana de entender aunque no nos suponga ningún beneficio directo. Por ejemplo saber porqué un modelo clasifica un planeta como habitable o no habitable.
+    \item Encontrar un significado a los fenómenos que no entedemos. Por ejemplo \textit{¿Por qué Amazon me recomienda estos productos?}
+        \begin{figure}[H]
+            \ffigbox[\FBwidth] {
+                \caption[Recomendación y su significado]{Recomendación de Amazon por la compra de un iPad Pro M5. El modelo de recomendación muestra los productos que se compran juntos frecuentemente. La web de Amazon muestra el significado de esa recomendación. Fuente: elaboración propia.}
+            }
+            {\includegraphics[width=0.75\linewidth]{recomendados-porque.png}}
+        \end{figure}
+
+    \item Detectar sesgo: para poder reconducir o prevenir que el modelo tome deciones sesgadas, tomando decisiones que serían consideradas injustas.
+    \item Aceptación social, para que el modelo pueda ser usado sin causar malestar.
+    \item Encontrar un lenguaje común. Por ejemplo un robot limpiador puede quedarse parado porque su motor paso a paso no puede girar al menos a 20 rpm, la señal real es \textit{el pin 12 necesita al menos 200mA, está por encima del límite programado}; la interpretración con lenguaje común debería ser \textit{estoy atascado porque no consigo girar la rueda}.
+    \item Auditar los modelos, para prevenir fallos sistemáticos. Por ejemplo un modelo de clasificación de cáncer puede tener un 99.9\% de \textit{accuracy} promedio, pero para un tipo de cáncer concreto tener un 20\%.
+\end{itemize}
+
+Una \textit{explicación} consiste en una forma superior de interpretabilidad, y es una respuesta a una pregunta de tipo \textbf{porqué}, por ejemplo \textit{¿por qué el alumno tardó tanto en entregar el TFG?}. Las buenas explicaciones cumplen \cite{Miller2019}:
+\begin{itemize}
+    \item Son contrastivas \cite{Lipton1990}. No solo queremos conocer porqué el modelo dió un resultado \textit{A}, sino también porqué \textit{A} y no otro resultado \textit{A'}. La explicaciones que son contrastivas nos dan una respuesta de las diferencias que han provocado una respuesta \textit{A} a diferencia de una respuesta \textit{A'}. La explicaciones que son contrastivas dependen totalmente de la aplicación que se le de al modelo, por ejemplo un modelo puede predecir que un paciente tiene un melanoma. Desde el punto del vista del médico, la explicación contrastiva es \textit{¿qué diferencia a este paciente de otro paciente con características similares?}, pero desde el punto de vista del paciente la explicación contrastiva sería \textit{¿qué valores debería tener distintos para que no hubiese predicho melanoma?}. El médico puede probar otras terapias, mientras que el paciente puede fijarse en otros pacientes para copiar su estilo de vida; aunque el modelo es el mismo la explicación contrastiva es distinta.
+    \item Son selectivas, pues dan los motivos que más han influenciado la decisión del modelo.
+    \item Son sociales, dependen del conocimiento y capacidad del receptor, y están hechas para las personas. A un joven ingeniero informático le puedes explicar que la web no funciona porque debido a falta de memoria en los nodos, hay un \texttt{CrashLoopBackoff} en los \texttt{pods}, y ha causado un \textit{retry storm}, pero a un ejecutivo debes explicarle que la caída de la web \textit{se debe a causas ajenas al equipo de ingeniería, y se está trabajando en recuperarla}. Ambas explicaciones son ciertas, pero están adaptadas a la persona que la recibe.
+    \item Se centran en lo más sorprendente para el receptor de la explicación, pues las personas se fijan más en las razones sorprendentes que en las comunes.
+    \item Son fieles, pues sino no sirven de nada.
+    \item Son consistentes con las creencias que tiene el receptor de la explicación. Las explicaciones deben seguir el modelo mental del receptor sobre las causas y los efectos. Una explicación demasiado sorprendente puede ser descartada como incierta.
+    \item Se pueden refutar, es decir que si no fuese cierta la explicación se puede comprobar. Por ejemplo para el modelo de publicidad creamos una explicación que dice que dice que el tamaño del título afecta en los clicks; se puede refutar poniendo el tamaño del título igual que el texto principal y observando como bajan los clicks.
+\end{itemize}
+
+\begin{figure}[H]
+    \ffigbox[\FBwidth] {
+        \caption[Niveles de entendimiento de los modelos]{Niveles de entendimiento de los modelos desde el punto de vista de un investigador. Fuente: elaboración propia.}
+    }
+    {\includegraphics[width=0.85\linewidth]{interpretabilidad.png}}
+\end{figure}
+
+Los métodos de XAI son diversos y permiten atacar los problemas de explicabilidad desde distintos ángulos, dependendiendo de las necesidades del problema. Según \cite{molnar2025, Kamath2021} los problemas de explicabilidad se pueden acotar según:
+\begin{itemize}
+    \item Alcance de la explicabilidad
+    \begin{itemize}
+        \item Global. Los métodos de alcance global son útiles cuando se busca explicar el comportamiento agregado del modelo, y se provee de métodos que permiten comprender el modelo independientemente de los inputs utilizados. Este tipo de alcance da un entendimiento sobre los mecanismos internos del modelo.
+        \item Local. En contraste, el alcance local trata de explicar como un subconjunto de las posibles entradas se comporta una vez entra al modelo para producir la salida. Lo que se busca es comprender cómo se ha generado el output a partir de cierto input, es decir acotando el funcionamiento del modelo a las partes que involucran dicho input.
+    \end{itemize}
+    \item Etapa de uso del modelo
+    \begin{itemize}
+        \item Previo al uso de un modelo. Aquí pertenecen las técnicas que solo son aplicables a los datos, y también se le conoce como \textit{EDA}, \textit{Exploratory Data Analysis}. Los métodos de explicabilidad previos al uso del modelo tratan de adquirir un entendimiento de cómo se generan los datos y cómo se relacionan.
+        \item Con el modelo entrenado. También se lo conoce como métodos autoexplicativos, y usan la estructura interna del modelo, que suele ser inherentemente explicable, para producir la explicación. Incluye métodos como los árboles de decisión.
+        \item Con el modelo produciendo salidas. Se suelen aplicar a modelos considerados cajas negras, como las redes de neuronas, y son aplicables cuando la estructura interna del modelo no permite adquirir un entendimiento.
+    \end{itemize}
+    \item Conocimiento sobre el modelo
+    \begin{itemize}
+        \item Específico del modelo. Cuando el procedimiento para adquirir explicabilidad es específico, se trata de explotar cierta estructura o conocimiento que tenemos del modelo para producir explicaciones; esto causa que dichos métodos solo puedan usarse en modelos concretos. Por ejemplo los métodos de explicabilidad de los árboles de decisión son necesariamente específicicos, ya que se debe tener un árbol y no otro tipo de estructura. Son métodos más ventajosos que los agnósticos, porque explotan más información.
+        \item Agnóstico al modelo. Son métodos de XAI aplicables a cualquier modelo, y no explotan el funcionamiento del modelo, sino que a través de las entradas, salidas y ejecutar el modelo varias veces, es posible obtener explicaciones. Por ejemplo el método LIME (\textit{Local Interpretable Model-agnostic Explanations}).
+    \end{itemize}
+\end{itemize}
 
 \chapter{Objetivos}
 
 \chapter{Estado del arte}
-\section{Explicaciones contrafactuales}
 
-\section{Explicaciones contrafactuales en series temporales}
+Las explicaciones contrafactuales son predicciones que describen el cambio mínimo a realizar a una instancia para que el modelo prediga un nuevo valor predefinido. Estas predicciones responden a preguntas del tipo \textit{"si X no hubiese ocurrido, Y no habría ocurrido"}, como por ejemplo \textit{"si hubiese tenido mayor salario, me habrían concedido el préstamo"}. Las explicaciones contrafactuales son predicciones sobre mundos hipotéticos, ya que la instancia original es el suceso que en realidad sí ocurrió. Las explicaciones contrafactuales deben ser amigables con los seres humanos, similares a la instancia original, accionables y variadas \cite{molnar2025}.
+
+\section{Modelos surrogados}
+
+Los modelos surrogados son modelos que se entrenan para aproximar la distribución de un modelo más complejo, normalmente de tipo caja negra. Estos modelos surrogados son inherentemente interpretables, lo que permite extraer conclusiones a través del nuevo modelo, tanto del funcionamiento del modelo complejo como de los datos usados.
+
+Los modelos surrogados pueden ser tanto globales (si se entrenan sobre la distribución completa) o locales (si se usa un subconjunto) \cite{Kamath2021, molnar2025}. En ambos casos, también se conoce al proceso de obtener modelos surrogados como "destilación", sobre todo en un contexto de modelos de redes de neuronas \cite{hinton2015}. Este trabajo se centrará en los modelos surrogados locales, pues se ajustan al objetivo del problema a resolver. Los modelos surrogados locales tienen un amplio uso en la ingeniería aeroespacial, por ejemplo para calcular las turbulencias en las puntas de las alas o el frenado de un satélite en la reentrada a la atmósfera \cite{Ghosh2021}.
+
+Respecto al uso en inteligencia artificial, la metodología de interpretabilidad con modelos surrogados ha evolucionado de usar un único método para analizar todo el modelo, a generar un \textit{ensemble} de modelos, calibrados para distintas zonas de la distribución de entrada del modelo a interpretar \cite{Pitra2025}; la potencia del modelo surrogado depende en gran medida de la región de estudio y de la no linearidad del modelo original. En particular, se consideran métodos de frontera aquellos que usan procesos gaussianos, sobre todo cuando es necesario dar una cota de error máxima al modelo surrogado. En \cite{Jia2020} presentan AutoSM (\textit{Auto Surrogate Model}), un algoritmo genético que dado el tamaño de muestra, escala, ruido, etc. ajusta los hiperparámetros de de un árbol de decisión, este árbol de decisión luego da lugar a distintos modelos surrogados que se usan finalmente para la interpretración. En \cite{Hess2013} explican el método \textit{PROGRESS} (\textit{Progressive Reinforcement-Learning-Based Surrogate Selection}), un método de aprendizaje por refuerzo para seleccionar un \textit{ensemble} óptimo a partir de una familia de modelos surrogados. En \cite{Raissi2016DeepMG} y \cite{Kerleguer2024} usan una combinación de procesos gaussianos y redes neuronales para conseguir que el modelo surrogado capture las características no lineales del modelo original, especialmente si existen saltos de discontinuidad. En \cite{Yuan2024} se usan modelos surrogados de tipo árbol bayesiano para poder dar garantías estadísticas sobre la incertidumbre del error; este tipo de modelo surrogados son útiles para que la interpretación pueda tener un error no solo especificado, sino también calibrado. En \cite{Boodaghidizaji2022} presentan un modelo surrogado únicamente basado en redes de neuronas profundas para problemas de física de fluidos, adquiriendo mejor rendimiento que los procesos gaussianos en condiciones de alta dimensionalidad. Respecto a la selección del subconjunto de entrenamiento del modelo surrogado, se suele optar por usar de forma completa la región de interés.
+
+Por último el método canónico de generación de modelos surrogados lo encontramos en LIME. LIME es un método propuesto por \cite{Ribeiro2016} en el que dada una instancia $\mathbf{x}$, se genera una vecindad de puntos (perturbación), y por medio de la ejecución repetida del modelo original se obtiene un nuevo subconjunto de datos, ignorando los datos originales. El modelo surrogado es inherentemente interpretrable, y se suelen usar modelos surrogados basados en MCO, lasso o árboles de decisión. El modelo surrogado funciona como una aproximación local fidedigna. Sin pérdida de generalidad, se puede describir el caso de LIME con MCO, (que es el de mayor interés en este trabajo):
+\begin{enumerate}
+    \item Se escoge un punto de interés (pivote) sobre el que centrar el modelo surrogado.
+    \item Genera una perturbación alrededor del punto de interés usando una distribución de media y varianza igual por cada columna del modelo.
+    \item Las muestras generadas en la perturbación se ponderan de acuerdo a la cercanía con la instancia original. Por defecto LIME usa (en datos tabulares) un kernel de suavizado exponencial.
+    \item Con la muestra relevante, se entrena el modelo surrogado. Por defecto se usa una regresión tipo Ridge \footnote{\url{https://github.com/marcotcr/lime/blob/ce2db6f20f47c3330beb107bb17fd25840ca4606/lime/lime_tabular.py\#L265}} , pero se puede usar cualquier modelo de regresión.
+\end{enumerate}
+LIME por defecto usa un kernel con suavizado exponencial para escoger la vecindad de puntos. El tamaño de kernel es 0.75 por la raíz cuadrada del número de columnas del modelo surrogado \footnote{\url{https://github.com/marcotcr/lime/blob/ce2db6f20f47c3330beb107bb17fd25840ca4606/lime/lime_tabular.py\#L195}}. Este valor por defecto afecta completamente al rendimiento y parámetros finales del modelo surrogado, siendo además que el valor del tamaño de kernel y el hecho de usar un kernel de suavizado exponencial, son elecciones arbritarias \cite{molnar2025}.
+
+Una de los problemas no resueltos en la literatura es escoger un modelo surrogado que sepamos que tiene un error acotado, en qué regiones y qué vecindad de datos se debe usar para generar el modelo surrogado \cite{Werth2018}. La tendencia general es en escoger modelos surrogados que tengan un rendimiento adecuado a lo largo de varias métricas, como varianza, media o interpretabilidad, y no solo escoger el modelo surrogado con el menor error. El paso de escoger un modelo surrogado (y las regiones aplicables) cada vez se apoya más en métodos automáticos, en vez de ser un paso previo a la interpretación del modelo; el hecho de que existan regiones más explicables de forma automática da una pista al investigador de dónde el modelo original se comporta de forma esperada y dónde no.
+
 
 \chapter{Análisis del problema}
 
@@ -1499,7 +1575,6 @@ Además, el problema se sitúa con frecuencia en la frontera de la distribución
 En este capítulo se presenta \texttt{CFGTS} (\textit{CounterFactual Generation for Time Series}), un algoritmo de generación de explicaciones contrafactuales para modelos predictivos de series temporales. El algoritmo se estructura en tres fases secuenciales: (1) generación de candidatos contrafactuales mediante optimización multi-objetivo, (2) generación de un conjunto de cobertura para enriquecer el espacio muestral, y (3) evaluación causal de cada contrafactual generado.
 
 Conceptualmente, \texttt{CFGTS} opera en dos espacios acoplados. En el espacio de entrada busca perturbaciones plausibles de la instancia original; en el espacio de salida construye una vecindad alrededor de la predicción original y del objetivo contrafactual, y sobre esa vecindad estima un modelo causal auxiliar. La calidad final de cada contrafactual se mide por el grado de alineación entre el cambio esperado según ese modelo causal y el cambio realmente inducido por el predictor en todas sus salidas.
-
 
 \section{Notación}
 
@@ -2024,15 +2099,16 @@ En otras palabras, la regresión lineal ajustada por todos los retardos estima e
 
 \subsubsection{CausalModel vs Naive LIME}
 
-Fijada una salida $d$, la comparación correcta se formula respecto del \textbf{efecto total} $\boldsymbol{\tau}^{(d)}$, no respecto del coeficiente directo condicionado. En la implementación Python se consideran dos estimadores alternativos:
+De cara a motivar la propuesta, se presenta una variación del modelo visto hasta ahora. Se ha motivado la existencia de una estructura de grafo demostrando que cuando se omiten las interacciones se introducen sesgos. Es natural entonces, usar algún tipo de modelo que tenga en cuenta la estructura de grafo autorregresivo. Si por el contrario se usa un modelo que use únicamente una regresión directa, de tipo MCO, pueden llegar a darse sesgos en la respuesta de la calidad del contrafactual. Gran parte de este trabajo se centra en motivar porqué ignorar la estructura induce sesgos.
 
+Fijada una salida $d$, la comparación correcta se formula respecto del \textbf{efecto total} $\boldsymbol{\tau}^{(d)}$, no respecto del coeficiente directo condicionado, y se consideran dos modelos alternativos:
 \begin{itemize}
     \item \textbf{CausalModel} (con DAG y criterio de puerta trasera):
           $$\widehat{\boldsymbol{\beta}}_{\text{causal}}^{(d)} = \boldsymbol{\tau}^{(d)}.$$
           Es el estimador alineado con el efecto total que se quiere puntuar.
     \item \textbf{Naive LIME} (MCO ajustado, pero sin usar el DAG):
           $$\widehat{\boldsymbol{\beta}}_{\text{mco}}^{(d)} = \boldsymbol{\tau}^{(d)} + \mathbf{b}^{(d)},$$
-          donde $\mathbf{b}^{(d)} \in \mathbb{R}^{n_{\text{In}}}$ es el vector de sesgo. En sistemas longitudinales, sus componentes recogen precisamente la parte mediada que queda bloqueada al condicionar sobre retardos intermedios.
+          donde $\mathbf{b}^{(d)} \in \mathbb{R}^{n_{\text{In}}}$ es el vector de sesgo (también conocido como término independiente).
 \end{itemize}
 
 \subsubsection{Algoritmo}
