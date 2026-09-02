@@ -276,7 +276,7 @@ hmargin=3cm
 
     El algoritmo consiste en 3 fases diferenciadas. La primera fase de generación de contrafactuales encontrados mediante la resolución de problema de optimización no lineal. La segunda fase es la generación de un espacio de cobertura en el intervalon generado por los valores objetivo en los contrafactuales. Por último se genera un modelo causal sobre el intervalo de cobertura, y se asigna una puntuación a cada contrafactual; la puntuación mide el grado de alineación del contrafactual contra las suposiciones causales que tienen los modelos de series temporales.
 
-    Luego se presenta la implementación del algoritmo que se ha realizado en Python, dado que el código es públicamente accesible.
+    El trabajo incluye la implementación del algoritmo que se ha realizado en Python, dado que el código es públicamente accesible.
 
     % TODO Add more?
 
@@ -1586,10 +1586,10 @@ Podemos clasificar los algoritmos de generación de contrafactuales según:
               \item Específicos del modelo, si el algoritmo de generación sólo puede aplicarse a un modelo concreto.
           \end{itemize}
     \item Según el uso de los datos de entrenamiento
-    \begin{itemize}
-        \item Exógenos a los datos. Este tipo de algoritmos no usan las instancias de los datos de entrenamiento del modelo original para generar los contrafactuales. Pueden generar contrafactuales que estén fuera de los datos de entrenamiento
-        \item Endógeno a los datos. Cuando el algoritmo es endógeno a los datos, buscará los contrafactuales en el propio dataset de entrenamiento. Este tipo de algoritmos están muy relacionados con los de generación de instancias prototípicas.
-    \end{itemize}
+          \begin{itemize}
+              \item Exógenos a los datos. Este tipo de algoritmos no usan las instancias de los datos de entrenamiento del modelo original para generar los contrafactuales. Pueden generar contrafactuales que estén fuera de los datos de entrenamiento
+              \item Endógeno a los datos. Cuando el algoritmo es endógeno a los datos, buscará los contrafactuales en el propio dataset de entrenamiento. Este tipo de algoritmos están muy relacionados con los de generación de instancias prototípicas.
+          \end{itemize}
 \end{itemize}
 Continuando con la literatura, podemos encontrar algoritmos concretos más relevantes a los problemas que se tratan en este trabajo.
 
@@ -2672,31 +2672,31 @@ La clase \texttt{CFGTS} expone un constructor con los parámetros descritos en l
     {\caption{Parámetros del constructor de la clase CFGTS}\label{tab:params}}
     {\begin{tabular}{|p{4cm}|p{3.2cm}|p{1.5cm}|p{4.5cm}|}
             \hline
-            \textbf{Parámetro}      & \textbf{Tipo}             & \textbf{Defecto} & \textbf{Descripción}                                                                  \\
+            \textbf{Parámetro}      & \textbf{Tipo}             & \textbf{Defecto} & \textbf{Descripción}                                                                                                                                                                               \\
             \hline
-            \texttt{model}          & \texttt{RegressorMixin}   & ---              & Modelo de regresión de scikit-learn previamente ajustado                              \\
+            \texttt{model}          & \texttt{RegressorMixin}   & ---              & Modelo de regresión de scikit-learn previamente ajustado                                                                                                                                           \\
             \hline
-            \texttt{instance}       & \texttt{DataFrame}        & ---              & Instancia original $\mathbf{x}_0$ (una fila)                                          \\
+            \texttt{instance}       & \texttt{DataFrame}        & ---              & Instancia original $\mathbf{x}_0$ (una fila)                                                                                                                                                       \\
             \hline
             \texttt{counterfactual
-                \_value}  & \texttt{DataFrame}        & ---              & Vector objetivo $\mathbf{y}^{*}$                                                                \\
+                \_value}  & \texttt{DataFrame}        & ---              & Vector objetivo $\mathbf{y}^{*}$                                                                                                                                                                             \\
             \hline
-            \texttt{whitelist}      & \texttt{list[str] | None} & \texttt{None}    & Variables modificables $W$. Si es \texttt{None}, todas las variables son modificables \\
+            \texttt{whitelist}      & \texttt{list[str] | None} & \texttt{None}    & Variables modificables $W$. Si es \texttt{None}, todas las variables son modificables                                                                                                              \\
             \hline
-            \texttt{timeout}        & \texttt{int}              & \texttt{60}      & Tiempo máximo (en segundos) por fase de optimización                                  \\
+            \texttt{timeout}        & \texttt{int}              & \texttt{60}      & Tiempo máximo (en segundos) por fase de optimización                                                                                                                                               \\
             \hline
-            \texttt{n\_walk\_steps} & \texttt{int}              & \texttt{4}       & Número de pasos de avance temporal usados para enriquecer el conjunto causal          \\
+            \texttt{n\_walk\_steps} & \texttt{int}              & \texttt{4}       & Número de pasos de avance temporal usados para enriquecer el conjunto causal                                                                                                                       \\
             \hline
             \texttt{n\_trials}      & \texttt{int | None}       & \texttt{None}    & Número máximo de ensayos por fase. Cada fase se detiene al alcanzar el primero de los dos límites, \texttt{n\_trials} o \texttt{timeout}; fijarlo hace los resultados independientes de la máquina \\
             \hline
             \texttt{n\_coverage
-                \_trials} & \texttt{int | None}       & \texttt{None}    & Sustituye a \texttt{n\_trials} solo en la Fase~2. Si es \texttt{None}, se emplea \texttt{n\_trials}                                                                                              \\
+                \_trials}     & \texttt{int | None}       & \texttt{None}    & Sustituye a \texttt{n\_trials} solo en la Fase~2. Si es \texttt{None}, se emplea \texttt{n\_trials}                                                                                                      \\
             \hline
-            \texttt{range\_min}     & \texttt{int}              & \texttt{-10}     & Límite inferior $r_{\min}$ del espacio de búsqueda                                    \\
+            \texttt{range\_min}     & \texttt{int}              & \texttt{-10}     & Límite inferior $r_{\min}$ del espacio de búsqueda                                                                                                                                                 \\
             \hline
-            \texttt{range\_max}     & \texttt{int}              & \texttt{10}      & Límite superior $r_{\max}$ del espacio de búsqueda                                    \\
+            \texttt{range\_max}     & \texttt{int}              & \texttt{10}      & Límite superior $r_{\max}$ del espacio de búsqueda                                                                                                                                                 \\
             \hline
-            \texttt{**kwargs}       & \texttt{str}              & ---              & Argumentos opcionales. Clave soportada: \texttt{verbose} (nivel de \textit{logging})  \\
+            \texttt{**kwargs}       & \texttt{str}              & ---              & Argumentos opcionales. Clave soportada: \texttt{verbose} (nivel de \textit{logging})                                                                                                               \\
             \hline
         \end{tabular}}
 \end{table}
@@ -2813,9 +2813,9 @@ Cada serie se entrena con los métodos usuales para series temporales, con un sp
             \hline
             \textbf{Conjunto} & \textbf{Vars.} & \textbf{Series} & \textbf{Vent. test} & \textbf{Instancias} \\
             \hline
-            Sintético AR(2)  & 1 & 20 & 46 & 15 \\
+            Sintético AR(2)   & 1              & 20              & 46                  & 15                  \\
             \hline
-            \textit{Sunspots} & 1 & 1  & 6  & 6  \\
+            \textit{Sunspots} & 1              & 1               & 6                   & 6                   \\
             \hline
         \end{tabular}}
 \end{table}
@@ -2831,39 +2831,39 @@ La Tabla~\ref{tab:res_protocolo} recoge la configuración, que constitute 126 ej
     {\caption{Configuración experimental de la evaluación de CFGTS}\label{tab:res_protocolo}}
     {\begin{tabular}{|p{6.2cm}|p{5.8cm}|}
             \hline
-            \textbf{Parámetro}                             & \textbf{Valor}                                    \\
+            \textbf{Parámetro}                      & \textbf{Valor}                                                  \\
             \hline
-            Orden de retardo $p$                           & 3                                                 \\
+            Orden de retardo $p$                    & 3                                                               \\
             \hline
-            Horizonte de predicción $T$                    & 6                                                 \\
+            Horizonte de predicción $T$             & 6                                                               \\
             \hline
-            Partición                                      & 60/20/20                                          \\
+            Partición                               & 60/20/20                                                        \\
             \hline
-            Normalización                                  & \textit{min-max}                                  \\
+            Normalización                           & \textit{min-max}                                                \\
             \hline
-            Paso entre ventanas de prueba                  & $p + T = 9$                                       \\
+            Paso entre ventanas de prueba           & $p + T = 9$                                                     \\
             \hline
-            Modelos                                        & Regresión lineal y \textit{Random Forest}         \\
+            Modelos                                 & Regresión lineal y \textit{Random Forest}                       \\
             \hline
-            \texttt{n\_trials} (Fase~1)                    & 300                                               \\
+            \texttt{n\_trials} (Fase~1)             & 300                                                             \\
             \hline
-            \texttt{n\_coverage\_trials} (Fase~2)          & 10                                                \\
+            \texttt{n\_coverage\_trials} (Fase~2)   & 10                                                              \\
             \hline
-            \texttt{timeout} (tope de seguridad)           & 60\,s                                             \\
+            \texttt{timeout} (tope de seguridad)    & 60\,s                                                           \\
             \hline
-            $[r_{\min}, r_{\max}]$                         & $[0,\ 3]$                                         \\
+            $[r_{\min}, r_{\max}]$                  & $[0,\ 3]$                                                       \\
             \hline
-            \texttt{n\_walk\_steps}                        & 1                                                 \\
+            \texttt{n\_walk\_steps}                 & 1                                                               \\
             \hline
-            Desplazamiento del objetivo $cp$               & $0{,}50$                                          \\
+            Desplazamiento del objetivo $cp$        & ${,}50$                                                         \\
             \hline
-            Semillas por instancia                         & $\{0, 1, 2\}$                                     \\
+            Semillas por instancia                  & $\{0, 1, 2\}$                                                   \\
             \hline
-            Tamaño del submuestreo $K$                     & 5                                                 \\
+            Tamaño del submuestreo $K$              & 5                                                               \\
             \hline
-            Perturbaciones de control por ejecución        & 25                                                \\
+            Perturbaciones de control por ejecución & 25                                                              \\
             \hline
-            Semilla base                                   & 42\footnote{El sentido de la vida, el universo y todo lo demás}                                                \\
+            Semilla base                            & 42\footnote{El sentido de la vida, el universo y todo lo demás} \\
             \hline
         \end{tabular}}
 \end{table}
@@ -2891,9 +2891,9 @@ Antes de interpretar el \textit{score} se comprueba que los modelos usados son d
             \hline
             \textbf{Conjunto} & \textbf{Lineal} & \textbf{Random Forest} \\
             \hline
-            Sintético AR(2)   & 7{,}62  & 8{,}07  \\
+            Sintético AR(2)   & 7{,}62          & 8{,}07                 \\
             \hline
-            \textit{Sunspots} & 15{,}63 & 12{,}94 \\
+            \textit{Sunspots} & 15{,}63         & 12{,}94                \\
             \hline
         \end{tabular}}
 \end{table}
@@ -2907,15 +2907,15 @@ La Tabla~\ref{tab:res_principal} contiene el resultado central de la evaluación
     {\caption[Puntuación causal frente al control aleatorio]{Puntuación media del frente de Pareto ($\bar{s}$, con intervalo de confianza al 95\,\%), puntuación media del control aleatorio ($\bar{s}_{\text{ctrl}}$) y diferencia entre ambas ($\Delta$), con el valor $p$ de la prueba $t$ emparejada. Las medias se toman sobre ventanas de prueba independientes, promediando previamente las tres semillas de cada instancia.}\label{tab:res_principal}}
     {\begin{tabular}{|p{2.9cm}|p{2.4cm}|c|c|c|c|}
             \hline
-            \textbf{Conjunto} & \textbf{Modelo} & $\bar{s}$ & $\bar{s}_{\text{ctrl}}$ & $\Delta$ & $p$ \\
+            \textbf{Conjunto} & \textbf{Modelo} & $\bar{s}$            & $\bar{s}_{\text{ctrl}}$ & $\Delta$   & $p$                 \\
             \hline
-            Sintético AR(2)  & Lineal        & $0{,}970 \pm 0{,}009$ & $0{,}890$ & $+0{,}080$ & $\mathbf{<0{,}001}$ \\
+            Sintético AR(2)   & Lineal          & ${,}970 \pm 0{,}009$ & ${,}890$                & $+0{,}080$ & $\mathbf{<0{,}001}$ \\
             \hline
-            Sintético AR(2)  & Random Forest & $0{,}617 \pm 0{,}046$ & $0{,}506$ & $+0{,}110$ & $\mathbf{0{,}005}$  \\
+            Sintético AR(2)   & Random Forest   & ${,}617 \pm 0{,}046$ & ${,}506$                & $+0{,}110$ & $\mathbf{{,}005}$   \\
             \hline
-            \textit{Sunspots} & Lineal        & $0{,}955 \pm 0{,}015$ & $0{,}923$ & $+0{,}032$ & $\mathbf{0{,}04}$   \\
+            \textit{Sunspots} & Lineal          & ${,}955 \pm 0{,}015$ & ${,}923$                & $+0{,}032$ & $\mathbf{{,}04}$    \\
             \hline
-            \textit{Sunspots} & Random Forest & $0{,}502 \pm 0{,}098$ & $0{,}413$ & $+0{,}089$ & $0{,}23$            \\
+            \textit{Sunspots} & Random Forest   & ${,}502 \pm 0{,}098$ & ${,}413$                & $+0{,}089$ & ${,}23$             \\
             \hline
         \end{tabular}}
 \end{table}
@@ -2925,15 +2925,15 @@ La Tabla~\ref{tab:res_principal} contiene el resultado central de la evaluación
     {\caption[Estadísticos complementarios de la evaluación]{Máximo sobre un submuestreo de $K = 5$ candidatos ($s_K$), menor error relativo alcanzado en el frente ($J_{\text{obj}}^{\min}$), tamaño medio del frente y desviación típica entre semillas.}\label{tab:res_secundaria}}
     {\begin{tabular}{|p{2.9cm}|p{2.4cm}|c|c|c|c|}
             \hline
-            \textbf{Conjunto} & \textbf{Modelo} & $s_K$ & $J_{\text{obj}}^{\min}$ & \textbf{Cand.} & $\sigma_{\text{sem}}$ \\
+            \textbf{Conjunto} & \textbf{Modelo} & $s_K$  & $J_{\text{obj}}^{\min}$ & \textbf{Cand.} & $\sigma_{\text{sem}}$ \\
             \hline
-            Sintético AR(2)  & Lineal        & 0{,}994 & 0{,}001 & 15{,}6 & 0{,}020 \\
+            Sintético AR(2)   & Lineal          & {,}994 & {,}001                  & 15{,}6         & {,}020                \\
             \hline
-            Sintético AR(2)  & Random Forest & 0{,}808 & 0{,}112 & 12{,}3 & 0{,}049 \\
+            Sintético AR(2)   & Random Forest   & {,}808 & {,}112                  & 12{,}3         & {,}049                \\
             \hline
-            \textit{Sunspots} & Lineal        & 0{,}991 & 0{,}002 & 13{,}9 & 0{,}236 \\
+            \textit{Sunspots} & Lineal          & {,}991 & {,}002                  & 13{,}9         & {,}236                \\
             \hline
-            \textit{Sunspots} & Random Forest & 0{,}748 & 0{,}134 & 12{,}1 & 0{,}080 \\
+            \textit{Sunspots} & Random Forest   & {,}748 & {,}134                  & 12{,}1         & {,}080                \\
             \hline
         \end{tabular}}
 \end{table}
@@ -2944,7 +2944,7 @@ El segundo patrón, y el más importante, es que \textbf{el control aleatorio ob
 
 \begin{figure}[H]
     \ffigbox[\FBwidth]{
-        \caption[Distribución de las puntuaciones de consistencia causal]{Distribución de la puntuación media del frente de Pareto por ejecución, desagregada por conjunto de datos y modelo. Las puntuaciones del modelo lineal (azul) se concentran junto a la unidad en ambos conjuntos, mientras que las del \textit{Random Forest} (naranja) se reparten en torno a $0{,}5$ con gran dispersión.}
+        \caption[Distribución de las puntuaciones de consistencia causal]{Distribución de la puntuación media del frente de Pareto por ejecución, desagregada por conjunto de datos y modelo. Las puntuaciones del modelo lineal (azul) se concentran junto a la unidad en ambos conjuntos, mientras que las del \textit{Random Forest} (naranja) se reparten en torno a ${,}5$ con gran dispersión.}
         \label{fig:res_scores}
     }{
         \includegraphics[width=\linewidth]{fig_score_distribution.png}
@@ -2955,9 +2955,9 @@ El segundo patrón, y el más importante, es que \textbf{el control aleatorio ob
 
 Los conjuntos de datos sintéticos que se han usado permite responder a una de las premisas básicas de este trabajo, un mecanismo generador y modelo lineales inducen una estructura de tipo grafo causal que \texttt{CFGTS} puede capturar.
 
-La experimentación con los conjuntos datos confirman la hipótesis. Con modelo lineal, $\bar{s}$ alcanza $0{,}970 \pm 0{,}009$, el valor más alto y más estable de toda la evaluación.
+La experimentación con los conjuntos datos confirman la hipótesis. Con modelo lineal, $\bar{s}$ alcanza ${,}970 \pm 0{,}009$, el valor más alto y más estable de toda la evaluación.
 
-Al sustituir el modelo por un \textit{Random Forest} la puntuación cae a $0{,}617 \pm 0{,}046$. Aquí la puntuación deja de ser trivialmente alta, pero el control también desciende en paralelo, hasta $0{,}506$.
+Al sustituir el modelo por un \textit{Random Forest} la puntuación cae a ${,}617 \pm 0{,}046$. Aquí la puntuación deja de ser trivialmente alta, pero el control también desciende en paralelo, hasta ${,}506$.
 
 La Figura~\ref{fig:res_ejemplo} muestra cualitativamente una ejecución sobre el conjunto AR(2). La predicción se desplaza de forma coherente hacia delante, pese a que la optimización solo controla explícitamente la entrada.
 
@@ -2974,7 +2974,7 @@ La Figura~\ref{fig:res_ejemplo} muestra cualitativamente una ejecución sobre el
 
 Para evaluar un conjunto de datos reales, se ha escogido la serie \textit{Sunspots}. Esta serie presenta no linealidad, un período de 11 años, amplitud no estacionaria y heterocedasticidad. Además, los modelos usados son desfavorables en esta serie, al ser modelos de orden 3 (inferior al período de 11). La Tabla~\ref{tab:res_smape} refleja los errores sMAPE obtenidos al ajustar los modelos lineal y Random Forest a los datos.
 
-El comportamiento de la puntuación causal apenas se distingue del observado en el conjunto sintético: $0{,}955 \pm 0{,}015$ con modelo lineal y $0{,}502 \pm 0{,}098$ con \textit{Random Forest}. La degradación respecto del escenario controlado es de apenas $0{,}015$ puntos para el modelo lineal.
+El comportamiento de la puntuación causal apenas se distingue del observado en el conjunto sintético: ${,}955 \pm 0{,}015$ con modelo lineal y ${,}502 \pm 0{,}098$ con \textit{Random Forest}. La degradación respecto del escenario controlado es de apenas ${,}015$ puntos para el modelo lineal.
 
 Esta insensibilidad es en sí misma el resultado: se recuerda de la Fase~3 de la propuesta que la puntuación causal no mide la fidelidad del modelo al proceso real, sino la \textit{coherencia interna} entre el contrafactual y el mecanismo que el modelo ha aprendido. Un modelo lineal de orden 3 es un mal predictor de la actividad solar (al menor peor que el Random Forest). La consecuencia práctica es que una puntuación causal elevada no debe interpretarse como evidencia de que la explicación sea válida respecto del fenómeno, sino respecto del modelo; si el modelo es una mala representación del fenómeno, la explicación será internamente coherente y a la vez extrínsecamente engañosa.
 
