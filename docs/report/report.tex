@@ -225,29 +225,29 @@ hmargin=3cm
         \color{azulUC3M}
         \begin{center}
 
-        \begin{figure}[H] %incluimos el logotipo de la Universidad
-            \makebox[\textwidth][c]{\includegraphics[width=16cm]{logo_UC3M.png}}
-        \end{figure}
-        \vspace{2.5cm}
-        \begin{Large}
-            Grado Universitario en Ingeniería Informática\\
-             2025-2026\\ %Indica el curso académico
-            \vspace{2cm}
-            \textsl{Trabajo Fin de Grado}
-            \bigskip
+            \begin{figure}[H] %incluimos el logotipo de la Universidad
+                \makebox[\textwidth][c]{\includegraphics[width=16cm]{logo_UC3M.png}}
+            \end{figure}
+            \vspace{2.5cm}
+            \begin{Large}
+                Grado Universitario en Ingeniería Informática\\
+                2025-2026\\ %Indica el curso académico
+                \vspace{2cm}
+                \textsl{Trabajo Fin de Grado}
+                \bigskip
 
-        \end{Large}
+            \end{Large}
             {\Huge ``Propuesta de algoritmo de explicación contrafactual para el análisis de modelos predictivos de series temporales''}\\
             \vspace*{0.5cm}
             \rule{10.5cm}{0.1mm}\\
             \vspace*{0.9cm}
             {\LARGE José David Rico Días}\\
             \vspace*{1cm}
-        \begin{Large}
-            Tutor\\
-            Antonio Berlanga de Jesús\\
-            Colmenarejo, Septiembre 2026\\
-        \end{Large}
+            \begin{Large}
+                Tutor\\
+                Antonio Berlanga de Jesús\\
+                Colmenarejo, Septiembre 2026\\
+            \end{Large}
 
 
         \end{center}
@@ -272,9 +272,17 @@ hmargin=3cm
     \setcounter{page}{3}
 
     % ESCRIBIR EL RESUMEN AQUÍ
+    El trabajo que aquí se presenta contiene un algoritmo de generación de explicaciones contrafactuales para modelos de regresión en series temporales.
+
+    El algoritmo consiste en 3 fases diferenciadas. La primera fase de generación de contrafactuales encontrados mediante la resolución de problema de optimización no lineal. La segunda fase es la generación de un espacio de cobertura en el intervalon generado por los valores objetivo en los contrafactuales. Por último se genera un modelo causal sobre el intervalo de cobertura, y se asigna una puntuación a cada contrafactual; la puntuación mide el grado de alineación del contrafactual contra las suposiciones causales que tienen los modelos de series temporales.
+
+    Luego se presenta la implementación del algoritmo que se ha realizado en Python, dado que el código es públicamente accesible.
+
+    % TODO Add more?
 
     \textbf{Palabras clave:}
     % Escribir las palabras clave aquí
+    Explicaciones contrafactuales, Series temporales, Causalidad, Grafos causales, Inteligencia artificial explicable (XAI), Optimización multi-objetivo, Modelos autorregresivos, Modelos surrogados, Algoritmo
 
     \vfill
 \end{abstract}
@@ -292,7 +300,10 @@ hmargin=3cm
 \setcounter{page}{5}
 
 % ESCRIBIR LA DEDICATORIA AQUÍ
-TODO
+Mamá, Ari, Sara, Samuel sois las personas que más me han apoyado, mi familia. Todos hemos luchado para poder continuar mis estudios, y mis éxitos han sido igualmente vuestros éxitos.
+A la comunidad universitaria, y en especial al Grupo de Inteligencia Artificial Aplicada, conmigo han hido mucho más allá de lo necesario. Atesoro increíbles recuerdos y experiencias que me acomparán durante toda mi vida.
+
+Gracias.
 \vfill
 
 \newpage % página en blanco o de cortesía
@@ -365,11 +376,11 @@ La estadística se encarga del estudio de fenómenos inciertos, y se apoya en el
 
 Sea $(\Omega, \mathcal{F}, \mathbb{P})$ un espacio de probabilidad, donde $\Omega$ es el espacio muestral, $\mathcal{F}$ es una $\sigma$-álgebra de eventos y $\mathbb{P}:\mathcal{F}\to[0,1]$ es una medida de probabilidad tal que:
 $$
-\mathbb{P}(\Omega)=1,
-\qquad
-\mathbb{P}(A)\geq 0\;\;\forall A\in\mathcal{F},
-\qquad
-\mathbb{P}\left(\bigcup_{i=1}^{\infty} A_i\right)=\sum_{i=1}^{\infty}\mathbb{P}(A_i)
+    \mathbb{P}(\Omega)=1,
+    \qquad
+    \mathbb{P}(A)\geq 0\;\;\forall A\in\mathcal{F},
+    \qquad
+    \mathbb{P}\left(\bigcup_{i=1}^{\infty} A_i\right)=\sum_{i=1}^{\infty}\mathbb{P}(A_i)
 $$
 para toda familia numerable de eventos disjuntos $\{A_i\}$.
 Es decir, la probabilidad es una función que asigna a cada evento un número entre 0 y 1, de tal forma que el evento seguro tiene probabilidad 1, el evento imposible tiene probabilidad 0, y la probabilidad de la unión de eventos disjuntos es igual a la suma de todas sus probabilidades.
@@ -387,42 +398,42 @@ Una variable aleatoria es una función medible $X:\Omega\to\mathcal{X}$, donde $
 
 \textbf{Variable discreta.} Si $\mathcal{X}$ es finito (discreto), su función de masa de probabilidad se define por
 $$
-p_X(x)=\mathbb{P}(X=x),
-\qquad
-\sum_{x\in\mathcal{X}} p_X(x)=1.
+    p_X(x)=\mathbb{P}(X=x),
+    \qquad
+    \sum_{x\in\mathcal{X}} p_X(x)=1.
 $$
 
 \textbf{Variable continua.} Si $X$ es continua, entonces debe existir un $f_X$ tal que
 $$
-\mathbb{P}(a\leq X\leq b)=\int_a^b f_X(x)\,dx,
-\qquad
-\int_{-\infty}^{\infty} f_X(x)\,dx=1.
+    \mathbb{P}(a\leq X\leq b)=\int_a^b f_X(x)\,dx,
+    \qquad
+    \int_{-\infty}^{\infty} f_X(x)\,dx=1.
 $$
 
 Para dos variables $X,Y$, la distribución conjunta se denota por
 $$
-\mathbb{P}(X=x,Y=y)=\mathbb{P}(x,y),
+    \mathbb{P}(X=x,Y=y)=\mathbb{P}(x,y),
 $$
 y las marginales se obtienen por
 $$
-\mathbb{P}(X=x)=\sum_y \mathbb{P}(x,y)
-\quad\text{o}\quad
-f_X(x)=\int f_{X,Y}(x,y)\,dy.
+    \mathbb{P}(X=x)=\sum_y \mathbb{P}(x,y)
+    \quad\text{o}\quad
+    f_X(x)=\int f_{X,Y}(x,y)\,dy.
 $$
 
 \subsection{Eventos}
 
 Un evento es cualquier subconjunto $A\in\mathcal{F}$. En términos de variables, afirmaciones como
 $$
-\{X=x\},\quad \{X\in B\},\quad \{X=x,\,Y=y\},\quad \{X\in B_1\cup B_2\}
+    \{X=x\},\quad \{X\in B\},\quad \{X=x,\,Y=y\},\quad \{X\in B_1\cup B_2\}
 $$
 son eventos. Operaciones lógicas se traducen en operaciones de conjuntos:
 $$
-A\cap B\;(\text{``y''}),
-\qquad
-A\cup B\;(\text{``o''}),
-\qquad
-A^c\;(\text{``no''}).
+    A\cap B\;(\text{``y''}),
+    \qquad
+    A\cup B\;(\text{``o''}),
+    \qquad
+    A^c\;(\text{``no''}).
 $$
 
 \subsection{Probabilidad condicional}
@@ -435,7 +446,7 @@ La probabilidad condicional de un evento $A$ dado un evento $B$ con $\mathbb{P}(
 
 En particular,
 $$
-\mathbb{P}(X=x\mid Y=y)=\frac{\mathbb{P}(X=x,Y=y)}{\mathbb{P}(Y=y)}.
+    \mathbb{P}(X=x\mid Y=y)=\frac{\mathbb{P}(X=x,Y=y)}{\mathbb{P}(Y=y)}.
 $$
 
 De la definición se derivan identidades clave:
@@ -494,7 +505,7 @@ equivalentemente,
 \end{equation}
 y en el caso continuo,
 $$
-f_{X,Y}(x,y)=f_X(x)f_Y(y).
+    f_{X,Y}(x,y)=f_X(x)f_Y(y).
 $$
 
 Cuando $X$ e $Y$ no son independientes en general, pero sí lo son al fijar $Z$, se escribe $X \perp Y \mid Z$.
@@ -503,27 +514,27 @@ Cuando $X$ e $Y$ no son independientes en general, pero sí lo son al fijar $Z$,
 
 La distribución de probabilidad de una variable discreta $X$ es el conjunto de valores $\{p_X(x)\}_{x\in\mathcal{X}}$, con
 $$
-0\leq p_X(x)\leq 1,
-\qquad
-\sum_{x\in\mathcal{X}} p_X(x)=1.
+    0\leq p_X(x)\leq 1,
+    \qquad
+    \sum_{x\in\mathcal{X}} p_X(x)=1.
 $$
 
 Para variables continuas, la distribución se representa mediante una densidad $f_X$, y su función de distribución acumulada
 $$
-F_X(x)=\mathbb{P}(X\leq x)=\int_{-\infty}^{x} f_X(t)\,dt.
+    F_X(x)=\mathbb{P}(X\leq x)=\int_{-\infty}^{x} f_X(t)\,dt.
 $$
 
 Para un vector de variables $\mathbf{V}=(X_1,\dots,X_n)$, la distribución conjunta se denota por
 $$
-p_{\mathbf{V}}(x_1,\dots,x_n)
-\quad\text{o}\quad
-f_{\mathbf{V}}(x_1,\dots,x_n),
+    p_{\mathbf{V}}(x_1,\dots,x_n)
+    \quad\text{o}\quad
+    f_{\mathbf{V}}(x_1,\dots,x_n),
 $$
 según el caso discreto o continuo, y satisface la normalización correspondiente:
 $$
-\sum_{x_1}\cdots\sum_{x_n} p_{\mathbf{V}}(x_1,\dots,x_n)=1,
-\qquad
-\int\cdots\int f_{\mathbf{V}}(x_1,\dots,x_n)\,dx_1\cdots dx_n=1.
+    \sum_{x_1}\cdots\sum_{x_n} p_{\mathbf{V}}(x_1,\dots,x_n)=1,
+    \qquad
+    \int\cdots\int f_{\mathbf{V}}(x_1,\dots,x_n)\,dx_1\cdots dx_n=1.
 $$
 
 \subsection{Ley de probabilidad total}
@@ -561,18 +572,18 @@ que es la regla de Bayes.
 
 \textbf{Ejemplo (descomposición por contextos).} Sea $D$ el evento ``defectuoso'' y sea $F\in\{F_1,F_2\}$ la fábrica de origen. Si
 $$
-\mathbb{P}(F_1)=0.30,
-\qquad
-\mathbb{P}(F_2)=0.70,
-\qquad
-\mathbb{P}(D\mid F_1)=\frac{1}{5000},
-\qquad
-\mathbb{P}(D\mid F_2)=\frac{1}{10000},
+    \mathbb{P}(F_1)=0.30,
+    \qquad
+    \mathbb{P}(F_2)=0.70,
+    \qquad
+    \mathbb{P}(D\mid F_1)=\frac{1}{5000},
+    \qquad
+    \mathbb{P}(D\mid F_2)=\frac{1}{10000},
 $$
 entonces, por \eqref{eq:law_total_probability_partition},
 $$
-\mathbb{P}(D)=\mathbb{P}(D\mid F_1)\mathbb{P}(F_1)+\mathbb{P}(D\mid F_2)\mathbb{P}(F_2)
-=\frac{1}{5000}(0.30)+\frac{1}{10000}(0.70)=0.00013.
+    \mathbb{P}(D)=\mathbb{P}(D\mid F_1)\mathbb{P}(F_1)+\mathbb{P}(D\mid F_2)\mathbb{P}(F_2)
+    =\frac{1}{5000}(0.30)+\frac{1}{10000}(0.70)=0.00013.
 $$
 
 \subsection{Uso de la regla de Bayes}
@@ -626,11 +637,11 @@ La esperanza condicional de $Y$ dado $X=x$ es
 
 \textbf{Ejemplo (dado justo).} Si $X\in\{1,2,3,4,5,6\}$ y $\mathbb{P}(X=x)=1/6$, entonces
 $$
-\mathbb{E}[X]=\sum_{x=1}^{6} x\frac{1}{6}=\frac{1+2+3+4+5+6}{6}=3.5.
+    \mathbb{E}[X]=\sum_{x=1}^{6} x\frac{1}{6}=\frac{1+2+3+4+5+6}{6}=3.5.
 $$
 Si la recompensa es $g(X)=X^2$, entonces
 $$
-\mathbb{E}[X^2]=\sum_{x=1}^{6} x^2\frac{1}{6}=\frac{91}{6}\approx 15.17.
+    \mathbb{E}[X^2]=\sum_{x=1}^{6} x^2\frac{1}{6}=\frac{91}{6}\approx 15.17.
 $$
 
 Además, $\mathbb{E}[X]$ minimiza el error cuadrático medio entre constantes; si $c$ es una constante elegida al azar, entonces:
@@ -663,17 +674,17 @@ y se expresa en las mismas unidades que $X$.
 
 \textbf{Ejemplo.} Si $X$ es el resultado de un dado justo,
 $$
-\mathbb{E}[X]=3.5
-\qquad
-\mathbb{E}[X^2]=\frac{91}{6},
+    \mathbb{E}[X]=3.5
+    \qquad
+    \mathbb{E}[X^2]=\frac{91}{6},
 $$
 entonces
 $$
-\operatorname{Var}(X)=\mathbb{E}[X^2]-\mathbb{E}[X]^2
-=\frac{91}{6}-\left(\frac{7}{2}\right)^2
-=\frac{35}{12},
-\qquad
-\sigma_X=\sqrt{\frac{35}{12}}\approx 1.708.
+    \operatorname{Var}(X)=\mathbb{E}[X^2]-\mathbb{E}[X]^2
+    =\frac{91}{6}-\left(\frac{7}{2}\right)^2
+    =\frac{35}{12},
+    \qquad
+    \sigma_X=\sqrt{\frac{35}{12}}\approx 1.708.
 $$
 
 La covarianza entre $X$ e $Y$ es
@@ -1067,7 +1078,7 @@ El DAG correspondiente es:
 
 Este grafo hace explícito un \textit{factor de confusión} entre $P$ y $C$:
 $$
-P \leftarrow A \rightarrow C
+    P \leftarrow A \rightarrow C
 $$
 
 \subsection{Modelos causales estructurales}
@@ -1085,7 +1096,7 @@ El modelo gráfico resulta útil porque, aunque contiene menos información que 
 En el ejemplo de conversión, el MCE es:
 \begin{equation}
     \begin{cases}
-        A := U_A \\
+        A := U_A          \\
         P := f_P(A,\,U_P) \\
         C := f_C(P,\,A,\,U_C)
     \end{cases}
@@ -1222,16 +1233,16 @@ La mediación indirecta es todavía más delicada que la directa, porque no exis
 
 La inferencia causal formaliza los efectos de mediación mediante \emph{resultados potenciales} \cite{Muthn2014}. Se denota $C(p, M(p^{*}))$ la conversión que se observaría si la exposición publicitaria fuera $P = p$ pero el recuerdo de marca $M$ tomara el valor que habría asumido bajo $P = p^{*}$. Con esta notación el efecto total se descompone como:
 \begin{align}
-    \mathrm{TE}   &= \mathbb{E}[C(1) - C(0)], \label{eq:te_cf} \\
-    \mathrm{PNDE} &= \mathbb{E}[C(1,\,M(0)) - C(0,\,M(0))], \label{eq:pnde} \\
-    \mathrm{TNIE} &= \mathbb{E}[C(1,\,M(1)) - C(1,\,M(0))], \label{eq:tnie}
+    \mathrm{TE}   & = \mathbb{E}[C(1) - C(0)], \label{eq:te_cf}              \\
+    \mathrm{PNDE} & = \mathbb{E}[C(1,\,M(0)) - C(0,\,M(0))], \label{eq:pnde} \\
+    \mathrm{TNIE} & = \mathbb{E}[C(1,\,M(1)) - C(1,\,M(0))], \label{eq:tnie}
 \end{align}
 de modo que $\mathrm{TE} = \mathrm{PNDE} + \mathrm{TNIE}$. El \textbf{PNDE} (\textit{Pure Natural Direct Effect}) mide el impacto directo de la publicidad sobre la conversión cuando el recuerdo de marca se fija al nivel que habría tenido \emph{sin} publicidad, es decir, bloqueando la vía $P \to M \to C$. El \textbf{TNIE} (\textit{Total Natural Indirect Effect}) mide el cambio en conversión atribuible únicamente al cambio que la publicidad induce en el recuerdo de marca, manteniendo fijo el nivel de exposición en $P = 1$.
 
 Considerando el modelo lineal sin interacción entre publicidad y recuerdo de marca,
 \begin{align*}
-    C_i &= \beta_0 + \beta_1 M_i + \beta_2 P_i + \varepsilon_{1i}, \\
-    M_i &= \gamma_0 + \gamma_1 P_i + \varepsilon_{2i},
+    C_i & = \beta_0 + \beta_1 M_i + \beta_2 P_i + \varepsilon_{1i}, \\
+    M_i & = \gamma_0 + \gamma_1 P_i + \varepsilon_{2i},
 \end{align*}
 los efectos naturales toman la forma \cite{Muthn2014}:
 \begin{equation}
@@ -1262,7 +1273,7 @@ El efecto indirecto es el producto del efecto de la publicidad sobre el recuerdo
 
             % PNDE: direct arc P → C
             \draw[pnde] (P) to[bend right=38]
-                node[midway, below, font=\scriptsize] {$\beta_2\ (\mathrm{PNDE})$} (C);
+            node[midway, below, font=\scriptsize] {$\beta_2\ (\mathrm{PNDE})$} (C);
 
             % Annotations
             \node[font=\scriptsize, gray45, above=4mm of M] {TNIE $= \beta_1\gamma_1$};
@@ -1293,17 +1304,17 @@ donde $\tau_{\max}$ es el retardo máximo del sistema. La restricción $\tau \ge
     Z^i_{t-\tau} \rightarrow Z^j_t \quad \Longleftrightarrow \quad Z^i_{t-\tau} \in \mathrm{pa}(Z^j_t).
     \label{eq:ts_edges}
 \end{equation}
-Como las aristas solo avanzan en el tiempo (o permanecen en el mismo instante, en sentido único), el grafo de series temporales desplegado sobre una ventana finita es \emph{acíclico}, lo que lo convierte en un grafo causal admisible al que se aplican directamente los conceptos de las secciones anteriores. La Figura~\ref{fig:ts_graph_var} muestra este despliegue para un sistema autorregresivo bivariante. Si colapsamos todos los instantes en un único nodo por variable obtenemos el grafo de la Figura~\ref{fig:ts_summary_var}: una representación compacta que, a diferencia del grafo desplegado, sí puede contener ciclos y bucles propios, pues recoge la realimentación entre variables a lo largo del tiempo.
+Como las aristas solo avanzan en el tiempo (o permanecen en el mismo instante, en sentido único), el grafo de series temporales desplegado sobre una ventana finita es \emph{acíclico}, lo que lo convierte en un grafo causal admisible al que se aplican directamente los conceptos de las secciones anteriores. La Figura~\ref{fig:ts_graph_var} muestra este despliegue para un sistema autorregresivo bivariante. Si colapsamos todos los instantes en un único nodo por variable obtenemos el grafo de la Figura~\ref{fig:ts_summary_var}: una representación compacta que, a diferencia del grafo desplegado, sí puede contener ciclos y bucles propios, ya que recoge la realimentación entre variables a lo largo del tiempo.
 
 \begin{figure}[H]
     \centering
     \begingroup
     \shorthandoff{<>}
     \begin{tikzpicture}[
-        var/.style={draw, circle, minimum size=12mm, inner sep=1pt, font=\small},
-        auto/.style={-{Latex}, thick},
-        cruz/.style={-{Latex}, thick, gray45}
-    ]
+            var/.style={draw, circle, minimum size=12mm, inner sep=1pt, font=\small},
+            auto/.style={-{Latex}, thick},
+            cruz/.style={-{Latex}, thick, gray45}
+        ]
         % nodos
         \node (x2) [var] at (0, 1.9)   {$X_{t-2}$};
         \node (x1) [var] at (3.4, 1.9) {$X_{t-1}$};
@@ -1338,9 +1349,9 @@ Como las aristas solo avanzan en el tiempo (o permanecen en el mismo instante, e
     \begingroup
     \shorthandoff{<>}
     \begin{tikzpicture}[
-        var/.style={draw, circle, minimum size=11mm, font=\small},
-        ar/.style={-{Latex}, thick}
-    ]
+            var/.style={draw, circle, minimum size=11mm, font=\small},
+            ar/.style={-{Latex}, thick}
+        ]
         \node (X) [var] at (0,0) {$X$};
         \node (Y) [var] at (3.6,0) {$Y$};
         \draw[ar, bend left=18] (X) to node[above, font=\scriptsize] {$\tau=1$} (Y);
@@ -1368,8 +1379,8 @@ que coincide exactamente con la ecuación~\eqref{eq:formal_varp} desarrollada m�
 Como ejemplo, el sistema bivariante de la Figura~\ref{fig:ts_graph_var}, con $\mathbf{Z}_t = (X_t, Y_t)^\top$, corresponde a las ecuaciones
 \begin{equation}
     \begin{aligned}
-        X_t &:= a_1\,X_{t-1} + a_2\,X_{t-2} + b\,Y_{t-1} + \varepsilon^X_t, \\
-        Y_t &:= c\,X_{t-1} + d_1\,Y_{t-1} + d_2\,Y_{t-2} + \varepsilon^Y_t,
+        X_t & := a_1\,X_{t-1} + a_2\,X_{t-2} + b\,Y_{t-1} + \varepsilon^X_t, \\
+        Y_t & := c\,X_{t-1} + d_1\,Y_{t-1} + d_2\,Y_{t-2} + \varepsilon^Y_t,
     \end{aligned}
     \label{eq:var2_bivariate}
 \end{equation}
@@ -1398,15 +1409,15 @@ Esta factorización recursiva es la que legitima trasladar al dominio temporal t
     \begingroup
     \shorthandoff{<>}
     \begin{tikzpicture}[
-        var/.style   = {draw, circle, minimum size=14mm, inner sep=2pt, font=\small},
-        src/.style   = {draw, circle, minimum size=14mm, inner sep=2pt, font=\small,
-                        fill=blue!15, thick},
-        tgt/.style   = {draw, circle, minimum size=14mm, inner sep=2pt, font=\small,
-                        fill=red!15, thick},
-        ar/.style    = {-{Latex}, thick, gray!60},
-        pi1/.style   = {-{Latex}, very thick, blue!70!black},
-        pi2/.style   = {-{Latex}, very thick, orange!80!black},
-    ]
+            var/.style   = {draw, circle, minimum size=14mm, inner sep=2pt, font=\small},
+            src/.style   = {draw, circle, minimum size=14mm, inner sep=2pt, font=\small,
+                    fill=blue!15, thick},
+            tgt/.style   = {draw, circle, minimum size=14mm, inner sep=2pt, font=\small,
+                    fill=red!15, thick},
+            ar/.style    = {-{Latex}, thick, gray!60},
+            pi1/.style   = {-{Latex}, very thick, blue!70!black},
+            pi2/.style   = {-{Latex}, very thick, orange!80!black},
+        ]
         % ---- nodos: columnas separadas 6 cm, filas separadas 2.8 cm ----
         \node (X2) [var] at (0,   2.8) {$X_{t-2}$};
         \node (Y2) [src] at (0,   0)   {$Y_{t-2}$};
@@ -1422,9 +1433,9 @@ Esta factorización recursiva es la que legitima trasladar al dominio temporal t
 
         % ---- aristas lag-2: curvas por encima / por debajo ----
         \draw[ar] (X2) to[out=30, in=150]
-            node[above, font=\scriptsize] {$a_2$} (Xt);
+        node[above, font=\scriptsize] {$a_2$} (Xt);
         \draw[ar] (Y2) to[out=-30, in=210]
-            node[below, font=\scriptsize] {$d_2$} (Yt);
+        node[below, font=\scriptsize] {$d_2$} (Yt);
 
         % ---- aristas cruzadas lag-1 (gris) ----
         \draw[ar] (X2) -- node[above, font=\scriptsize, sloped] {$c$}  (Y1);
@@ -1448,7 +1459,7 @@ Esta factorización recursiva es la que legitima trasladar al dominio temporal t
             \qquad
             \textcolor{orange!80!black}{$\pi_2$: $Y_{t-2}\!\xrightarrow{d_1}\!Y_{t-1}\!\xrightarrow{b}\!X_t$}\\[6pt]
             $\displaystyle\frac{\partial\,\mathbb{E}[X_t \mid do(Y_{t-2})]}{\partial\,Y_{t-2}}
-             = b\,a_1 + d_1\,b = b\,(a_1+d_1)$
+                = b\,a_1 + d_1\,b = b\,(a_1+d_1)$
         };
     \end{tikzpicture}
     \endgroup
@@ -1478,12 +1489,12 @@ La importancia de la interpretabilidad de los modelos radica en que, aunque teng
 \begin{itemize}
     \item Curiosidad: la necesidad humana de entender aunque no nos suponga ningún beneficio directo. Por ejemplo saber porqué un modelo clasifica un planeta como habitable o no habitable.
     \item Encontrar un significado a los fenómenos que no entedemos. Por ejemplo \textit{¿Por qué Amazon me recomienda estos productos?}
-        \begin{figure}[H]
-            \ffigbox[\FBwidth] {
-                \caption[Recomendación y su significado]{Recomendación de Amazon por la compra de un iPad Pro M5. El modelo de recomendación muestra los productos que se compran juntos frecuentemente. La web de Amazon muestra el significado de esa recomendación. Fuente: elaboración propia.}
-            }
-            {\includegraphics[width=0.75\linewidth]{recomendados-porque.png}}
-        \end{figure}
+          \begin{figure}[H]
+              \ffigbox[\FBwidth] {
+                  \caption[Recomendación y su significado]{Recomendación de Amazon por la compra de un iPad Pro M5. El modelo de recomendación muestra los productos que se compran juntos frecuentemente. La web de Amazon muestra el significado de esa recomendación. Fuente: elaboración propia.}
+              }
+              {\includegraphics[width=0.75\linewidth]{recomendados-porque.png}}
+          \end{figure}
 
     \item Detectar sesgo: para poder reconducir o prevenir que el modelo tome deciones sesgadas, tomando decisiones que serían consideradas injustas.
     \item Aceptación social, para que el modelo pueda ser usado sin causar malestar.
@@ -1512,28 +1523,85 @@ Una \textit{explicación} consiste en una forma superior de interpretabilidad, y
 Los métodos de XAI son diversos y permiten atacar los problemas de explicabilidad desde distintos ángulos, dependendiendo de las necesidades del problema. Según \cite{molnar2025, Kamath2021} los problemas de explicabilidad se pueden acotar según:
 \begin{itemize}
     \item Alcance de la explicabilidad
-    \begin{itemize}
-        \item Global. Los métodos de alcance global son útiles cuando se busca explicar el comportamiento agregado del modelo, y se provee de métodos que permiten comprender el modelo independientemente de los inputs utilizados. Este tipo de alcance da un entendimiento sobre los mecanismos internos del modelo.
-        \item Local. En contraste, el alcance local trata de explicar como un subconjunto de las posibles entradas se comporta una vez entra al modelo para producir la salida. Lo que se busca es comprender cómo se ha generado el output a partir de cierto input, es decir acotando el funcionamiento del modelo a las partes que involucran dicho input.
-    \end{itemize}
+          \begin{itemize}
+              \item Global. Los métodos de alcance global son útiles cuando se busca explicar el comportamiento agregado del modelo, y se provee de métodos que permiten comprender el modelo independientemente de los inputs utilizados. Este tipo de alcance da un entendimiento sobre los mecanismos internos del modelo.
+              \item Local. En contraste, el alcance local trata de explicar como un subconjunto de las posibles entradas se comporta una vez entra al modelo para producir la salida. Lo que se busca es comprender cómo se ha generado el output a partir de cierto input, es decir acotando el funcionamiento del modelo a las partes que involucran dicho input.
+          \end{itemize}
     \item Etapa de uso del modelo
-    \begin{itemize}
-        \item Previo al uso de un modelo. Aquí pertenecen las técnicas que solo son aplicables a los datos, y también se le conoce como \textit{EDA}, \textit{Exploratory Data Analysis}. Los métodos de explicabilidad previos al uso del modelo tratan de adquirir un entendimiento de cómo se generan los datos y cómo se relacionan.
-        \item Con el modelo entrenado. También se lo conoce como métodos autoexplicativos, y usan la estructura interna del modelo, que suele ser inherentemente explicable, para producir la explicación. Incluye métodos como los árboles de decisión.
-        \item Con el modelo produciendo salidas. Se suelen aplicar a modelos considerados cajas negras, como las redes de neuronas, y son aplicables cuando la estructura interna del modelo no permite adquirir un entendimiento.
-    \end{itemize}
+          \begin{itemize}
+              \item Previo al uso de un modelo. Aquí pertenecen las técnicas que solo son aplicables a los datos, y también se le conoce como \textit{EDA}, \textit{Exploratory Data Analysis}. Los métodos de explicabilidad previos al uso del modelo tratan de adquirir un entendimiento de cómo se generan los datos y cómo se relacionan.
+              \item Con el modelo entrenado. También se lo conoce como métodos autoexplicativos, y usan la estructura interna del modelo, que suele ser inherentemente explicable, para producir la explicación. Incluye métodos como los árboles de decisión.
+              \item Con el modelo produciendo salidas. Se suelen aplicar a modelos considerados cajas negras, como las redes de neuronas, y son aplicables cuando la estructura interna del modelo no permite adquirir un entendimiento.
+          \end{itemize}
     \item Conocimiento sobre el modelo
-    \begin{itemize}
-        \item Específico del modelo. Cuando el procedimiento para adquirir explicabilidad es específico, se trata de explotar cierta estructura o conocimiento que tenemos del modelo para producir explicaciones; esto causa que dichos métodos solo puedan usarse en modelos concretos. Por ejemplo los métodos de explicabilidad de los árboles de decisión son necesariamente específicicos, ya que se debe tener un árbol y no otro tipo de estructura. Son métodos más ventajosos que los agnósticos, porque explotan más información.
-        \item Agnóstico al modelo. Son métodos de XAI aplicables a cualquier modelo, y no explotan el funcionamiento del modelo, sino que a través de las entradas, salidas y ejecutar el modelo varias veces, es posible obtener explicaciones. Por ejemplo el método LIME (\textit{Local Interpretable Model-agnostic Explanations}).
-    \end{itemize}
+          \begin{itemize}
+              \item Específico del modelo. Cuando el procedimiento para adquirir explicabilidad es específico, se trata de explotar cierta estructura o conocimiento que tenemos del modelo para producir explicaciones; esto causa que dichos métodos solo puedan usarse en modelos concretos. Por ejemplo los métodos de explicabilidad de los árboles de decisión son necesariamente específicicos, ya que se debe tener un árbol y no otro tipo de estructura. Son métodos más ventajosos que los agnósticos, porque explotan más información.
+              \item Agnóstico al modelo. Son métodos de XAI aplicables a cualquier modelo, y no explotan el funcionamiento del modelo, sino que a través de las entradas, salidas y ejecutar el modelo varias veces, es posible obtener explicaciones. Por ejemplo el método LIME (\textit{Local Interpretable Model-agnostic Explanations}).
+          \end{itemize}
 \end{itemize}
-
-\chapter{Objetivos}
 
 \chapter{Estado del arte}
 
+\section{Explicaciones contrafactuales}
+
 Las explicaciones contrafactuales son predicciones que describen el cambio mínimo a realizar a una instancia para que el modelo prediga un nuevo valor predefinido. Estas predicciones responden a preguntas del tipo \textit{"si X no hubiese ocurrido, Y no habría ocurrido"}, como por ejemplo \textit{"si hubiese tenido mayor salario, me habrían concedido el préstamo"}. Las explicaciones contrafactuales son predicciones sobre mundos hipotéticos, ya que la instancia original es el suceso que en realidad sí ocurrió. Las explicaciones contrafactuales deben ser amigables con los seres humanos, similares a la instancia original, accionables y variadas \cite{molnar2025}.
+
+Dichos mundos hipotéticos pueden responder a dos tipos de preguntas: de regresión o de clasificación. Los contrafactuales de clasificación son los más ampliamente estudiados, mientras que los contrafactuales de regresión tienen una literatura más débil.
+
+% Review
+Comenzando por una revisión más sistemática, en las revisiones realiazadas por \cite{Guidotti2022, Kan2024, Artelt2019, Verma2024, Chou2022} se condensan las temáticas más relevantes del campo de las explicaciones contrafactuales para modelos de clasificación (no se han encontrado revisiones de contrafactuales de regresión, que son los más relevantes para este trabajo).
+
+Los métodos de frontera para la búsqueda de contrafactuales intentan proveer de un balance de las siguientes propiedades deseables:
+\begin{enumerate}
+    \item Validez. Si respecto a una instancial original $x$ y un valor objetivo $y*$, se genera una nueva instancia $x'$ tal que efectivamente se llega al resultado deseado.
+    \item Minimalidad. No deberían cambiarse atributos innecesariamente. Por ejemplo si dos explicaciones contrafactuales $c_1$, $c_2$ dicen que deberías llegar a 25000€ de salario para obtener un crédito, pero $c_2$ además dice que te deberías mudar, se debería preferir $c_1$ por tener menos variaciones.
+    \item Similaridad. El contrafactual debería ser lo más cercano a la instancia original. Existe gran debate en la literatura sobre cómo definir la similaridad, aunque la mayoría de métodos se decantan por usar distancias de tipo norma ($L_2$, $L_{\infty}$, etc.)
+    \item Plausibilidad. Dada la distribución original de los datos, los contrafactuales deberían poder existir dentro de esa distribución. El problema de saber si una instancia contrafactual es plausible depende de poseer datos que reflejen fidedignamente la distribución real. Además la plausibilidad se ve afectada por la "maldición de la dimensionalidad".
+    \item Poder discriminante. Un contrafactual debería cambiar las variables que más afectan a la decisión final en orden. Es decir, si un sistema de créditos asigna como variable más importante el salario, el contrafactual debería reflejar esta importancia cambiando más el salario que el resto de variables.
+    \item Accionabilidad. Todos los contrafactuales tienen como objetivo personas, por ello es necesario proveer contrafactuales que puedan dar pasos a los usuarios para cambiar el resultado del modelo. Por ejemplo un contrafactual podría decir que siendo más joven te habrían dado el crédito, pero esa explicación no es accionable para un usuario.
+    \item Causalidad. Es una paso posterior a que un contrafactual sea plausible y accionable, el contrafactual debería ser capaz de mantener las relaciones que existen entre las variables. Por ejemplo el tipo de interés de un crédito se ve afectado por los años de amortización; en una deuda de tipo \textit{unsecured}, a mayor tiempo, mayor interés, \textit{ceteris paribus}, y no sería causal una explicación contrafactual en la que se baje el tiempo de la deuda y se mantuviese el interés. Es una de las grandes incógnitas de la literatura el cómo incorporar causalidad a las explicaciones contrafactuales.
+    \item Diversidad. Es deseable que se generen varias explicaciones válidas, de tal forma que el usuario objetivo de las explicaciones tenga un mejor entendimiento. Es una pregunta abierta de la literatura el cómo ordenar los contrafactuales que ya son diversos.
+\end{enumerate}
+
+Así mismo los algoritmos que generan las explicaciones contrafactuales deberían cumplir ser:
+\begin{enumerate}
+    \item Eficientes. Deberían generar la explicación en un tiempo razonable para el usuario
+    \item Estables. Dados dos modelos que den predicciones similares (por ejemplo un \textit{Knn} y \textit{CatBoost}), un mismo algoritmo de generación de contrafactuales debería dar explicaciones parecidas para ambos modelos.
+    \item Consistentes. Un algoritmo de generación de contrafactuales es consistente si los cambios que se realizan en el modelo original (por ejemplo por entranar con nuevos datos) refleja los cambios del modelo de forma fidedigna. Por ejemplo si el modelo de aceptación de crédito ahora necesita un mínimo de 30000€ para poder dar un crédito, el algoritmo de generación de explicaciones debería tener en cuenta el nuevo mínimo.
+    \item Justos. Es quizás lo más defícil de conseguir, pues implica que variar ciertos atributos de la explicación no invalida la validez de la explicación. Por ejemplo, en un sistema de crédito el algoritmo de generación debería ser capaz de generar la misma explicación contrafactual independientemente de la raza de la persona.
+\end{enumerate}
+Los métodos existentes no dominan simultáneamente todas las propiedades, sino que dependiendo del modelo y tipo de datos es necesario aplicar una variedad de técnicas para encontrar las explicaciones.
+
+Podemos clasificar los algoritmos de generación de contrafactuales según:
+\begin{itemize}
+    \item Método de generación
+          \begin{itemize}
+              \item Por fuerza bruta. Es uno de los primeros métodos que se desarrollaron, y consiste en una búsqueda de tipo "grid search", probando todas las posibilidades de la distribución hasta encontrar una instancia que cambie el valor objetivo.
+              \item Por métodos de optimización. Es el método que usa la mayoría de algoritmos. Primero se defina una o varias funciones de pérdida, y luego se usa un algoritmo de optimización para generar los contrafactuales.
+              \item Por métodos heurísticos. Son mucho más eficientes que los métodos de optimización, con la contrapartida de no presentar contrafactuales con buenas propiedades. Suelen presentarse en algoritmos específicos al modelo, también en problemas con tipos de datos más concretos (como texto).
+          \end{itemize}
+    \item Información sobre el modelo original
+          \begin{itemize}
+              \item Agnósticos al modelo, si el algoritmo de generación se puede aplicar a cualquier modelo.
+              \item Específicos del modelo, si el algoritmo de generación sólo puede aplicarse a un modelo concreto.
+          \end{itemize}
+    \item Según el uso de los datos de entrenamiento
+    \begin{itemize}
+        \item Exógenos a los datos. Este tipo de algoritmos no usan las instancias de los datos de entrenamiento del modelo original para generar los contrafactuales. Pueden generar contrafactuales que estén fuera de los datos de entrenamiento
+        \item Endógeno a los datos. Cuando el algoritmo es endógeno a los datos, buscará los contrafactuales en el propio dataset de entrenamiento. Este tipo de algoritmos están muy relacionados con los de generación de instancias prototípicas.
+    \end{itemize}
+\end{itemize}
+Continuando con la literatura, podemos encontrar algoritmos concretos más relevantes a los problemas que se tratan en este trabajo.
+
+Respecto a los algoritmos de generación de contrafactuales de clasificación, encontramos en el estado del arte
+métodos que intentan balancear las propiedades antes expuestas. En \cite{Marzari2024} se centran en la robustez de las explicaciones contrafactuales en modelos de redes de neuronas, generando los contrafactuales cambiando los parámetros de la red de neuronas. En \cite{Mothilal2020} muestran \texttt{DiCE}, en el que principalmente se añade un término de pérdida que penaliza la falta de diversidad, y en modelos tipo caja negra realizan la búsqueda de los contrafactuales con un algoritmo genético.
+% Clasificación en series temporales
+Concretando aún más en el dominio de las series temporales, los algoritmos intentan explotar la estructura temporal de los datos para aumentar la plausibilidad de las explicaciones. En \cite{Ates2021} describen CoMTE, el cual basa su procedimiento en las instancias "distractoras", instancias reales del dataset a las cuales mediante un algoritmo tipo \textit{greedy} se van intercambiando las features hasta que cambia la clasificación; de todos los cambios estudiados, se busca el que menos cambiaos tenga respecto a la instancia original. En \cite{Delaney2021} implementan \textit{Native Guide}, el cual se basa encontrar la instancia más cercana que cambie la salida del modelo (también conocida como \textit{nearest-unlike neighbour}); se usa una distancia manhattan con búsqueda de tipo \textit{greedy}. En \cite{Filali2022} detallan Timex, donde minimizan 3 objetivos simultáneos, diferencia de objetivos, diferencia respecto a la instancia original y (como novedad) la diferencia entre baricentros de las series, luego generan un nuevo dataset con distintas predicciones que luego se usa para encontrar el contrafactual vía distancia manhattan. En \cite{Bahri2024} presentan DiscoX, en el que usan una medida basada en series de discordia (una serie temporal de discordia es una subsecuencia que tiene la mayor distancia respecto a otra $T$, es decir una serie de discordia en $T$ en referencia a $T'$ tiene forma similar a $T$ pero forma muy distinta a $T'$), y construyen un nuevo dataset que se usa para buscar el contrafactual mediante perturbaciones. En \cite{Lang2023} describen SPARCE, un método de generación que se centra más en generar contrafactuales variados, para ello entrenan una red GAN que luego optimizan por descenso de gradiente; la función de pérdida combina 3 términos, uno de validez, uno de proximidad y otro de variedad. En \cite{Qi2024} proponen TIME-CF, que usa shapelets (segmentos de la serie con formas características); la algoritmo de generación de contrafactuales trata de sustituir los shapelets (generados con una red GAN) hasta hallar el contrafactual. En \cite{Wang2024} exponen Glacier, donde primero entrenan un auto-encoder, sobre el que aplican descenso del gradiente minimizando una función de pérdida que combina similaridad con plausibilidad; el resultado es un único contrafactual. Continuando con \cite{Xiangyu2025}, implementan CFWoT (Counterfactuals Without Traning data), en el que mediante aprendizaje por refuerzo se varia la instancia original hasta que se encuentra un estado en el que ha llegado al objetivo contrafactual; se reportan los contrafactuales de menor a mayor distancia respecto a la instancia original.
+
+
+Por último, aunque la literatura es escasa, para los casos de regresión (o predicción) en series temporales se encuentran los siguientes métodos: en \cite{Yan2023} presentan CounTS, un modelo de series temporales inherentemente interpretable que aplica directamente el \textit{framework} de Pearl. En CounTS usan como base un modelo de redes de neuronas bayesianas, con el que no solo se entrena el valor de salida sino que se va entrenando para conocer la distribución de probabilidad original de los datos. Con este modelo, es posible hacer tanto el paso de inferencia como el paso de generar el contrafactual. El contrafactual se genera mediante descenso del gradiente hasta que la instancia contrafactual tenga llega a una probabilidad de existencia definida. Por último, en \cite{Wang2023} implementan ForecastCF, en el que dado un modelo de series temporales diferenciable $f(\cdot)$, se busca mediante descenso de gradiente el contrafactual dentro de un intervalo $[\alpha, \beta]$ usando la función de pérdida $\mathcal{L} =\|f(x^*) - \alpha\| + \|\beta - f(x^*)\|$; las principales innovaciones fueron determinar el contrafactual en un rango concreto y aplicar el descenso del gradiente de contrafactuales a un modelo de regresión.
+
+La literatura actual no ha desarrollado métodos de explicación contrafactual de regresión en la misma medida que para el caso de clasificación \cite{Guidotti2022}.
 
 \section{Modelos surrogados}
 
@@ -1554,7 +1622,6 @@ LIME por defecto usa un kernel con suavizado exponencial para escoger la vecinda
 
 Una de los problemas no resueltos en la literatura es escoger un modelo surrogado que sepamos que tiene un error acotado, en qué regiones y qué vecindad de datos se debe usar para generar el modelo surrogado \cite{Werth2018}. La tendencia general es en escoger modelos surrogados que tengan un rendimiento adecuado a lo largo de varias métricas, como varianza, media o interpretabilidad, y no solo escoger el modelo surrogado con el menor error. El paso de escoger un modelo surrogado (y las regiones aplicables) cada vez se apoya más en métodos automáticos, en vez de ser un paso previo a la interpretación del modelo; el hecho de que existan regiones más explicables de forma automática da una pista al investigador de dónde el modelo original se comporta de forma esperada y dónde no.
 
-
 \chapter{Análisis del problema}
 
 El problema que aborda \texttt{CFGTS} puede formularse del siguiente modo: dado un modelo autorregresivo multi-salida ya ajustado $\hat{f}: \mathbb{R}^{n_{\text{In}}} \rightarrow \mathbb{R}^{D}$, una única instancia original $\mathbf{x}_0$ y un objetivo contrafactual $\mathbf{y}^{*} \in \mathbb{R}^{D}$, se desea encontrar las perturbaciones de $\mathbf{x}_0$ que satisfagan simultáneamente cuatro requisitos:
@@ -1571,6 +1638,7 @@ Este planteamiento es más restrictivo que la generación de contrafactuales en 
 Además, el problema se sitúa con frecuencia en la frontera de la distribución inducida por el modelo. El objetivo $\mathbf{y}^{*}$ puede quedar lejos de la predicción original $\hat{\mathbf{y}}_0 = \hat{f}(\mathbf{x}_0)$ o cerca del borde de las salidas alcanzables mediante perturbaciones locales de $\mathbf{x}_0$. En esas regiones la información es escasa y la respuesta del modelo puede ser heterogénea entre salidas. Por esta razón, \texttt{CFGTS} no se limita a optimizar candidatos contrafactuales: también construye un conjunto de cobertura alrededor del trayecto entre $\hat{\mathbf{y}}_0$ y $\mathbf{y}^{*}$ y lo enriquece con pasos de \textit{forward walking}, es decir ejecutar el modelo hacia delante de forma autorregresiva, con el fin de estimar efectos causales (respecto a $\hat{f}$) más estables sin requerir acceso al conjunto de entrenamiento.
 
 \chapter{Propuesta}
+\label{cap:propuesta}
 
 En este capítulo se presenta \texttt{CFGTS} (\textit{CounterFactual Generation for Time Series}), un algoritmo de generación de explicaciones contrafactuales para modelos predictivos de series temporales. El algoritmo se estructura en tres fases secuenciales: (1) generación de candidatos contrafactuales mediante optimización multi-objetivo, (2) generación de un conjunto de cobertura para enriquecer el espacio muestral, y (3) evaluación causal de cada contrafactual generado.
 
@@ -1589,7 +1657,6 @@ Se define:
     \item $[r_{\min}, r_{\max}] \subset \mathbb{R}$: el rango de búsqueda para cada variable.
     \item $n_{\text{walk}} \in \mathbb{N}$: el número de pasos de avance temporal utilizados por la implementación para enriquecer el conjunto de validación causal.
 \end{itemize}
-
 
 
 \section{Entradas del algoritmo}
@@ -1620,7 +1687,7 @@ El algoritmo \texttt{CFGTS} se ejecuta en tres fases secuenciales:
     \item Generación de un conjunto de cobertura para enriquecer el espacio muestral.
     \item Evaluación causal de cada contrafactual generado.
 \end{itemize}
-Para cada fase se presenta, en primer lugar, la formalización matemática de sus definiciones y objetivos; a continuación, el algoritmo que los materializa; y, por último, las propiedades demostradas que justifican su comportamiento, cuyas demostraciones se desarrollan en el Anexo E.
+Para cada fase se presenta, en primer lugar, la formalización matemática de sus definiciones y objetivos; a continuación, el algoritmo que los materializa; y, por último, las propiedades demostradas que justifican su comportamiento, cuyas demostraciones se desarrollan en el Anexo B.
 
 \subsection{Fase 1: Generación de candidatos contrafactuales}
 
@@ -1792,6 +1859,8 @@ Es decir, restringir los límites de búsqueda produce una región factible más
 \subsection{Fase 2: Generación del conjunto de cobertura}
 
 Esta subsección formaliza y resuelve la Fase~2 del algoritmo: la generación del conjunto de cobertura mediante la minimización de la discrepancia estelar centrada $L^2$ para un modelo multi-salida $\hat{f}: \mathbb{R}^{n_{\text{In}}} \to \mathbb{R}^{D}$. Disponer de un conjunto de muestras con suficiente diversidad en el espacio de salida es necesario para poder estimar, en la Fase~3, los efectos de cada variable sobre todas las salidas del modelo.
+
+Se debe recordar de la discusión en el marco teórico que escoger un intervalo adecuado para buscar los contrafactuales es un problema activamente investigado. En este trabajo se ha optado por usar la discrepancia estelar y formular la generación del conjunto de datos como un problema de optimización. La discrepancia estelar es una métrica usada en el campo de los métodos numéricos quasi-montecarlo, y se usa principalmente para construir mejores conjuntos aleatorios. El diseño e implementación están inspirados en el trabajo de \cite{Clment2025, CLEMENT2022101645} y \cite{ZHOU2013283}.
 
 \subsubsection{Intervalo de cobertura}
 
@@ -2603,26 +2672,31 @@ La clase \texttt{CFGTS} expone un constructor con los parámetros descritos en l
     {\caption{Parámetros del constructor de la clase CFGTS}\label{tab:params}}
     {\begin{tabular}{|p{4cm}|p{3.2cm}|p{1.5cm}|p{4.5cm}|}
             \hline
-            \textbf{Parámetro}             & \textbf{Tipo}             & \textbf{Defecto} & \textbf{Descripción}                                                                  \\
+            \textbf{Parámetro}      & \textbf{Tipo}             & \textbf{Defecto} & \textbf{Descripción}                                                                  \\
             \hline
-            \texttt{model}                 & \texttt{RegressorMixin}   & ---              & Modelo de regresión de scikit-learn previamente ajustado                              \\
+            \texttt{model}          & \texttt{RegressorMixin}   & ---              & Modelo de regresión de scikit-learn previamente ajustado                              \\
             \hline
-            \texttt{instance}              & \texttt{DataFrame}        & ---              & Instancia original $\mathbf{x}_0$ (una fila)                                          \\
+            \texttt{instance}       & \texttt{DataFrame}        & ---              & Instancia original $\mathbf{x}_0$ (una fila)                                          \\
             \hline
             \texttt{counterfactual
-            \_value} & \texttt{DataFrame}        & ---              & Vector objetivo $\mathbf{y}^{*}$                                                      \\
+                \_value}  & \texttt{DataFrame}        & ---              & Vector objetivo $\mathbf{y}^{*}$                                                                \\
             \hline
-            \texttt{whitelist}             & \texttt{list[str] | None} & \texttt{None}    & Variables modificables $W$. Si es \texttt{None}, todas las variables son modificables \\
+            \texttt{whitelist}      & \texttt{list[str] | None} & \texttt{None}    & Variables modificables $W$. Si es \texttt{None}, todas las variables son modificables \\
             \hline
-            \texttt{timeout}               & \texttt{int}              & \texttt{60}      & Tiempo máximo (en segundos) por fase de optimización                                  \\
+            \texttt{timeout}        & \texttt{int}              & \texttt{60}      & Tiempo máximo (en segundos) por fase de optimización                                  \\
             \hline
-            \texttt{n\_walk\_steps}        & \texttt{int}              & \texttt{4}       & Número de pasos de avance temporal usados para enriquecer el conjunto causal          \\
+            \texttt{n\_walk\_steps} & \texttt{int}              & \texttt{4}       & Número de pasos de avance temporal usados para enriquecer el conjunto causal          \\
             \hline
-            \texttt{range\_min}            & \texttt{int}              & \texttt{-10}     & Límite inferior $r_{\min}$ del espacio de búsqueda                                    \\
+            \texttt{n\_trials}      & \texttt{int | None}       & \texttt{None}    & Número máximo de ensayos por fase. Cada fase se detiene al alcanzar el primero de los dos límites, \texttt{n\_trials} o \texttt{timeout}; fijarlo hace los resultados independientes de la máquina \\
             \hline
-            \texttt{range\_max}            & \texttt{int}              & \texttt{10}      & Límite superior $r_{\max}$ del espacio de búsqueda                                    \\
+            \texttt{n\_coverage
+                \_trials} & \texttt{int | None}       & \texttt{None}    & Sustituye a \texttt{n\_trials} solo en la Fase~2. Si es \texttt{None}, se emplea \texttt{n\_trials}                                                                                              \\
             \hline
-            \texttt{**kwargs}              & \texttt{str}              & ---              & Argumentos opcionales. Clave soportada: \texttt{verbose} (nivel de \textit{logging})  \\
+            \texttt{range\_min}     & \texttt{int}              & \texttt{-10}     & Límite inferior $r_{\min}$ del espacio de búsqueda                                    \\
+            \hline
+            \texttt{range\_max}     & \texttt{int}              & \texttt{10}      & Límite superior $r_{\max}$ del espacio de búsqueda                                    \\
+            \hline
+            \texttt{**kwargs}       & \texttt{str}              & ---              & Argumentos opcionales. Clave soportada: \texttt{verbose} (nivel de \textit{logging})  \\
             \hline
         \end{tabular}}
 \end{table}
@@ -2721,10 +2795,217 @@ En el ejemplo anterior se observan los siguientes aspectos relevantes:
 \end{itemize}
 
 \chapter{Resultados}
-% Un modelo lineal debería ser equivalente la explicación
+
+En este capítulo se presenta una evaluación contra la implementación del algoritmo \texttt{CFGTS}, descrito en el Capítulo~\ref{cap:propuesta}. El protocolo de evaluación está basado en el trabajo de \cite{Wang2023} y \cite{Kan2024}. Para ello se intenta responder a la pregunta, \textit{¿incorporar la puntuación causal aporta información relevante al contrafactual?}
+
+\section{Protocolo experimental}
+
+\subsection{Conjuntos de datos}
+
+Se emplean dos conjuntos de datos, resumidos en la Tabla~\ref{tab:res_datos}. El primero es un conjunto sintético de 20 series AR(2) estacionarias de longitud variable y mecanismo generador lineal, el segundo es la serie de actividad solar \textit{Sunspots} (1700-2008), no lineal y con un ciclo conocido de (aproximadamente) once años.
+
+Cada serie se entrena con los métodos usuales para series temporales, con un split 60, 20, 20, y se normaliza cada variable por por \textit{min-max}.
+
+\begin{table}[H]
+    \ttabbox[\FBwidth]
+    {\caption{Conjuntos de datos empleados en la evaluación}\label{tab:res_datos}}
+    {\begin{tabular}{|p{3.4cm}|c|c|c|c|}
+            \hline
+            \textbf{Conjunto} & \textbf{Vars.} & \textbf{Series} & \textbf{Vent. test} & \textbf{Instancias} \\
+            \hline
+            Sintético AR(2)  & 1 & 20 & 46 & 15 \\
+            \hline
+            \textit{Sunspots} & 1 & 1  & 6  & 6  \\
+            \hline
+        \end{tabular}}
+\end{table}
+
+\subsection{Modelos y objetivos}
+
+A cada conjunto de datos se ajustan dos modelos: una regresión lineal y un \textit{Random Forest}. El valor objetivo de cada instancia se define como una ventana, $y^{*}_d = \operatorname{mediana}(\mathbf{x}_{0,d}) \cdot (1 + cp)$, con $cp = 0{,}50$.
+
+La Tabla~\ref{tab:res_protocolo} recoge la configuración, que constitute 126 ejecuciones de CFGTS.
+
+\begin{table}[H]
+    \ttabbox[\FBwidth]
+    {\caption{Configuración experimental de la evaluación de CFGTS}\label{tab:res_protocolo}}
+    {\begin{tabular}{|p{6.2cm}|p{5.8cm}|}
+            \hline
+            \textbf{Parámetro}                             & \textbf{Valor}                                    \\
+            \hline
+            Orden de retardo $p$                           & 3                                                 \\
+            \hline
+            Horizonte de predicción $T$                    & 6                                                 \\
+            \hline
+            Partición                                      & 60/20/20                                          \\
+            \hline
+            Normalización                                  & \textit{min-max}                                  \\
+            \hline
+            Paso entre ventanas de prueba                  & $p + T = 9$                                       \\
+            \hline
+            Modelos                                        & Regresión lineal y \textit{Random Forest}         \\
+            \hline
+            \texttt{n\_trials} (Fase~1)                    & 300                                               \\
+            \hline
+            \texttt{n\_coverage\_trials} (Fase~2)          & 10                                                \\
+            \hline
+            \texttt{timeout} (tope de seguridad)           & 60\,s                                             \\
+            \hline
+            $[r_{\min}, r_{\max}]$                         & $[0,\ 3]$                                         \\
+            \hline
+            \texttt{n\_walk\_steps}                        & 1                                                 \\
+            \hline
+            Desplazamiento del objetivo $cp$               & $0{,}50$                                          \\
+            \hline
+            Semillas por instancia                         & $\{0, 1, 2\}$                                     \\
+            \hline
+            Tamaño del submuestreo $K$                     & 5                                                 \\
+            \hline
+            Perturbaciones de control por ejecución        & 25                                                \\
+            \hline
+            Semilla base                                   & 42\footnote{El sentido de la vida, el universo y todo lo demás}                                                \\
+            \hline
+        \end{tabular}}
+\end{table}
+
+\subsection{Magnitudes registradas}
+
+De cada ejecución se analizan los contrafactuales generados, y sobre ellos se calcula:
+
+\begin{itemize}
+    \item $\bar{s}$, la puntuación media, el estadístico principal.
+    \item $s_{K}$, el máximo sobre una submuestra aleatorio de $K = 5$ contrafactuales. Al fijar $K$ podemos comparar ejecuciones de \texttt{CFGTS} que generan distinta cantidad de contrafactuales.
+    \item $\bar{s}_{\text{ctrl}}$, la puntuación media del control aleatorio: 25 perturbaciones de dirección aleatoria que se puntúan invocando \texttt{score\_candidates()} sobre el mismo objeto \texttt{CFGTS}. Comparten, por tanto, los mismos efectos causales estimados.
+    \item $J_{\text{obj}}^{\min}$, el menor error relativo alcanzado en el frente, que mide si el objetivo llegó realmente a satisfacerse.
+    \item El número de candidatos por instancia y la desviación típica entre semillas, $\sigma_{\text{sem}}$.
+\end{itemize}
+
+\subsection{Validez de los modelos entrenados}
+
+Antes de interpretar el \textit{score} se comprueba que los modelos usados son descripciones razonables de las series. La Tabla~\ref{tab:res_smape} recoge el sMAPE de la predicción recursiva a seis pasos sobre el conjunto de prueba. Ningún modelo es degenerado, de modo que los contrafactuales se generan sobre modelos "realistas".
+
+\begin{table}[H]
+    \ttabbox[\FBwidth]
+    {\caption[Error de predicción de los modelos]{sMAPE (\%) de predicción recursivo a seis pasos sobre el conjunto de prueba.}\label{tab:res_smape}}
+    {\begin{tabular}{|p{3.6cm}|c|c|}
+            \hline
+            \textbf{Conjunto} & \textbf{Lineal} & \textbf{Random Forest} \\
+            \hline
+            Sintético AR(2)   & 7{,}62  & 8{,}07  \\
+            \hline
+            \textit{Sunspots} & 15{,}63 & 12{,}94 \\
+            \hline
+        \end{tabular}}
+\end{table}
+
+\section{Resultados generales}
+
+La Tabla~\ref{tab:res_principal} contiene el resultado central de la evaluación y la Tabla~\ref{tab:res_secundaria} los estadísticos complementarios.
+
+\begin{table}[H]
+    \ttabbox[\FBwidth]
+    {\caption[Puntuación causal frente al control aleatorio]{Puntuación media del frente de Pareto ($\bar{s}$, con intervalo de confianza al 95\,\%), puntuación media del control aleatorio ($\bar{s}_{\text{ctrl}}$) y diferencia entre ambas ($\Delta$), con el valor $p$ de la prueba $t$ emparejada. Las medias se toman sobre ventanas de prueba independientes, promediando previamente las tres semillas de cada instancia.}\label{tab:res_principal}}
+    {\begin{tabular}{|p{2.9cm}|p{2.4cm}|c|c|c|c|}
+            \hline
+            \textbf{Conjunto} & \textbf{Modelo} & $\bar{s}$ & $\bar{s}_{\text{ctrl}}$ & $\Delta$ & $p$ \\
+            \hline
+            Sintético AR(2)  & Lineal        & $0{,}970 \pm 0{,}009$ & $0{,}890$ & $+0{,}080$ & $\mathbf{<0{,}001}$ \\
+            \hline
+            Sintético AR(2)  & Random Forest & $0{,}617 \pm 0{,}046$ & $0{,}506$ & $+0{,}110$ & $\mathbf{0{,}005}$  \\
+            \hline
+            \textit{Sunspots} & Lineal        & $0{,}955 \pm 0{,}015$ & $0{,}923$ & $+0{,}032$ & $\mathbf{0{,}04}$   \\
+            \hline
+            \textit{Sunspots} & Random Forest & $0{,}502 \pm 0{,}098$ & $0{,}413$ & $+0{,}089$ & $0{,}23$            \\
+            \hline
+        \end{tabular}}
+\end{table}
+
+\begin{table}[H]
+    \ttabbox[\FBwidth]
+    {\caption[Estadísticos complementarios de la evaluación]{Máximo sobre un submuestreo de $K = 5$ candidatos ($s_K$), menor error relativo alcanzado en el frente ($J_{\text{obj}}^{\min}$), tamaño medio del frente y desviación típica entre semillas.}\label{tab:res_secundaria}}
+    {\begin{tabular}{|p{2.9cm}|p{2.4cm}|c|c|c|c|}
+            \hline
+            \textbf{Conjunto} & \textbf{Modelo} & $s_K$ & $J_{\text{obj}}^{\min}$ & \textbf{Cand.} & $\sigma_{\text{sem}}$ \\
+            \hline
+            Sintético AR(2)  & Lineal        & 0{,}994 & 0{,}001 & 15{,}6 & 0{,}020 \\
+            \hline
+            Sintético AR(2)  & Random Forest & 0{,}808 & 0{,}112 & 12{,}3 & 0{,}049 \\
+            \hline
+            \textit{Sunspots} & Lineal        & 0{,}991 & 0{,}002 & 13{,}9 & 0{,}236 \\
+            \hline
+            \textit{Sunspots} & Random Forest & 0{,}748 & 0{,}134 & 12{,}1 & 0{,}080 \\
+            \hline
+        \end{tabular}}
+\end{table}
+
+El primer patrón es que \textbf{la naturaleza del modelo domina el valor de la puntuación causal}, muy por encima del conjunto de datos. La Figura~\ref{fig:res_scores} muestra el mismo patrón en forma de distribución.
+
+El segundo patrón, y el más importante, es que \textbf{el control aleatorio obtiene puntuaciones inferiores a las de \texttt{CFGTS}}. Este resultado se analiza en la Sección~\ref{sec:res_control}.
+
+\begin{figure}[H]
+    \ffigbox[\FBwidth]{
+        \caption[Distribución de las puntuaciones de consistencia causal]{Distribución de la puntuación media del frente de Pareto por ejecución, desagregada por conjunto de datos y modelo. Las puntuaciones del modelo lineal (azul) se concentran junto a la unidad en ambos conjuntos, mientras que las del \textit{Random Forest} (naranja) se reparten en torno a $0{,}5$ con gran dispersión.}
+        \label{fig:res_scores}
+    }{
+        \includegraphics[width=\linewidth]{fig_score_distribution.png}
+    }
+\end{figure}
+
 \section{Conjunto de datos sintéticos}
 
+Los conjuntos de datos sintéticos que se han usado permite responder a una de las premisas básicas de este trabajo, un mecanismo generador y modelo lineales inducen una estructura de tipo grafo causal que \texttt{CFGTS} puede capturar.
+
+La experimentación con los conjuntos datos confirman la hipótesis. Con modelo lineal, $\bar{s}$ alcanza $0{,}970 \pm 0{,}009$, el valor más alto y más estable de toda la evaluación.
+
+Al sustituir el modelo por un \textit{Random Forest} la puntuación cae a $0{,}617 \pm 0{,}046$. Aquí la puntuación deja de ser trivialmente alta, pero el control también desciende en paralelo, hasta $0{,}506$.
+
+La Figura~\ref{fig:res_ejemplo} muestra cualitativamente una ejecución sobre el conjunto AR(2). La predicción se desplaza de forma coherente hacia delante, pese a que la optimización solo controla explícitamente la entrada.
+
+\begin{figure}[H]
+    \ffigbox[\FBwidth]{
+        \caption[Ejemplo cualitativo de contrafactual generado por CFGTS]{Contrafactual generado por \texttt{CFGTS} sobre una instancia del conjunto sintético AR(2) con modelo lineal. En negro, la ventana de retardos original (trazo discontinuo) y su predicción recursiva a seis pasos (trazo contínuo); en verde, la ventana contrafactual y la predicción; en naranja, el valor objetivo $y^{*}$.}
+        \label{fig:res_ejemplo}
+    }{
+        \includegraphics[width=0.85\linewidth]{fig_example.png}
+    }
+\end{figure}
+
 \section{Conjunto de datos reales}
+
+Para evaluar un conjunto de datos reales, se ha escogido la serie \textit{Sunspots}. Esta serie presenta no linealidad, un período de 11 años, amplitud no estacionaria y heterocedasticidad. Además, los modelos usados son desfavorables en esta serie, al ser modelos de orden 3 (inferior al período de 11). La Tabla~\ref{tab:res_smape} refleja los errores sMAPE obtenidos al ajustar los modelos lineal y Random Forest a los datos.
+
+El comportamiento de la puntuación causal apenas se distingue del observado en el conjunto sintético: $0{,}955 \pm 0{,}015$ con modelo lineal y $0{,}502 \pm 0{,}098$ con \textit{Random Forest}. La degradación respecto del escenario controlado es de apenas $0{,}015$ puntos para el modelo lineal.
+
+Esta insensibilidad es en sí misma el resultado: se recuerda de la Fase~3 de la propuesta que la puntuación causal no mide la fidelidad del modelo al proceso real, sino la \textit{coherencia interna} entre el contrafactual y el mecanismo que el modelo ha aprendido. Un modelo lineal de orden 3 es un mal predictor de la actividad solar (al menor peor que el Random Forest). La consecuencia práctica es que una puntuación causal elevada no debe interpretarse como evidencia de que la explicación sea válida respecto del fenómeno, sino respecto del modelo; si el modelo es una mala representación del fenómeno, la explicación será internamente coherente y a la vez extrínsecamente engañosa.
+
+\section{Contraste con el control aleatorio}
+\label{sec:res_control}
+
+La Figura~\ref{fig:res_control} muestra la comparación del \textit{score} causal contra contrafactuales aleatorios. Se esperaría que aquellos que se han buscado mediante el algoritmo tuviesen mejor puntuación.
+
+\begin{figure}[H]
+    \ffigbox[\FBwidth]{
+        \caption[Puntuación causal de CFGTS frente al control aleatorio]{Puntuación media de consistencia causal de los contrafactuales de \texttt{CFGTS} (azul) frente a contrafactuales aleatorios. Las barras de error son intervalos de confianza al 95\,\%.}
+        \label{fig:res_control}
+    }{
+        \includegraphics[width=\linewidth]{fig_control.png}
+    }
+\end{figure}
+
+\section{Relación con los objetivos de la Fase 1}
+
+Siguiendo con la discusión, se ha comprobado con los conjuntos de datos que mejores contrafactuales llevan a mejores puntuaciones causales, pero entonces cabría preguntarse si el objetivo de optimización no consigue ya obtener contrafactuales que se consideren causales respecto al modelo, sin que tengamos que calcular para ello una puntuación. Para responderlo se computó la correlación entre la puntuación $s$ y cada uno de los objetivos. El resultado agregado sobre las 126 ejecuciones es $\rho(s, J_{\text{obj}}) = -0{,}20$ y $\rho(s, J_{\text{prox}}) = +0{,}20$.
+
+La conclusión es que la puntuación causal es prácticamente ortogonal a los objetivos de la Fase~1: ordena los contrafactuales de tal forma que ninguno de los dos objetivos de optimización puede alcanzar.
+
+\begin{figure}[H]
+    \ffigbox[\FBwidth]{
+        \caption[Relación entre proximidad, error y consistencia causal]{Todos los contrafactuales generados durante la evaluación, situados en el plano de los dos objetivos de optimización en la Fase~1, y coloreados según su puntuación causal.}
+        \label{fig:res_tradeoff}
+    }{
+        \includegraphics[width=0.8\linewidth]{fig_tradeoff.png}
+    }
+\end{figure}
 
 \chapter{Marco regulador}
 % El TFG deberá incorporar el desarrollo de uno o varios de los siguientes apartados:
@@ -2736,11 +3017,7 @@ En el ejemplo anterior se observan los siguientes aspectos relevantes:
 % recomendable que haya un apartado específico
 \section{Legislación}
 % Artificial intelligence act de la UE
-\subsection{Protección}
 
-\section{Estándares de programación en Python}
-\subsection{Construcción de paquetes}
-\subsection{Distribución de paquetes}
 
 \chapter{Análisis del entorno}
 \section{Entorno socio-económico}
@@ -2759,16 +3036,16 @@ En el ejemplo anterior se observan los siguientes aspectos relevantes:
 
 \chapter{Planificación}
 
-En este trabajo se ha combinado investigación teórica en estadística, causalidad \textit{pearliana} y series temporales con la práctica del diseño de un algoritmo, su formalización y su implementación como paquete de software. El proyecto se inició en enero de 2025, con una estimación de entrega en septiembre de 2025; esta estimación rápidamente demostró ser insuficiente con las obligaciones profesionales y la dificultad técnica del trabajo.
+El proyecto se inició en enero de 2025, con una estimación de entrega en septiembre de 2025; esta estimación rápidamente demostró ser insuficiente con las obligaciones profesionales y la dificultad técnica del trabajo.
 
-El trabajo se desarrolló de forma continuada, aunque no siempre con la misma intensidad, hasta su entrega en septiembre de 2026. Al tratarse de un periodo superior al año y medio, se ha podido compaginar el trabajo con otras obligaciones académicas y profesionales, que han impedido terminar el trabajo antes, dedicando bloques de tiempo relativamente cortos por día pero manteniendo fases de trabajo largas, lo que ha permitido detenerse a reformular partes del planteamiento (como por ejemplo la definición final de la puntuación de consistencia causal y su comparación frente a la regresión por MCO) sin comprometer la fecha de entrega.
+El trabajo se desarrolló de forma continuada, aunque no siempre con la misma intensidad, hasta su entrega en septiembre de 2026. Al tratarse de un periodo superior al año y medio, se ha podido compaginar el trabajo con otras obligaciones académicas y profesionales, que han impedido terminar el trabajo antes, dedicando bloques de tiempo relativamente cortos por día pero manteniendo fases de trabajo largas, lo que ha permitido detenerse a reformular partes del planteamiento (como por ejemplo la definición final de la puntuación de consistencia causal y su comparación frente al Naive LIME) sin comprometer la fecha de entrega.
 
 El trabajo se organizó en 5 fases secuenciales y con períodos solapados; la investigación teórica y la formalización matemática se retomaron puntualmente durante la fase de implementación para resolver agujeros teóricos que solo se hicieron evidentes al programar el algoritmo:
 
 \begin{itemize}
     \item \textbf{Fase 1: Investigación y fundamentos teóricos.} La fase 1 se dedicó a construir una base sólida de conocimiento en los campos necesarios para abordar el problema: estadística y probabilidad, causalidad \textit{pearliana} (grafos causales, modelos causales estructurales, intervenciones y mediación), series temporales (modelos autorregresivos, similaridad, clasificación) y el estado del arte en generación de explicaciones contrafactuales, tanto en datos tabulares como en series temporales. Esta fase destaca por dedicarse a revisar bibliografía especializada, mucha más de lo que originalmente se esperaba, y estudiar las limitaciones de los métodos existentes (en esencia el método \textit{LIME}) cuando se aplican a datos en series temporales. Se perfiló la motivación y el planteamiento del problema que después darían forma a los primeros capítulos de la memoria. Esta fase transcurrió aproximadamente desde enero de 2025 hasta septiembre de 2025, concentrándose especialmente en los primeros meses del proyecto.
 
-    \item \textbf{Fase 2: Diseño y formalización matemática del algoritmo.} Una vez asentados la mayoría de fundamentos teóricos, se procedió a diseñar \texttt{CFGTS} como algoritmo de dos fases: generación de candidatos mediante optimización bi-objetivo y evaluación causal. Esta fase se centró en formalizar cada componente: las funciones objetivo $J_1$ y $J_2$, la noción de dominancia y optimalidad de Pareto, el grafo causal temporal y la puntuación de consistencia causal, así como la comparación entre el estimador basado en el DAG y una regresión lineal ajustada (LIME). El atento lector notará la mención de solo dos fases: el paso del algoritmo relativo a la generación de un conjunto de cobertura y el uso de la discrepancia estelar centrada $L^2$ se añadió después, al comprobar la falta de estabilidad numérica de las soluciones; un algoritmo sin implementar nunca hubiese podido mostrar la necesidad de este paso. De esta fase surgieron los enunciados y las demostraciones que conforman el Anexo E, un trabajo que exigió varias (en ocasiones demasiadas) iteraciones para refinar las hipótesis de cada teorema y evitar afirmaciones poco defendibles (por ejemplo acotar la dominancia del modelo causal al caso lineal). Esta fase se extendió aproximadamente desde mayo de 2025 hasta noviembre de 2025.
+    \item \textbf{Fase 2: Diseño y formalización matemática del algoritmo.} Una vez asentados la mayoría de fundamentos teóricos, se procedió a diseñar \texttt{CFGTS} como algoritmo de dos fases: generación de candidatos mediante optimización bi-objetivo y evaluación causal. Esta fase se centró en formalizar cada componente: las funciones objetivo $J_1$ y $J_2$, la noción de dominancia y optimalidad de Pareto, el grafo causal temporal y la puntuación de consistencia causal, así como la comparación entre el estimador basado en el DAG y una regresión lineal ajustada (LIME). El atento lector notará la mención de solo dos fases: el paso del algoritmo relativo a la generación de un conjunto de cobertura y el uso de la discrepancia estelar centrada $L^2$ se añadió después, al comprobar la falta de estabilidad numérica de las soluciones; un algoritmo sin implementar nunca hubiese podido mostrar la necesidad de este paso. De esta fase surgieron los enunciados y las demostraciones que conforman el Anexo B, un trabajo que exigió varias (en ocasiones demasiadas) iteraciones para refinar las hipótesis de cada teorema y evitar afirmaciones poco defendibles (por ejemplo acotar la dominancia del modelo causal al caso lineal). Esta fase se extendió aproximadamente desde mayo de 2025 hasta noviembre de 2025.
 
     \item \textbf{Fase 3: Implementación del paquete \texttt{cfgts}.} Esta fase consistió en materializar el algoritmo formalizado como un paquete de Python distribuible. Se desarrolló la clase principal \texttt{CFGTS}. También se incorporaron aspectos de calidad de software: tipado estático (\texttt{mypy}), pruebas automatizadas y la configuración del \textit{wheel} con \texttt{Hatchling}. Esta fase se desarrolló de forma intermitente entre julio de 2025 y abril de 2026, alternando periodos de programación intensiva con semanas de menor dedicación por coincidir con otras obligaciones o por necesitar refinar la parte teórica del algoritmo.
 
@@ -2786,26 +3063,28 @@ En la Tabla~\ref{tab:planificacion} se resume la planificación descrita, indica
             \hline
             \textbf{Fase} & \textbf{Tarea realizada}                        & \textbf{Fecha inicio} & \textbf{Fecha fin} \\
             \hline
-            Fase 1        & Investigación y fundamentos teóricos            & 01/2025                & 09/2025            \\
+            Fase 1        & Investigación y fundamentos teóricos            & 01/2025               & 09/2025            \\
             \hline
-            Fase 2        & Diseño y formalización matemática del algoritmo & 05/2025                & 11/2025            \\
+            Fase 2        & Diseño y formalización matemática del algoritmo & 05/2025               & 11/2025            \\
             \hline
-            Fase 3        & Implementación del paquete \texttt{cfgts}       & 07/2025                & 04/2026            \\
+            Fase 3        & Implementación del paquete \texttt{cfgts}       & 07/2025               & 04/2026            \\
             \hline
-            Fase 4        & Experimentación y resultados                    & 03/2026                & 07/2026            \\
+            Fase 4        & Experimentación y resultados                    & 03/2026               & 07/2026            \\
             \hline
-            Fase 5        & Redacción de la memoria y revisión final        & 01/2026                & 09/2026            \\
+            Fase 5        & Redacción de la memoria y revisión final        & 01/2026               & 09/2026            \\
             \hline
         \end{tabular}}
 \end{table}
 
-En cuanto a la dedicación diaria, las Fases~1 y 2 se llevaron a cabo con una carga aproximada de entre media hora y 2h diarias, que pude compatibilizar con otras actividades académicas y laborales. Fue necesario dedicar gran parte del tiempo a profundizar en los fundamentos teóricos y a depurar la formalización sin "inventarse" resultados, pues los temas a tratar salen bastante del conocimiento del Grado. La Fase~3, al tratarse de la implementación del software, tuvo una dedicación más irregular: periodos de baja actividad se alternaron con semanas de entre cuatro y seis horas diarias (sobre todo usando los períodos de vacaciones para poder avanzar el trabajo). La Fase~4 exigió períodos más largos pero espaciados en el tiempo, al requerir ejecuciones repetidas de los experimentos y ajustes en la configuración de los mismos. Por último, la Fase~5 ha sido la de mayor concentración de horas por día, con sesiones de 1 a 2 horas diarias entre semana y 5-8h en los fines de semana, dado que la redacción de la memoria, la revisión de la notación entre capítulos y la elaboración de los anexos de demostraciones son tareas que se benefician de sesiones de trabajo largas y continuas.
+En cuanto a la dedicación diaria, las Fases~1 y 2 se llevaron a cabo con una carga aproximada de entre media hora y 2h diarias, que pude compatibilizar con otras actividades académicas y laborales. Fue necesario dedicar gran parte del tiempo a profundizar en los fundamentos teóricos y a depurar la formalización sin "inventar" resultados, pues los temas a tratar salen bastante del conocimiento del Grado. La Fase~3, al tratarse de la implementación del software, tuvo una dedicación más irregular: periodos de baja actividad se alternaron con semanas de entre cuatro y seis horas diarias (sobre todo usando los períodos de vacaciones para poder avanzar el trabajo). La Fase~4 exigió períodos más largos pero espaciados en el tiempo, al requerir ejecuciones repetidas de los experimentos y ajustes en la configuración de los mismos. Por último, la Fase~5 ha sido la de mayor concentración de horas por día, con sesiones de 1 a 2 horas diarias entre semana y 5-8h en los fines de semana, dado que la redacción de la memoria, la revisión de la notación entre capítulos y la elaboración de los anexos de demostraciones son tareas que se benefician de sesiones de trabajo largas y continuas.
 
 \chapter{Presupuesto}
 
 \chapter{Conclusiones}
 
 \chapter{Futuras líneas de investigación}
+
+% Hablar de que el método de generación de contrafactuales del paso 1 se puede cambiar por otros métodos.
 
 % COMENZAR A ESCRIBIR la MEMORIA
 
@@ -2876,15 +3155,8 @@ En cuanto a la dedicación diaria, las Fases~1 y 2 se llevaron a cabo con una ca
 %----------
 
 % Si tu trabajo incluye anexos, puedes descomentar las siguientes líneas
-\chapter* {Anexo A. Series temporales}
-\pagenumbering{gobble} % Las páginas de los anexos no se numeran
-\renewcommand{\thefigure}{A.\arabic{figure}} % Cambiar el formato del número de figura
 
-
-\chapter* {Anexo B. Explicaciones contrafactuales}
-\renewcommand{\thefigure}{B.\arabic{figure}} % Cambiar el formato del número de figura
-
-\chapter*{ANEXO C. GLOSARIO}
+\chapter*{ANEXO A. GLOSARIO}
 \renewcommand{\thefigure}{C.\arabic{figure}} % Cambiar el formato del número de figura
 
 \begin{tabbing}
@@ -2892,7 +3164,7 @@ En cuanto a la dedicación diaria, las Fases~1 y 2 se llevaron a cabo con una ca
     LSTM \>	\textit{Long Short Term Memory}
 \end{tabbing}
 
-\chapter* {Anexo E. Demostraciones}
+\chapter* {Anexo B. Demostraciones}
 
 En este anexo se demuestran los teoremas propuestos. La notación usada en las demostraciones es la misma que en la sección de formalización del problema.
 
@@ -2903,7 +3175,7 @@ Durante todo el anexo fijamos las siguientes convenciones:
     \item Siempre que aparezca el objetivo $J_1$, suponemos $\forall k \in \{0, \ldots, D-1\},\; y_k^* \neq 0$, de modo que cada cociente relativo está bien definido en sentido clásico.
 \end{itemize}
 
-\section*{E.1 Contrafactual}
+\section*{B.1 Contrafactual}
 
 Sea $\hat{f}: \mathbb{R}^{n_{\text{In}}} \to \mathbb{R}^{D}$ un modelo ajustado,
 $\mathbf{x} \in \mathbb{R}^{n_{\text{In}}}$ la instancia original,
@@ -3080,7 +3352,7 @@ Además, usaremos los siguientes predicados auxiliares:
     Por tanto, las sumas finitas que definen el objetivo original y el escalado coinciden término a término, y en consecuencia $J_1$ es invariante por escalado simultáneo del objetivo y de la salida del modelo.
 \end{proof}
 
-\section*{E.2 Cobertura}
+\section*{B.2 Cobertura}
 
 En esta sección se desarrollan las demostraciones de las propiedades del objetivo de cobertura. Seguimos un desglose por bloques: primero se prueban las propiedades escalares del intervalo de cobertura, después las propiedades de la normalización, a continuación los lemas sobre los núcleos de discrepancia y, por último, el resultado de cobertura completa junto con sus corolarios vectoriales.
 
@@ -3283,7 +3555,7 @@ Los índices recorrerán conjuntos finitos; en la notación matemática escribir
 
 El intervalo de cobertura está bien definido, contiene los valores de predicción relevantes, induce una normalización correcta al intervalo unitario y preserva la estructura necesaria para medir uniformidad mediante la discrepancia estelar centrada $L^2$.
 
-\section*{E.3 Grafo causal temporal}
+\section*{B.3 Grafo causal temporal}
 
 En esta sección se demuestran los teoremas relativos al grafo causal temporal, la puntuación de consistencia causal y la comparación formal entre el estimador causal basado en el DAG y la regresión lineal ajustada. La notación es la misma que en la sección de formalización correspondiente del capítulo de Propuesta.
 
@@ -3430,8 +3702,8 @@ $$s_d(\mathbf{x}') = 1 - \frac{|a - b|}{|a| + |b| + \varepsilon}.$$
     Por hipótesis, $x''_i - x_i = (x'_i - x_i) + (x''_i - x'_i)$ para todo $i$. Entonces,
     \begin{align*}
         \Delta y_d^{\text{esp}}(\mathbf{x}, \mathbf{x}'')
-         & = \sum_{i=0}^{n_{\text{In}}-1} \beta_i^{(d)} \cdot (x''_i - x_i)                                                     \\
-         & = \sum_{i=0}^{n_{\text{In}}-1} \beta_i^{(d)} \cdot \bigl[(x'_i - x_i) + (x''_i - x'_i)\bigr]                        \\
+         & = \sum_{i=0}^{n_{\text{In}}-1} \beta_i^{(d)} \cdot (x''_i - x_i)                                                      \\
+         & = \sum_{i=0}^{n_{\text{In}}-1} \beta_i^{(d)} \cdot \bigl[(x'_i - x_i) + (x''_i - x'_i)\bigr]                          \\
          & = \sum_{i=0}^{n_{\text{In}}-1} \beta_i^{(d)} (x'_i - x_i) + \sum_{i=0}^{n_{\text{In}}-1} \beta_i^{(d)} (x''_i - x'_i) \\
          & = \Delta y_d^{\text{esp}}(\mathbf{x}, \mathbf{x}') + \Delta y_d^{\text{esp}}(\mathbf{x}', \mathbf{x}''),
     \end{align*}
@@ -3469,9 +3741,9 @@ y la noción de consistencia con el DAG respecto del conjunto de padres $P \subs
     Partimos de la definición del cambio real y desarrollamos la forma lineal de $f_d$:
     \begin{align*}
         \Delta y_d^{\text{real}}
-         & = f_d(\mathbf{x}') - f_d(\mathbf{x})                                                                                  \\
+         & = f_d(\mathbf{x}') - f_d(\mathbf{x})                                                                                             \\
          & = \left(\sum_{i=0}^{n_{\text{In}}-1} w_i^{(d)} x'_i + b_d\right) - \left(\sum_{i=0}^{n_{\text{In}}-1} w_i^{(d)} x_i + b_d\right) \\
-         & = \sum_{i=0}^{n_{\text{In}}-1} w_i^{(d)} x'_i - \sum_{i=0}^{n_{\text{In}}-1} w_i^{(d)} x_i                                  \\
+         & = \sum_{i=0}^{n_{\text{In}}-1} w_i^{(d)} x'_i - \sum_{i=0}^{n_{\text{In}}-1} w_i^{(d)} x_i                                       \\
          & = \sum_{i=0}^{n_{\text{In}}-1} w_i^{(d)} (x'_i - x_i),
     \end{align*}
     donde los interceptos $b_d$ se cancelan y los sumatorios se combinan término a término. Por otro lado, la definición del cambio esperado junto con la hipótesis $\boldsymbol{\beta}^{(d)} = \mathbf{w}^{(d)}$ da
@@ -3491,7 +3763,7 @@ y la noción de consistencia con el DAG respecto del conjunto de padres $P \subs
     \begin{align*}
         \Delta y_d^{\text{esp}}\!\left(\boldsymbol{\beta}^{(d)}\right) - \Delta y_d^{\text{real}}
          & = \sum_{i=0}^{n_{\text{In}}-1} \beta_i^{(d)} (x'_i - x_i) - \sum_{i=0}^{n_{\text{In}}-1} w_i^{(d)} (x'_i - x_i) \\
-         & = \sum_{i=0}^{n_{\text{In}}-1} \bigl(\beta_i^{(d)} - w_i^{(d)}\bigr) (x'_i - x_i)                              \\
+         & = \sum_{i=0}^{n_{\text{In}}-1} \bigl(\beta_i^{(d)} - w_i^{(d)}\bigr) (x'_i - x_i)                               \\
          & = E_d(\boldsymbol{\beta}^{(d)}, \mathbf{w}^{(d)}, \mathbf{x}, \mathbf{x}'),
     \end{align*}
     donde la última igualdad es exactamente la definición del error de predicción.
