@@ -195,3 +195,5 @@ lean/README.md
 lean/CfgtsLean/CausalGraph.lean
 lean/CfgtsLean/CounterfactualObjective.lean
 lean/CfgtsLean/CoverageObjective.lean
+evaluation/
+scripts/

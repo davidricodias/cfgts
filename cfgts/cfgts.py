@@ -27,6 +27,7 @@ class CFGTS:
     __slots__ = (
         "__run_lock",
         "_all_trials",
+        "_causal_effects",
         "_causal_model",
         "_counterfactual_study",
         "_counterfactuals",
@@ -42,6 +43,8 @@ class CFGTS:
         "instance",
         "kwargs",
         "model",
+        "n_coverage_trials",
+        "n_trials",
         "n_walk_steps",
         "range_max",
         "range_min",
@@ -59,6 +62,8 @@ class CFGTS:
         range_min: int = -(10**1),
         range_max: int = 10**1,
         n_walk_steps: int = 4,
+        n_trials: int | None = None,
+        n_coverage_trials: int | None = None,
         **kwargs: str,
     ):
         """The CFGTS (CounterFactual Generation for Time Series) class is designed to
@@ -82,6 +87,8 @@ class CFGTS:
             range_min (int, optional): The minimum value for the features when generating counterfactuals. Defaults to -(10**1).
             range_max (int, optional): The maximum value for the features when generating counterfactuals. Defaults to 10**1.
             n_walk_steps (int, optional): Number of forward time steps to walk from each counterfactual and coverage point for generating additional data points for causal validation. Defaults to 4.
+            n_trials (int | None, optional): The maximum number of optimization trials per phase. When set, each phase stops at whichever limit (`n_trials` or `timeout`) is reached first; fixing it makes runs reproducible across machines. Defaults to None (time-bounded only).
+            n_coverage_trials (int | None, optional): Overrides `n_trials` for Phase 2 only. A coverage trial suggests `300 * n_features` parameters at once and is therefore orders of magnitude costlier than a Phase 1 trial, while contributing a single point to the causal dataset. Defaults to None (same budget as `n_trials`).
             kwargs (str): Additional keyword arguments for configuration. Supported keys include:
                 - "verbose": Sets the logging level conformant to the logging library levels. For example CFGTS(..., verbose="DEBUG"). Defaults to "NOTSET".
         """
@@ -93,6 +100,10 @@ class CFGTS:
         self.range_min: int = range_min
         self.range_max: int = range_max
         self.n_walk_steps: int = n_walk_steps
+        self.n_trials: int | None = n_trials
+        self.n_coverage_trials: int | None = (
+            n_coverage_trials if n_coverage_trials is not None else n_trials
+        )
         self.kwargs: dict[str, str] = kwargs
 
         self._counterfactuals: DataFrame | None = None
@@ -101,6 +112,7 @@ class CFGTS:
         self._coverage_study: Study | None = None
         self._forward_set: DataFrame | None = None
         self._causal_model: CausalModel | None = None
+        self._causal_effects: dict[str, dict[str, float]] | None = None
         self._num_coverage_trials: int = (
             300  # Number of samples in the matrix generated for coverage optimization objective
         )
@@ -127,6 +139,71 @@ class CFGTS:
             "Study has not been created yet. Please run the `run()` method first."
         )
         return self._counterfactual_study
+
+    @property
+    def causal_effects(self: CFGTS) -> dict[str, dict[str, float]] | None:
+        """Causal effect of every input on every target, estimated in Phase 3."""
+        assert self._causal_effects is not None, (
+            "Causal effects have not been estimated yet. Please run the `run()` method first."
+        )
+        return self._causal_effects
+
+    def score_candidates(self: CFGTS, candidates: DataFrame) -> np.ndarray:
+        """Apply the Phase 3 causal consistency score to arbitrary candidates.
+
+        Args:
+            candidates (DataFrame): Rows holding the input columns of the instance.
+
+        Returns:
+            np.ndarray: One score per row, NaN where no effect could be estimated.
+        """
+        assert self._causal_effects is not None, (
+            "Causal effects have not been estimated yet. Please run the `run()` method first."
+        )
+        predictions = np.asarray(self.model.predict(candidates[self._input_cols]), dtype=float)
+        return self.__score_rows(
+            np.asarray(candidates[self._input_cols].to_numpy(), dtype=float),
+            predictions,
+            self._causal_effects,
+        )
+
+    def __score_rows(
+        self: CFGTS,
+        candidate_inputs: np.ndarray,
+        candidate_outputs: np.ndarray,
+        causal_effects: dict[str, dict[str, float]],
+    ) -> np.ndarray:
+        """Score rows by how closely the realised output change matches the change
+        the estimated causal effects predict for the same input perturbation."""
+        instance_vals = np.asarray(self.instance[self._input_cols].to_numpy(), dtype=float)[0]
+        y_hat = np.asarray(self.model.predict(self.instance), dtype=float)[0]
+
+        scores: list[float] = []
+        for row_idx in range(candidate_inputs.shape[0]):
+            delta_x = candidate_inputs[row_idx] - instance_vals
+
+            target_scores: list[float] = []
+            for tgt_idx, tgt in enumerate(self._target_cols):
+                effects = causal_effects.get(tgt, {})
+                if not effects:
+                    continue
+
+                expected_delta = sum(
+                    effects[inp] * delta_x[i]
+                    for i, inp in enumerate(self._input_cols)
+                    if inp in effects
+                )
+                actual_delta = float(candidate_outputs[row_idx, tgt_idx]) - float(y_hat[tgt_idx])
+
+                target_scores.append(
+                    1.0
+                    - abs(expected_delta - actual_delta)
+                    / (abs(expected_delta) + abs(actual_delta) + 1e-10)
+                )
+
+            scores.append(float(np.mean(target_scores)) if target_scores else float("nan"))
+
+        return np.asarray(scores, dtype=float)
 
     def __setup_logging(self: CFGTS) -> None:
         logging_level: str = "NOTSET"
@@ -293,41 +370,20 @@ class CFGTS:
 
         if all(not effects for effects in causal_effects.values()):
             log.warning("No causal effects could be estimated; scoring skipped.")
+            self._causal_effects = causal_effects
             self._counterfactuals = self._counterfactuals.with_columns(
                 pl.lit(float("nan")).alias("score")
             )
             return
 
-        # Score each counterfactual: mean causal consistency across D targets
-        y_hat: np.ndarray = np.asarray(self.model.predict(self.instance), dtype=float)[
-            0
-        ]  # shape (D,)
+        self._causal_effects = causal_effects
 
-        scores: list[float] = []
-        instance_vals = instance_df[input_cols].iloc[0].to_numpy(dtype=float)
-
-        for _, row in counterfactuals_df.iterrows():
-            cf_vals = row[input_cols].to_numpy(dtype=float)
-            delta_x = cf_vals - instance_vals
-
-            target_scores: list[float] = []
-            for tgt_idx, tgt in enumerate(target_cols):
-                effects = causal_effects[tgt]
-                if not effects:
-                    continue
-
-                expected_delta = sum(
-                    effects[inp] * delta_x[i] for i, inp in enumerate(input_cols) if inp in effects
-                )
-                actual_y = float(row[tgt])
-                actual_delta = actual_y - float(y_hat[tgt_idx])
-
-                target_score = 1.0 - abs(expected_delta - actual_delta) / (
-                    abs(expected_delta) + abs(actual_delta) + 1e-10
-                )
-                target_scores.append(target_score)
-
-            scores.append(float(np.mean(target_scores)) if target_scores else float("nan"))
+        scores_arr = self.__score_rows(
+            counterfactuals_df[input_cols].to_numpy().astype(float),
+            counterfactuals_df[target_cols].to_numpy().astype(float),
+            causal_effects,
+        )
+        scores = scores_arr.tolist()
 
         self._counterfactuals = self._counterfactuals.with_columns(pl.Series("score", scores))
 
@@ -348,10 +404,12 @@ class CFGTS:
             self.instance,
             range_min=self.range_min,
             range_max=self.range_max,
+            whitelist=self.whitelist,
         )
         self._counterfactual_study.optimize(
             optimization_objective,
             timeout=self.timeout,
+            n_trials=self.n_trials,
             n_jobs=1,
         )
 
@@ -360,19 +418,29 @@ class CFGTS:
         for _trial in self._counterfactual_study.trials:
             for k, v in _trial.params.items():
                 all_trials[k].append(v)
-        self._all_trials = DataFrame(all_trials, schema=self._input_cols)
+        self._all_trials = self.__trials_to_frame(all_trials)
 
         # Store best trials
         counterfactuals = defaultdict(list)
         for _trial in self._counterfactual_study.best_trials:
             for k, v in _trial.params.items():
                 counterfactuals[k].append(v)
-        self._counterfactuals = DataFrame(counterfactuals, schema=self._input_cols)
+        self._counterfactuals = self.__trials_to_frame(counterfactuals)
         predictions = np.asarray(self.model.predict(self._counterfactuals), dtype=float)
         for idx, col_name in enumerate(self._target_cols):
             self._counterfactuals = self._counterfactuals.with_columns(
                 pl.Series(col_name, predictions[:, idx])
             )
+
+    def __trials_to_frame(self: CFGTS, trial_params: dict[str, list[float]]) -> DataFrame:
+        """Rebuild full input rows from Optuna params, restoring the original value of
+        any feature the whitelist prevented the optimizer from suggesting."""
+        n_rows = len(next(iter(trial_params.values()), []))
+        instance_row = self.instance.to_numpy()[0]
+        columns = {}
+        for idx, col in enumerate(self._input_cols):
+            columns[col] = trial_params.get(col) or [float(instance_row[idx])] * n_rows
+        return DataFrame(columns, schema=self._input_cols)
 
     def __generate_coverage_set(self: CFGTS) -> None:
         r"""Calculate coverage set between $\hat{y}$ and $\hat{y}'$ for all D targets."""
@@ -399,6 +467,7 @@ class CFGTS:
         self._coverage_study.optimize(
             optimization_objective,
             timeout=self.timeout,
+            n_trials=self.n_coverage_trials,
             n_jobs=1,
         )
 
@@ -613,6 +682,7 @@ class CFGTS:
             instance: DataFrame,
             range_min: int = -(10**1),
             range_max: int = 10**1,
+            whitelist: list[str] | None = None,
         ) -> None:
             self.model = model
             self.objective_value = copy.deepcopy(objective_value).to_numpy()
@@ -621,11 +691,17 @@ class CFGTS:
             self.suggested_instance = np.ndarray(shape=(instance.shape[0], instance.shape[1]))
             self.range_min = range_min
             self.range_max = range_max
+            self.whitelist = whitelist
 
         def __call__(self, trial: Trial) -> tuple[float, float]:
             suggestion = np.ndarray(shape=(self.instance.shape[0], self.instance.shape[1]))
             for i in range(len(self.suggested_instance)):
                 for j in range(len(self.suggested_instance[i])):
+                    # Non-whitelisted features are pinned to their original value so
+                    # the optimizer cannot move them.
+                    if self.whitelist is not None and self.variables[j] not in self.whitelist:
+                        suggestion[i][j] = self.instance[i][j]
+                        continue
                     suggestion[i][j] = trial.suggest_float(
                         f"{self.variables[j]}", self.range_min, self.range_max
                     )
