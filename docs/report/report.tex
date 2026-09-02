@@ -3159,10 +3159,36 @@ En cuanto a la dedicación diaria, las Fases~1 y 2 se llevaron a cabo con una ca
 \chapter*{ANEXO A. GLOSARIO}
 \renewcommand{\thefigure}{C.\arabic{figure}} % Cambiar el formato del número de figura
 
-\begin{tabbing}
-    MLP  \quad\quad\= \textit{MultiLayer Perceptron} \\
-    LSTM \>	\textit{Long Short Term Memory}
-\end{tabbing}
+\begin{description}
+    \item[AR] \textit{AutoRegressive} (autorregresivo). Modelo en el que una variable se explica mediante sus propios valores retardados.
+    \item[\textit{backdoor}] Criterio de ajuste por puerta trasera: conjunto de variables que, al condicionar (no intervenir) sobre ellas, bloquea los caminos de retroceso (confusores) entre una causa y un efecto, permitiendo identificar el efecto causal a partir de datos observacionales.
+    \item[CDE] \textit{Controlled Direct Effect} (efecto directo controlado). Diferencial en el resultado al intervenir sobre la causa manteniendo fijo por intervención el mediador.
+    \item[CFGTS] \textit{CounterFactual Generation for Time Series}. Algoritmo y paquete propuestos en este trabajo.
+    \item[DAG] \textit{Directed Acyclic Graph} (grafo dirigido acíclico). Grafo cuyas aristas tienen dirección y en el que no existen ciclos.
+    \item[DGP] \textit{Data Generating Process} (proceso generador de datos). Mecanismo, habitualmente desconocido, que produce datos observables.
+    \item[DTW] \textit{Dynamic Time Warping}. Medida de similaridad elástica entre series temporales que permite estirar localmente una serie para mejorar su emparejamiento.
+    \item[EDA] \textit{Exploratory Data Analysis} (análisis exploratorio de datos). Técnicas de explicabilidad aplicadas antes del uso de un modelo.
+    \item[EDR] \textit{Edit Distance on Real sequence}. Medida de similaridad basada en edición entre series temporales.
+    \item[ERP] \textit{Edit Distance with Real Penalty}. Medida de similaridad basada en edición entre series temporales con tolerancia a huecos.
+    \item[\textit{fitted}] Cuando un modelo ha sido entrenado (ajustado) con los datos.
+    \item[\textit{forward walking}] Recorrer el modelo autorregresivamente para generar predicciones adicionales.
+    \item[GML] \textit{Graph Modeling Language}. Formato de representación de grafos.
+    \item[LCSS] \textit{Longest Common Subsequence}. Medida de similaridad entre series temporales basada en la subsecuencia común más larga.
+    \item[LIME] \textit{Local Interpretable Model-agnostic Explanations}. Método de referencia para generar modelos surrogados locales mediante perturbación y ponderación por cercanía.
+    \item[MCE] Modelo Causal Estructural (véase SCM).
+    \item[MCO] Mínimos Cuadrados Ordinarios. Método de estimación de los coeficientes de una regresión lineal minimizando la suma de residuos al cuadrado.
+    \item[PNDE] \textit{Pure Natural Direct Effect} (efecto directo natural puro). Componente del efecto total que se transmite directamente de la causa al efecto.
+    \item[RCT] \textit{Randomized Controlled Trial} (experimento controlado aleatorizado). Procedimiento experimental de referencia para la investigación causal.
+    \item[SCM] \textit{Structural Causal Model} (modelo causal estructural). Conjunto de variables exógenas, endógenas y ecuaciones que determinan cómo se asignan los valores de las variables de interés.
+    \item[\textit{shapelet}] Segmento característico de una serie temporal, utilizado por algunos métodos de clasificación y generación de contrafactuales.
+    \item[sMAPE] \textit{symmetric Mean Absolute Percentage Error}. Métrica simétrica de error porcentual absoluto medio, usada para evaluar la calidad de la predicción recursiva de los modelos.
+    \item[SVAR] \textit{Structural Vector AutoRegressive} (modelo autorregresivo estructural). Generalización del VAR que admite enlaces contemporáneos entre variables.
+    \item[TE] Efecto Total (\textit{Total Effect}). Suma del efecto directo y de todos los efectos mediados entre una causa y un efecto.
+    \item[TNIE] \textit{Total Natural Indirect Effect} (efecto indirecto natural total). Componente del efecto total que se transmite a través de la variable mediadora. Véase también PNDE.
+    \item[TPE] \textit{Tree-structured Parzen Estimator}. Algoritmo de optimización bayesiana empleado por la biblioteca Optuna para resolver problemas de optimización.
+    \item[VAR] \textit{Vector AutoRegressive} (vectorial autorregresivo). Modelo lineal matricial y multivariante donde cada variable se explica por todos los valores retardados de todas las variables del sistema.
+    \item[\textit{whitelist}] Subconjunto de variables de entrada que el optimizador de \texttt{CFGTS} tiene permitido modificar al generar contrafactuales.
+\end{description}
 
 \chapter* {Anexo B. Demostraciones}
 
