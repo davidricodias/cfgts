@@ -7,21 +7,6 @@
   year      = {2017}
 }
 
-@article{Guidotti2022,
-  author    = {Guidotti,  Riccardo},
-  doi       = {10.1007/s10618-022-00831-6},
-  issn      = {1573-756X},
-  journal   = {Data Mining and Knowledge Discovery},
-  month     = apr,
-  number    = {5},
-  pages     = {2770–2824},
-  publisher = {Springer Science and Business Media LLC},
-  title     = {Counterfactual explanations and how to find them: literature review and benchmarking},
-  url       = {http://dx.doi.org/10.1007/s10618-022-00831-6},
-  volume    = {38},
-  year      = {2022}
-}
-
 @article{deBoer2001,
   abstract = {Ancient tradition linked the Delphic oracle in Greece to specific  geological phenomena, including a fissure in the bedrock, intoxicating  gaseous emissions, and a spring. Despite testimony by  ancient authors, many modern scholars have dismissed these traditional  accounts as mistaken or fraudulent. This paper presents  the results of an interdisciplinary study that has succeeded in locating  young faults at the oracle site and has also identified the  prophetic vapor as an emission of light hydrocarbon gases generated  in the underlying strata of bituminous limestone.},
   author   = {de Boer, J.Z. and Hale, J.R. and Chanton, J.},
@@ -512,15 +497,323 @@
 }
 
 @inproceedings{Ribeiro2016,
-  series = {KDD ’16},
-  title = {“Why Should I Trust You?”: Explaining the Predictions of Any Classifier},
-  url = {http://dx.doi.org/10.1145/2939672.2939778},
-  DOI = {10.1145/2939672.2939778},
-  booktitle = {Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining},
-  publisher = {ACM},
-  author = {Ribeiro,  Marco Tulio and Singh,  Sameer and Guestrin,  Carlos},
-  year = {2016},
-  month = Aug,
-  pages = {1135–1144},
-  collection = {KDD ’16}
+  author     = {Ribeiro,  Marco Tulio and Singh,  Sameer and Guestrin,  Carlos},
+  booktitle  = {Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining},
+  collection = {KDD ’16},
+  doi        = {10.1145/2939672.2939778},
+  month      = Aug,
+  pages      = {1135–1144},
+  publisher  = {ACM},
+  series     = {KDD ’16},
+  title      = {“Why Should I Trust You?”: Explaining the Predictions of Any Classifier},
+  url        = {http://dx.doi.org/10.1145/2939672.2939778},
+  year       = {2016}
+}
+
+
+
+% Papers estado del arte CFX
+
+% Review
+@article{Guidotti2022,
+  author    = {Guidotti,  Riccardo},
+  doi       = {10.1007/s10618-022-00831-6},
+  issn      = {1573-756X},
+  journal   = {Data Mining and Knowledge Discovery},
+  month     = Apr,
+  number    = {5},
+  pages     = {2770–2824},
+  publisher = {Springer Science and Business Media LLC},
+  title     = {Counterfactual explanations and how to find them: literature review and benchmarking},
+  url       = {http://dx.doi.org/10.1007/s10618-022-00831-6},
+  volume    = {38},
+  year      = {2022}
+}
+
+@article{Kan2024,
+  author  = {Ziwen Kan and Shahbaz Rezaei and Xin Liu},
+  journal = {ArXiv},
+  title   = {Benchmarking Counterfactual Interpretability in Deep Learning Models for Time Series Classification},
+  url     = {https://api.semanticscholar.org/CorpusID:271946845},
+  volume  = {abs/2408.12666},
+  year    = {2024}
+}
+
+@article{Artelt2019,
+  author  = {Andr{\'e} Artelt and Barbara Hammer},
+  journal = {ArXiv},
+  title   = {On the computation of counterfactual explanations - A survey},
+  url     = {https://api.semanticscholar.org/CorpusID:208138142},
+  volume  = {abs/1911.07749},
+  year    = {2019}
+}
+
+@article{Verma2024,
+  abstract   = {Machine learning plays a role in many deployed decision systems, often in ways that are difficult or impossible to understand by human stakeholders. Explaining, in a human-understandable way, the relationship between the input and output of machine learning models is essential to the development of trustworthy machine learning based systems. A burgeoning body of research seeks to define the goals and methods of explainability in machine learning. In this article, we seek to review and categorize research on counterfactual explanations, a specific class of explanation that provides a link between what could have happened had input to a model been changed in a particular way. Modern approaches to counterfactual explainability in machine learning draw connections to the established legal doctrine in many countries, making them appealing to fielded systems in high-impact areas such as finance and healthcare. Thus, we design a rubric with desirable properties of counterfactual explanation algorithms and comprehensively evaluate all currently proposed algorithms against that rubric. Our rubric provides easy comparison and comprehension of the advantages and disadvantages of different approaches and serves as an introduction to major research themes in this field. We also identify gaps and discuss promising research directions in the space of counterfactual explainability.},
+  address    = {New York, NY, USA},
+  articleno  = {312},
+  author     = {Verma, Sahil and Boonsanong, Varich and Hoang, Minh and Hines, Keegan and Dickerson, John and Shah, Chirag},
+  doi        = {10.1145/3677119},
+  issn       = {0360-0300},
+  issue_date = {December 2024},
+  journal    = {ACM Comput. Surv.},
+  keywords   = {Explainability in ML, counterfactual explanations, algorithmic recourse, interpretability in ML},
+  month      = oct,
+  number     = {12},
+  numpages   = {42},
+  publisher  = {Association for Computing Machinery},
+  title      = {Counterfactual Explanations and Algorithmic Recourses for Machine Learning: A Review},
+  url        = {https://doi.org/10.1145/3677119},
+  volume     = {56},
+  year       = {2024}
+}
+
+@article{Chou2022,
+  abstract = {Deep learning models have achieved high performance across different domains, such as medical decision-making, autonomous vehicles, decision support systems, among many others. However, despite this success, the inner mechanisms of these models are opaque because their internal representations are too complex for a human to understand. This opacity makes it hard to understand the how or the why of the predictions of deep learning models. There has been a growing interest in model-agnostic methods that make deep learning models more transparent and explainable to humans. Some researchers recently argued that for a machine to achieve human-level explainability, this machine needs to provide human causally understandable explanations, also known as causability. A specific class of algorithms that have the potential to provide causability are counterfactuals. This paper presents an in-depth systematic review of the diverse existing literature on counterfactuals and causability for explainable artificial intelligence (AI). We performed a Latent Dirichlet topic modelling analysis (LDA) under a Preferred Reporting Items for Systematic Reviews and Meta-Analyses (PRISMA) framework to find the most relevant literature articles. This analysis yielded a novel taxonomy that considers the grounding theories of the surveyed algorithms, together with their underlying properties and applications to real-world data. Our research suggests that current model-agnostic counterfactual algorithms for explainable AI are not grounded on a causal theoretical formalism and, consequently, cannot promote causability to a human decision-maker. Furthermore, our findings suggest that the explanations derived from popular algorithms in the literature provide spurious correlations rather than cause/effects relationships, leading to sub-optimal, erroneous, or even biased explanations. Thus, this paper also advances the literature with new directions and challenges on promoting causability in model-agnostic approaches for explainable AI.},
+  author   = {Yu-Liang Chou and Catarina Moreira and Peter Bruza and Chun Ouyang and Joaquim Jorge},
+  doi      = {https://doi.org/10.1016/j.inffus.2021.11.003},
+  issn     = {1566-2535},
+  journal  = {Information Fusion},
+  keywords = {Deep learning, Explainable AI, Causability, Counterfactuals, Causality},
+  pages    = {59-83},
+  title    = {Counterfactuals and causability in explainable artificial intelligence: Theory, algorithms, and applications},
+  url      = {https://www.sciencedirect.com/science/article/pii/S1566253521002281},
+  volume   = {81},
+  year     = {2022}
+}
+
+% NoTS / CLA
+
+@misc{Marzari2024,
+  archiveprefix = {arXiv},
+  author        = {Luca Marzari and Francesco Leofante and Ferdinando Cicalese and Alessandro Farinelli},
+  eprint        = {2407.07482},
+  primaryclass  = {cs.LG},
+  title         = {Rigorous Probabilistic Guarantees for Robust Counterfactual Explanations},
+  url           = {https://arxiv.org/abs/2407.07482},
+  year          = {2024}
+}
+
+
+@inproceedings{Mothilal2020,
+  abstract  = {Post-hoc explanations of machine learning models are crucial for people to understand and act on algorithmic predictions. An intriguing class of explanations is through counterfactuals, hypothetical examples that show people how to obtain a different prediction. We posit that effective counterfactual explanations should satisfy two properties: feasibility of the counterfactual actions given user context and constraints, and diversity among the counterfactuals presented. To this end, we propose a framework for generating and evaluating a diverse set of counterfactual explanations based on determinantal point processes. To evaluate the actionability of counterfactuals, we provide metrics that enable comparison of counterfactual-based methods to other local explanation methods. We further address necessary tradeoffs and point to causal implications in optimizing for counterfactuals. Our experiments on four real-world datasets show that our framework can generate a set of counterfactuals that are diverse and well approximate local decision boundaries, outperforming prior approaches to generating diverse counterfactuals. We provide an implementation of the framework at https://github.com/microsoft/DiCE.},
+  address   = {New York, NY, USA},
+  author    = {Mothilal, Ramaravind K. and Sharma, Amit and Tan, Chenhao},
+  booktitle = {Proceedings of the 2020 Conference on Fairness, Accountability, and Transparency},
+  doi       = {10.1145/3351095.3372850},
+  isbn      = {9781450369367},
+  location  = {Barcelona, Spain},
+  numpages  = {11},
+  pages     = {607–617},
+  publisher = {Association for Computing Machinery},
+  series    = {FAT* '20},
+  title     = {Explaining machine learning classifiers through diverse counterfactual explanations},
+  url       = {https://doi.org/10.1145/3351095.3372850},
+  year      = {2020}
+}
+
+% TS / CLA
+
+@inproceedings{Lang2023,
+  abstract  = {Since neural networks play an increasingly important role in critical sectors, explaining network predictions has become a key research topic. Counterfactual explanations can help to understand why classifier models decide for particular class assignments and, moreover, how the respective input samples would have to be modified such that the class prediction changes. Previous approaches mainly focus on image and tabular data. In this work we propose SPARCE, a generative adversarial network (GAN) architecture that generates SPARse Counterfactual Explanations for multivariate time series. Our approach provides a custom sparsity layer and regularizes the counterfactual loss function in terms of similarity, sparsity, and smoothness of trajectories. We evaluate our approach on real-world human motion datasets as well as a synthetic time series interpretability benchmark. Although we make significantly sparser modifications than other approaches, we achieve comparable or better performance on all metrics. Moreover, we demonstrate that our approach predominantly modifies salient time steps and features, leaving non-salient inputs untouched.},
+  address   = {Cham},
+  author    = {Lang, Jana
+               and Giese, Martin A.
+               and Ilg, Winfried
+               and Otte, Sebastian},
+  booktitle = {Artificial Neural Networks and Machine Learning -- ICANN 2023},
+  editor    = {Iliadis, Lazaros
+               and Papaleonidas, Antonios
+               and Angelov, Plamen
+               and Jayne, Chrisina},
+  isbn      = {978-3-031-44223-0},
+  pages     = {180--193},
+  publisher = {Springer Nature Switzerland},
+  title     = {Generating Sparse Counterfactual Explanations for Multivariate Time Series},
+  year      = {2023}
+}
+
+@misc{Qi2024,
+  archiveprefix = {arXiv},
+  author        = {Qi Huang and Wei Chen and Thomas Bäck and Niki van Stein},
+  eprint        = {2402.01343},
+  primaryclass  = {cs.LG},
+  title         = {Shapelet-based Model-agnostic Counterfactual Local Explanations for Time Series Classification},
+  url           = {https://arxiv.org/abs/2402.01343},
+  year          = {2024}
+}
+
+@article{Wang2024,
+  author    = {Wang,  Zhendong and Samsten,  Isak and Miliou,  Ioanna and Mochaourab,  Rami and Papapetrou,  Panagiotis},
+  doi       = {10.1007/s10994-023-06502-x},
+  issn      = {1573-0565},
+  journal   = {Machine Learning},
+  month     = Mar,
+  number    = {7},
+  pages     = {4639–4669},
+  publisher = {Springer Science and Business Media LLC},
+  title     = {Glacier: guided locally constrained counterfactual explanations for time series classification},
+  url       = {http://dx.doi.org/10.1007/s10994-023-06502-x},
+  volume    = {113},
+  year      = {2024}
+}
+
+@misc{Xiangyu2025,
+  archiveprefix = {arXiv},
+  author        = {Xiangyu Sun and Raquel Aoki and Kevin H. Wilson},
+  eprint        = {2405.18563},
+  primaryclass  = {cs.LG},
+  title         = {No $D_{\text{train}}$: Model-Agnostic Counterfactual Explanations Using Reinforcement Learning},
+  url           = {https://arxiv.org/abs/2405.18563},
+  year          = {2025}
+}
+
+@inproceedings{Ates2021,
+  author    = {Ates, Emre and Aksar, Burak and Leung, Vitus J. and Coskun, Ayse K.},
+  booktitle = {2021 International Conference on Applied Artificial Intelligence (ICAPAI)},
+  doi       = {10.1109/ICAPAI49758.2021.9462056},
+  keywords  = {Production systems;Time series analysis;Machine learning;Debugging;Market research;Robustness;Astronomy},
+  number    = {},
+  pages     = {1-8},
+  title     = {Counterfactual Explanations for Multivariate Time Series},
+  volume    = {},
+  year      = {2021}
+}
+
+
+@inproceedings{Delaney2021,
+  abstract  = {In recent years, there has been a rapidly expanding focus on explaining the predictions made by black-box AI systems that handle image and tabular data. However, considerably less attention has been paid to explaining the predictions of opaque AI systems handling time series data. In this paper, we advance a novel model-agnostic, case-based technique -- Native Guide -- that generates counterfactual explanations for time series classifiers. Given a query time series, {\$}{\$}T{\_}{\{}q{\}}{\$}{\$}Tq, for which a black-box classification system predicts class, c, a counterfactual time series explanation shows how {\$}{\$}T{\_}{\{}q{\}}{\$}{\$}Tqcould change, such that the system predicts an alternative class, {\$}{\$}c'{\$}{\$}c{\textasciiacutex}. The proposed instance-based technique adapts existing counterfactual instances in the case-base by highlighting and modifying discriminative areas of the time series that underlie the classification. Quantitative and qualitative results from two comparative experiments indicate that Native Guide generates plausible, proximal, sparse and diverse explanations that are better than those produced by key benchmark counterfactual methods.},
+  address   = {Cham},
+  author    = {Delaney, Eoin
+               and Greene, Derek
+               and Keane, Mark T.},
+  booktitle = {Case-Based Reasoning Research and Development},
+  editor    = {S{\'a}nchez-Ruiz, Antonio A.
+               and Floyd, Michael W.},
+  isbn      = {978-3-030-86957-1},
+  pages     = {32--47},
+  publisher = {Springer International Publishing},
+  title     = {Instance-Based Counterfactual Explanations for Time Series Classification},
+  year      = {2021}
+}
+
+@inproceedings{Filali2022,
+  abstract  = {EXplainable Artificial Intelligence (XAI) methods are increasingly accepted as effective tools to trace complex machine learning models' decision-making processes. There are two underlying XAI paradigms: (1) traditional factual methods and (2) emerging counterfactual models. The first family of methods uses feature attribution techniques that alter the feature space and observe the impact on the decision function. Counterfactual models aim at providing the smallest possible change to the feature vector that can change the prediction outcome. In this paper, we propose TimeX, a new model-agnostic time series counterfactual explanation algorithm that provides sparse, interpretable, and contiguous explanations. We validate our model using real-world time series datasets and show that our approach can generate explanations with up to 20\% fewer outliers in comparison with other state-of-the-art competing baselines.},
+  address   = {New York, NY, USA},
+  author    = {Filali Boubrahimi, Souka{\"i}na and Hamdi, Shah Muhammad},
+  booktitle = {Proceedings of the 31st ACM International Conference on Information \& Knowledge Management},
+  doi       = {10.1145/3511808.3557663},
+  isbn      = {9781450392365},
+  keywords  = {time series classification, explainable artificial intelligence (xai), counterfactual explanations},
+  location  = {Atlanta, GA, USA},
+  numpages  = {5},
+  pages     = {3943–3947},
+  publisher = {Association for Computing Machinery},
+  series    = {CIKM '22},
+  title     = {On the Mining of Time Series Data Counterfactual Explanations using Barycenters},
+  url       = {https://doi.org/10.1145/3511808.3557663},
+  year      = {2022}
+}
+
+@article{Bahri2024,
+  author    = {Bahri,  Omar and Li,  Peiyu and Filali Boubrahimi,  Soukaina and Hamdi,  Shah Muhammad},
+  doi       = {10.1007/s10618-024-01028-9},
+  issn      = {1573-756X},
+  journal   = {Data Mining and Knowledge Discovery},
+  month     = Aug,
+  number    = {6},
+  pages     = {3347–3371},
+  publisher = {Springer Science and Business Media LLC},
+  title     = {Discord-based counterfactual explanations for time series classification},
+  url       = {http://dx.doi.org/10.1007/s10618-024-01028-9},
+  volume    = {38},
+  year      = {2024}
+}
+
+% TS / REG
+@inproceedings{Yan2023,
+  abstract  = {Interpretable time series prediction is crucial for safety-critical areas such as healthcare and autonomous driving. Most existing methods focus on interpreting predictions by assigning important scores to segments of time series. In this paper, we take a different and more challenging route and aim at developing a self-interpretable model, dubbed Counterfactual Time Series (CounTS), which generates counterfactual and actionable explanations for time series predictions. Specifically, we formalize the problem of time series counterfactual explanations, establish associated evaluation protocols, and propose a variational Bayesian deep learning model equipped with counterfactual inference capability of time series abduction, action, and prediction. Compared with state-of-the-art baselines, our self-interpretable model can generate better counterfactual explanations while maintaining comparable prediction accuracy.},
+  author    = {Yan, Jingquan and Wang, Hao},
+  booktitle = {Proceedings of the 40th International Conference on Machine Learning},
+  editor    = {Krause, Andreas and Brunskill, Emma and Cho, Kyunghyun and Engelhardt, Barbara and Sabato, Sivan and Scarlett, Jonathan},
+  month     = {23--29 Jul},
+  pages     = {39110--39125},
+  pdf       = {https://proceedings.mlr.press/v202/yan23d/yan23d.pdf},
+  publisher = {PMLR},
+  series    = {Proceedings of Machine Learning Research},
+  title     = {Self-Interpretable Time Series Prediction with Counterfactual Explanations},
+  url       = {https://proceedings.mlr.press/v202/yan23d.html},
+  volume    = {202},
+  year      = {2023}
+}
+
+@inproceedings{Wang2023,
+  author    = {Wang, Zhendong and Miliou, Ioanna and Samsten, Isak and Papapetrou, Panagiotis},
+  booktitle = {2023 IEEE International Conference on Data Mining (ICDM)},
+  doi       = {10.1109/ICDM58522.2023.00180},
+  keywords  = {Manifolds;Perturbation methods;Time series analysis;Predictive models;Data models;Forecasting;Task analysis;time series forecasting;counterfactual explanations;model interpretability;deep learning},
+  number    = {},
+  pages     = {1391-1396},
+  title     = {Counterfactual Explanations for Time Series Forecasting},
+  volume    = {},
+  year      = {2023}
+}
+
+% Impacto social y legal
+
+@article{Wachter2017,
+  author    = {Wachter,  Sandra and Mittelstadt,  Brent and Russell,  Chris},
+  doi       = {10.2139/ssrn.3063289},
+  issn      = {1556-5068},
+  journal   = {SSRN Electronic Journal},
+  publisher = {Elsevier BV},
+  title     = {Counterfactual Explanations Without Opening the Black Box: Automated Decisions and the GDPR},
+  url       = {http://dx.doi.org/10.2139/ssrn.3063289},
+  year      = {2017}
+}
+
+
+% star discrepancy
+@article{Clment2025,
+  author    = {Clément,  Fran\c{c}ois and Doerr,  Carola and Klamroth,  Kathrin and Paquete,  Luís},
+  doi       = {10.1090/bproc/254},
+  issn      = {2330-1511},
+  journal   = {Proceedings of the American Mathematical Society,  Series B},
+  month     = May,
+  number    = {7},
+  pages     = {78–90},
+  publisher = {American Mathematical Society (AMS)},
+  title     = {Constructing optimal star discrepancy sets},
+  url       = {http://dx.doi.org/10.1090/bproc/254},
+  volume    = {12},
+  year      = {2025}
+}
+
+@article{CLEMENT2022101645,
+  abstract = {Motivated by applications in instance selection, we introduce the star discrepancy subset selection problem, which consists of finding a subset of m out of n points that minimizes the star discrepancy. First, we show that this problem is NP-hard. Then, we introduce a mixed integer linear formulation (MILP) and a combinatorial branch-and-bound (BB) algorithm for the star discrepancy subset selection problem and we evaluate both approaches against random subset selection and a greedy construction on different use-cases in dimension two and three. Our results show that the MILP and BB are efficient in dimension two for large and small m/n ratio, respectively, and for not too large n. However, the performance of both approaches decays strongly for larger dimensions and set sizes. As a side effect of our empirical comparisons we obtain point sets of discrepancy values that are much smaller than those of common low-discrepancy sequences, random point sets, and of Latin Hypercube Sampling. This suggests that subset selection could be an interesting approach for generating point sets of small discrepancy value.},
+  author   = {François Clément and Carola Doerr and Luís Paquete},
+  doi      = {https://doi.org/10.1016/j.jco.2022.101645},
+  issn     = {0885-064X},
+  journal  = {Journal of Complexity},
+  keywords = {Computational geometry, Discrepancy, Subset selection, Mixed-integer linear programming, Branch and bound},
+  pages    = {101645},
+  title    = {Star discrepancy subset selection: Problem formulation and efficient approaches for low dimensions},
+  url      = {https://www.sciencedirect.com/science/article/pii/S0885064X22000103},
+  volume   = {70},
+  year     = {2022}
+}
+
+@article{ZHOU2013283,
+  abstract = {There are various discrepancies that are measures of uniformity for a set of points on the unit hypercube. The discrepancies have played an important role in quasi-Monte Carlo methods. Each discrepancy has its own characteristic and some weakness. In this paper we point out some unreasonable phenomena associated with the commonly used discrepancies in the literature such as the Lp-star discrepancy, the center L2-discrepancy (CD) and the wrap-around L2-discrepancy (WD). Then, a new discrepancy, called the mixture discrepancy (MD), is proposed. As shown in this paper, the mixture discrepancy is more reasonable than CD and WD for measuring the uniformity from different aspects such as the intuitive view, the uniformity of subdimension projection, the curse of dimensionality and the geometric property of the kernel function. Moreover, the relationships between MD and other design criteria such as the balance pattern and generalized wordlength pattern are also given.},
+  author   = {Yong-Dao Zhou and Kai-Tai Fang and Jian-Hui Ning},
+  doi      = {https://doi.org/10.1016/j.jco.2012.11.006},
+  issn     = {0885-064X},
+  journal  = {Journal of Complexity},
+  keywords = {Centered -discrepancy, Curse of dimensionality, Generalized wordlength pattern, Mixture discrepancy, Quasi-Monte Carlo methods, Uniform design},
+  number   = {3},
+  pages    = {283-301},
+  title    = {Mixture discrepancy for quasi-random point sets},
+  url      = {https://www.sciencedirect.com/science/article/pii/S0885064X12001057},
+  volume   = {29},
+  year     = {2013}
 }
