@@ -1541,7 +1541,7 @@ Los métodos de XAI son diversos y permiten atacar los problemas de explicabilid
 \end{itemize}
 
 \chapter{Estado del arte}
-
+\label{cap:estadodelarte}
 \section{Explicaciones contrafactuales}
 
 Las explicaciones contrafactuales son predicciones que describen el cambio mínimo a realizar a una instancia para que el modelo prediga un nuevo valor predefinido. Estas predicciones responden a preguntas del tipo \textit{"si X no hubiese ocurrido, Y no habría ocurrido"}, como por ejemplo \textit{"si hubiese tenido mayor salario, me habrían concedido el préstamo"}. Las explicaciones contrafactuales son predicciones sobre mundos hipotéticos, ya que la instancia original es el suceso que en realidad sí ocurrió. Las explicaciones contrafactuales deben ser amigables con los seres humanos, similares a la instancia original, accionables y variadas \cite{molnar2025}.
@@ -2795,6 +2795,7 @@ En el ejemplo anterior se observan los siguientes aspectos relevantes:
 \end{itemize}
 
 \chapter{Resultados}
+\label{cap:resultados}
 
 En este capítulo se presenta una evaluación contra la implementación del algoritmo \texttt{CFGTS}, descrito en el Capítulo~\ref{cap:propuesta}. El protocolo de evaluación está basado en el trabajo de \cite{Wang2023} y \cite{Kan2024}. Para ello se intenta responder a la pregunta, \textit{¿incorporar la puntuación causal aporta información relevante al contrafactual?}
 
@@ -2802,7 +2803,7 @@ En este capítulo se presenta una evaluación contra la implementación del algo
 
 \subsection{Conjuntos de datos}
 
-Se emplean dos conjuntos de datos, resumidos en la Tabla~\ref{tab:res_datos}. El primero es un conjunto sintético de 20 series AR(2) estacionarias de longitud variable y mecanismo generador lineal, el segundo es la serie de actividad solar \textit{Sunspots} (1700-2008), no lineal y con un ciclo conocido de (aproximadamente) once años.
+Se emplean tres conjuntos de datos, resumidos en la Tabla~\ref{tab:res_datos}. El primero es un conjunto sintético de 20 series AR(2) estacionarias de longitud variable y mecanismo generador lineal, el segundo es un conjunto sintético bivariante VAR(4) de dos variables, y el tercero es la serie de actividad solar \textit{Sunspots} (1700-2008), no lineal y con un ciclo conocido de (aproximadamente) once años.
 
 Cada serie se entrena con los métodos usuales para series temporales, con un split 60, 20, 20, y se normaliza cada variable por por \textit{min-max}.
 
@@ -2822,48 +2823,46 @@ Cada serie se entrena con los métodos usuales para series temporales, con un sp
 
 \subsection{Modelos y objetivos}
 
-A cada conjunto de datos se ajustan dos modelos: una regresión lineal y un \textit{Random Forest}. El valor objetivo de cada instancia se define como una ventana, $y^{*}_d = \operatorname{mediana}(\mathbf{x}_{0,d}) \cdot (1 + cp)$, con $cp = 0{,}50$.
+A cada conjunto de datos se ajustan dos modelos: una regresión lineal y un \textit{Random Forest}. El valor objetivo de cada instancia se define como una ventana de cambio porcentual ($cp$), $y^{*}_d = \operatorname{mediana}(\mathbf{x}_{0,d}) \cdot (1 + cp)$, con $cp = 0{,}50$.
 
-La Tabla~\ref{tab:res_protocolo} recoge la configuración, que constitute 126 ejecuciones de CFGTS.
+La Tabla~\ref{tab:res_protocolo} recoge la configuración, que constitute 216 ejecuciones de CFGTS.
 
 \begin{table}[H]
     \ttabbox[\FBwidth]
     {\caption{Configuración experimental de la evaluación de CFGTS}\label{tab:res_protocolo}}
     {\begin{tabular}{|p{6.2cm}|p{5.8cm}|}
             \hline
-            \textbf{Parámetro}                      & \textbf{Valor}                                                  \\
+            \textbf{Parámetro}                                    & \textbf{Valor}                                                  \\
             \hline
-            Orden de retardo $p$                    & 3                                                               \\
+            Horizonte de predicción $T$                           & 6                                                               \\
             \hline
-            Horizonte de predicción $T$             & 6                                                               \\
+            Partición                                             & 60/20/20                                                        \\
             \hline
-            Partición                               & 60/20/20                                                        \\
+            Normalización                                         & \textit{min-max}                                                \\
             \hline
-            Normalización                           & \textit{min-max}                                                \\
+            Paso entre ventanas de prueba                         & $p + T = 9$                                                     \\
             \hline
-            Paso entre ventanas de prueba           & $p + T = 9$                                                     \\
+            Modelos                                               & Regresión lineal y \textit{Random Forest}                       \\
             \hline
-            Modelos                                 & Regresión lineal y \textit{Random Forest}                       \\
+            \texttt{n\_trials} (Fase~1)                           & 300                                                             \\
             \hline
-            \texttt{n\_trials} (Fase~1)             & 300                                                             \\
+            \texttt{n\_coverage\_trials} (Fase~2)                 & 10                                                              \\
             \hline
-            \texttt{n\_coverage\_trials} (Fase~2)   & 10                                                              \\
+            \texttt{timeout} (tope de seguridad)                  & 60\,s                                                           \\
             \hline
-            \texttt{timeout} (tope de seguridad)    & 60\,s                                                           \\
+            $[r_{\min}, r_{\max}]$                                & $[0,\ 3]$                                                       \\
             \hline
-            $[r_{\min}, r_{\max}]$                  & $[0,\ 3]$                                                       \\
+            \texttt{n\_walk\_steps}                               & 1                                                               \\
             \hline
-            \texttt{n\_walk\_steps}                 & 1                                                               \\
+            Desplazamiento del objetivo de cambio porcentual $cp$ & ${,}50$                                                         \\
             \hline
-            Desplazamiento del objetivo $cp$        & ${,}50$                                                         \\
+            Semillas por instancia                                & $\{0, 1, 2\}$                                                   \\
             \hline
-            Semillas por instancia                  & $\{0, 1, 2\}$                                                   \\
+            Tamaño del submuestreo $K$                            & 5                                                               \\
             \hline
-            Tamaño del submuestreo $K$              & 5                                                               \\
+            Perturbaciones de control por ejecución               & 25                                                              \\
             \hline
-            Perturbaciones de control por ejecución & 25                                                              \\
-            \hline
-            Semilla base                            & 42\footnote{El sentido de la vida, el universo y todo lo demás} \\
+            Semilla base                                          & 42\footnote{El sentido de la vida, el universo y todo lo demás} \\
             \hline
         \end{tabular}}
 \end{table}
@@ -2893,6 +2892,8 @@ Antes de interpretar el \textit{score} se comprueba que los modelos usados son d
             \hline
             Sintético AR(2)   & 7{,}62          & 8{,}07                 \\
             \hline
+            Sintético VAR(4)  & 3{,}80          & 3{,}70                 \\
+            \hline
             \textit{Sunspots} & 15{,}63         & 12{,}94                \\
             \hline
         \end{tabular}}
@@ -2909,13 +2910,17 @@ La Tabla~\ref{tab:res_principal} contiene el resultado central de la evaluación
             \hline
             \textbf{Conjunto} & \textbf{Modelo} & $\bar{s}$            & $\bar{s}_{\text{ctrl}}$ & $\Delta$   & $p$                 \\
             \hline
-            Sintético AR(2)   & Lineal          & ${,}970 \pm 0{,}009$ & ${,}890$                & $+0{,}080$ & $\mathbf{<0{,}001}$ \\
+            Sintético AR(2)   & Lineal          & ${,}975 \pm 0{,}008$ & ${,}891$                & $+0{,}084$ & $\mathbf{<0{,}001}$ \\
             \hline
-            Sintético AR(2)   & Random Forest   & ${,}617 \pm 0{,}046$ & ${,}506$                & $+0{,}110$ & $\mathbf{{,}005}$   \\
+            Sintético AR(2)   & Random Forest   & ${,}599 \pm 0{,}044$ & ${,}516$                & $+0{,}082$ & $\mathbf{{,}017}$   \\
             \hline
-            \textit{Sunspots} & Lineal          & ${,}955 \pm 0{,}015$ & ${,}923$                & $+0{,}032$ & $\mathbf{{,}04}$    \\
+            Sintético VAR(4)  & Lineal          & ${,}940 \pm 0{,}008$ & ${,}869$                & $+0{,}071$ & $\mathbf{<0{,}001}$ \\
             \hline
-            \textit{Sunspots} & Random Forest   & ${,}502 \pm 0{,}098$ & ${,}413$                & $+0{,}089$ & ${,}23$             \\
+            Sintético VAR(4)  & Random Forest   & ${,}537 \pm 0{,}061$ & ${,}413$                & $+0{,}124$ & $\mathbf{<0{,}001}$ \\
+            \hline
+            \textit{Sunspots} & Lineal          & ${,}948 \pm 0{,}063$ & ${,}917$                & $+0{,}030$ & ${,}26$             \\
+            \hline
+            \textit{Sunspots} & Random Forest   & ${,}500 \pm 0{,}099$ & ${,}421$                & $+0{,}079$ & ${,}06$             \\
             \hline
         \end{tabular}}
 \end{table}
@@ -2925,15 +2930,19 @@ La Tabla~\ref{tab:res_principal} contiene el resultado central de la evaluación
     {\caption[Estadísticos complementarios de la evaluación]{Máximo sobre un submuestreo de $K = 5$ candidatos ($s_K$), menor error relativo alcanzado en el frente ($J_{\text{obj}}^{\min}$), tamaño medio del frente y desviación típica entre semillas.}\label{tab:res_secundaria}}
     {\begin{tabular}{|p{2.9cm}|p{2.4cm}|c|c|c|c|}
             \hline
-            \textbf{Conjunto} & \textbf{Modelo} & $s_K$  & $J_{\text{obj}}^{\min}$ & \textbf{Cand.} & $\sigma_{\text{sem}}$ \\
+            \textbf{Conjunto} & \textbf{Modelo} & $s_K$    & $J_{\text{obj}}^{\min}$ & \textbf{Cand.} & $\sigma_{\text{sem}}$ \\
             \hline
-            Sintético AR(2)   & Lineal          & {,}994 & {,}001                  & 15{,}6         & {,}020                \\
+            Sintético AR(2)   & Lineal          & ${,}995$ & ${,}001$                & 15{,}8         & ${,}018$              \\
             \hline
-            Sintético AR(2)   & Random Forest   & {,}808 & {,}112                  & 12{,}3         & {,}049                \\
+            Sintético AR(2)   & Random Forest   & ${,}783$ & ${,}111$                & 11{,}3         & ${,}074$              \\
             \hline
-            \textit{Sunspots} & Lineal          & {,}991 & {,}002                  & 13{,}9         & {,}236                \\
+            Sintético VAR(4)  & Lineal          & ${,}983$ & ${,}043$                & 12{,}7         & ${,}029$              \\
             \hline
-            \textit{Sunspots} & Random Forest   & {,}748 & {,}134                  & 12{,}1         & {,}080                \\
+            Sintético VAR(4)  & Random Forest   & ${,}718$ & ${,}358$                & 8{,}8          & ${,}075$              \\
+            \hline
+            \textit{Sunspots} & Lineal          & ${,}990$ & ${,}001$                & 12{,}3         & ${,}047$              \\
+            \hline
+            \textit{Sunspots} & Random Forest   & ${,}786$ & ${,}135$                & 13{,}3         & ${,}072$              \\
             \hline
         \end{tabular}}
 \end{table}
@@ -2944,7 +2953,7 @@ El segundo patrón, y el más importante, es que \textbf{el control aleatorio ob
 
 \begin{figure}[H]
     \ffigbox[\FBwidth]{
-        \caption[Distribución de las puntuaciones de consistencia causal]{Distribución de la puntuación media del frente de Pareto por ejecución, desagregada por conjunto de datos y modelo. Las puntuaciones del modelo lineal (azul) se concentran junto a la unidad en ambos conjuntos, mientras que las del \textit{Random Forest} (naranja) se reparten en torno a ${,}5$ con gran dispersión.}
+        \caption[Distribución de las puntuaciones de consistencia causal]{Distribución de la puntuación media del frente de Pareto por ejecución, desagregada por conjunto de datos y modelo. Las puntuaciones del modelo lineal (azul) se concentran junto a la unidad en los tres conjuntos, mientras que las del \textit{Random Forest} (naranja) se reparten en torno a ${,}5$ con gran dispersión.}
         \label{fig:res_scores}
     }{
         \includegraphics[width=\linewidth]{fig_score_distribution.png}
@@ -2954,10 +2963,9 @@ El segundo patrón, y el más importante, es que \textbf{el control aleatorio ob
 \section{Conjunto de datos sintéticos}
 
 Los conjuntos de datos sintéticos que se han usado permite responder a una de las premisas básicas de este trabajo, un mecanismo generador y modelo lineales inducen una estructura de tipo grafo causal que \texttt{CFGTS} puede capturar.
+La experimentación con los conjuntos datos confirman la hipótesis en ambos casos. Con modelo lineal, $\bar{s}$ alcanza ${,}975 \pm 0{,}008$ en AR(2) y ${,}940 \pm 0{,}008$ en VAR(4).
 
-La experimentación con los conjuntos datos confirman la hipótesis. Con modelo lineal, $\bar{s}$ alcanza ${,}970 \pm 0{,}009$, el valor más alto y más estable de toda la evaluación.
-
-Al sustituir el modelo por un \textit{Random Forest} la puntuación cae a ${,}617 \pm 0{,}046$. Aquí la puntuación deja de ser trivialmente alta, pero el control también desciende en paralelo, hasta ${,}506$.
+Al sustituir el modelo por un \textit{Random Forest} la puntuación cae a ${,}599 \pm 0{,}044$ en AR(2) y a ${,}537 \pm 0{,}061$ en VAR(4). Aquí la puntuación deja de ser alta pero el control también desciende en paralelo, hasta ${,}516$ y ${,}413$ respectivamente.
 
 La Figura~\ref{fig:res_ejemplo} muestra cualitativamente una ejecución sobre el conjunto AR(2). La predicción se desplaza de forma coherente hacia delante, pese a que la optimización solo controla explícitamente la entrada.
 
@@ -2974,9 +2982,9 @@ La Figura~\ref{fig:res_ejemplo} muestra cualitativamente una ejecución sobre el
 
 Para evaluar un conjunto de datos reales, se ha escogido la serie \textit{Sunspots}. Esta serie presenta no linealidad, un período de 11 años, amplitud no estacionaria y heterocedasticidad. Además, los modelos usados son desfavorables en esta serie, al ser modelos de orden 3 (inferior al período de 11). La Tabla~\ref{tab:res_smape} refleja los errores sMAPE obtenidos al ajustar los modelos lineal y Random Forest a los datos.
 
-El comportamiento de la puntuación causal apenas se distingue del observado en el conjunto sintético: ${,}955 \pm 0{,}015$ con modelo lineal y ${,}502 \pm 0{,}098$ con \textit{Random Forest}. La degradación respecto del escenario controlado es de apenas ${,}015$ puntos para el modelo lineal.
+El comportamiento de la puntuación causal apenas se distingue del observado en el conjunto sintético: ${,}948 \pm 0{,}063$ con modelo lineal y ${,}500 \pm 0{,}099$ con \textit{Random Forest}. La degradación respecto del escenario controlado es de apenas ${,}027$ puntos para el modelo lineal.
 
-Esta insensibilidad es en sí misma el resultado: se recuerda de la Fase~3 de la propuesta que la puntuación causal no mide la fidelidad del modelo al proceso real, sino la \textit{coherencia interna} entre el contrafactual y el mecanismo que el modelo ha aprendido. Un modelo lineal de orden 3 es un mal predictor de la actividad solar (al menor peor que el Random Forest). La consecuencia práctica es que una puntuación causal elevada no debe interpretarse como evidencia de que la explicación sea válida respecto del fenómeno, sino respecto del modelo; si el modelo es una mala representación del fenómeno, la explicación será internamente coherente y a la vez extrínsecamente engañosa.
+Esta insensibilidad es en sí misma el resultado: se recuerda de la Fase~3 de la propuesta que la puntuación causal no mide la fidelidad del modelo al proceso real, sino la \textit{coherencia interna} entre el contrafactual y el mecanismo que el modelo ha aprendido. Un modelo lineal de orden 3 es un mal predictor de la actividad solar (al menos peor que el Random Forest). La consecuencia práctica es que una puntuación causal elevada no debe interpretarse como evidencia de que la explicación sea válida respecto del fenómeno, sino respecto del modelo; si el modelo es una mala representación del fenómeno, la explicación será internamente coherente y a la vez extrínsecamente engañosa.
 
 \section{Contraste con el control aleatorio}
 \label{sec:res_control}
@@ -2994,7 +3002,7 @@ La Figura~\ref{fig:res_control} muestra la comparación del \textit{score} causa
 
 \section{Relación con los objetivos de la Fase 1}
 
-Siguiendo con la discusión, se ha comprobado con los conjuntos de datos que mejores contrafactuales llevan a mejores puntuaciones causales, pero entonces cabría preguntarse si el objetivo de optimización no consigue ya obtener contrafactuales que se consideren causales respecto al modelo, sin que tengamos que calcular para ello una puntuación. Para responderlo se computó la correlación entre la puntuación $s$ y cada uno de los objetivos. El resultado agregado sobre las 126 ejecuciones es $\rho(s, J_{\text{obj}}) = -0{,}20$ y $\rho(s, J_{\text{prox}}) = +0{,}20$.
+Siguiendo con la discusión, se ha comprobado con los conjuntos de datos que mejores contrafactuales llevan a mejores puntuaciones causales, pero entonces cabría preguntarse si el objetivo de optimización no consigue ya obtener contrafactuales que se consideren causales respecto al modelo, sin que tengamos que calcular para ello una puntuación. Para responderlo se computó la correlación entre la puntuación $s$ y cada uno de los objetivos. El resultado agregado sobre las 216 ejecuciones es $\rho(s, J_{\text{obj}}) = -0{,}36$ y $\rho(s, J_{\text{prox}}) = +0{,}36$.
 
 La conclusión es que la puntuación causal es prácticamente ortogonal a los objetivos de la Fase~1: ordena los contrafactuales de tal forma que ninguno de los dos objetivos de optimización puede alcanzar.
 
@@ -3019,20 +3027,41 @@ La conclusión es que la puntuación causal es prácticamente ortogonal a los ob
 % Artificial intelligence act de la UE
 
 
-\chapter{Análisis del entorno}
-\section{Entorno socio-económico}
-% Hablar de la mejora en la toma de decisiones. Mayor confianza en IA. Mejor depurado de modelos
-% Impacto ambiental -> Es necesario realizar ejecuciones del modelo para llegar a la explicación contrafactual, lo que implica mayores emisiones de CO2 y consumo de agua -> Impacto negativo
+\chapter{Impacto económico, social, medioambiental y ético}
 
-% El TFG deberá deberá incorporar el desarrollo de los siguientes apartados:
-% • Presupuesto de la elaboración del TFG.
-% • Impacto socio-económico (impacto económico, social, medioambiental, ético, etc.) esperado de la aplicación del resultado del proyecto, plan de
-% explotación del mismo, o consideraciones sobre aspectos económicos de la temática del trabajo. Para trabajos teóricos, se debe detallar en qué
-% aplicaciones prácticas podría utilizarse y qué impacto socio-económico podría generar en el sector de aplicación.
-% Nótese que en la rúbrica de TFG se evaluará el ANÁLISIS del impacto socio-económico, no que el impacto sea positivo. Es decir, que se puede obtener
-% la máxima calificación para este apartado con un impacto socio-económico esperado de 0 – o negativo – siempre que el análisis sea correcto.
-% En la ‘Introducción’ debe quedar indicado claramente cuáles son los apartados en los que se reflejan los contenidos del ‘Entorno socio-económico’, siendo
-% recomendable que haya un apartado específico sobre el entorno socio-económico.
+Se comprenden los impactos que este trabajo puede tener como aquellas consecuencias directas o indirectas que puede provocar su uso en los ámbitos económico, social, medioambiental y ético. Este trabajo formaliza un algoritmo junto con una implementación de referencia, lo que provoca que los impactos sean principalmente indirectos y potenciales: se materializa en la medida que terceros (investigadores, gobiernos, empresas, etc.) implementen su propia versión del algoritmo.
+
+\section{Impacto económico}
+
+El impacto económico se entiende como la posibilidad de alterar el uso de los recursos económico-financieros de una organización por el uso del algoritmo. Principalmente se identifica que el uso de \texttt{CFGTS} tiene el potencial de reducir el coste de incorporar explicabilidad los modelos desplegados:
+\begin{enumerate}
+    \item El algoritmo no necesita el \textit{dataset} de entrenamiento. Según lo formalizado en Capítulo~\ref{cap:propuesta}, el algoritmo solo necesita un modelo ajustado, una instancia y un objetivo contrafactual. Es relavanto porque con frecuencia las organizaciones necesitan aplicar políticas de retención de datos (es decir, borrado de datos) ya sea por protección de datos o costes de almacenamiento. Auditar un modelo con \texttt{CFGTS} se vuelve una operación de menor coste.
+    \item El algoritmo es agnóstico al modelo. Al no imponerse una forma funcional, las organizaciones no tienen que desarrollar algoritmos de explicabilidad específicos por tipo de modelo. La implementación de referencia necesita que el modelo exponga la interfaz de \texttt{RegressorMixin} de scikit-learn, pero una implementación diferente del algoritmo (por ejemplo una basada en \texttt{PyTorch}) puede usar otro tipo de interfaz. Esto reduce la barrera de entrada a la explicabilidad en los equipos de ciencia de datos encargados de los modelos.
+\end{enumerate}
+
+
+\section{Impacto social}
+
+Los modelos de series temporales para los que \texttt{CFGTS} genera contrafactuales pueden usarse para tomar decisiones con un impacto directo sobre la sociedad: demanda eléctrica, parámetros clínicos contínuos o número de préstamos en \textit{default} son problemas en los que los modelos de series temporales son usados usualmente. En estos contextos poder generar explicaciones contrafactuales puede mejorar la confianza del operador en las situaciones en las que no es capaz de entender porqué el modelo ha predicho cierta cantidad y no otra. Esta confianza es positiva y entra en línea con las razones de interpretabilidad expuestas en el Capítulo~\ref{cap:estadodelarte}.
+
+Por otra parte, hay que matizar el límite de la confianza que puede aportar el uso del algoritmo a los operadores del modelo, ya que la puntuación de consistencia causal $s$ mide la coherencia del contrafactual contra lo esperado en un proceso causal. Del Capítulo~\ref{cap:resultados} se puede recordar que los modelos con un peor poder de predicción pueden obtener mejores puntuaciones de causalidad en sus contrafactuales. Es decir que la puntuación generada no debe arrojar confianza sobre el modelo que genera los contrafactuales, sino sobre los contrafactuales generados. Una puntuación causal elevada puede llevar a un efecto conocido en la literatura como \textit{explicabilidad de fachada}: una falsa sensación de que el modelo es válido porque sus contrafactuales son válidos.
+
+Por último la naturaleza libre y agnóstica del modelo permite la democratización de la explicabilidad, que tradicionalmente está reservada a grandes empresas con especialistas en inteligencia artificial.
+
+\section{Impacto medioambiental}
+
+Por diseño \texttt{CFGTS} no inspecciona los parámetros internos del modelo, sino que obtiene información del modelo mediante la ejecución repetida del modelo durante la fase de optimización de la Fase~1. Por ejemplo con la configuración experimental del Capítulo~\ref{cap:resultados} se dan hasta 300 evaluaciones del modelo en la Fase~1. Generar los contrafactuales y asignarles la puntuación es varios órdenes de magnitud más intensivo energéticamente que hacer una única inferencia. Esto se traduce en un mayor gasto eléctrico, y de forma indirecta mayor consumo de agua y mayores emisiones de dióxido de carbono. Este problema no es exclusivo de \texttt{CFGTS}, ya que otros métodos de explicabilidad como LIME o DiCE también sufren de esta desventaja.
+
+Aun así, la implementación de referencia incluye mecanismos para acotar el impacto medioambiental mediante los parámetros \texttt{n\_trials}, \texttt{n\_coverage\_trials} y \texttt{timeout}, que permiten limitar tanto las evaluaciones como como el tiempo máximo de búsqueda en los problemas de optimización. El opreador que despliegue \texttt{CFGTS} puede intercambiar de forma consciente estabilidad de la explicación por consumo energético.
+
+\section{Impacto ético}
+
+De los capítulos de implementación y resultados se puede recordar que la puntuación causal es relativa a los contrafactuales. La presentación de estas puntuaciones a operadores no técnicos (como un médico, un paciente, un responsable de negocio o un regulador gubernamental) puede dar una apariencia de validez a modelos que no tienen porqué ser correctos. Esta confusión puede llevar a tomar decisiones con una confianza indebida. Es responsabilidad del operador de \texttt{CFGTS} comunicar esta distinción a los usuarios.
+
+Segundo, el algoritmo admite un parámetro llamado \textit{whitelist} de variables modificables (Capítulo~\ref{cap:propuesta}). Este mecanismo puede usarse incorrectamente de la siguiente forma: imaginemos un modelo que deniega un préstamo por el género del cliente. El operador de \texttt{CFGTS} podría usar el algoritmo para generar un contrafactual en el que el género no está incluido en la \textit{whitelist}, y así poder justificar la decisión sesgada del modelo; se podrían justificar \textit{a posteriori} decisiones ya tomadas de forma discriminatoria.
+
+El planteamiento de generar contrafacuales sin tener acceso a los datos es afín al derecho a una explicación significativa sobre decisiones automatizadas que recoge el artículo~22 del RGPD. El algoritmo tendría un potencial positivo para poder proveer a los ciudadanos de explicaciones sobre decisiones que les afectan.
+
 
 \chapter{Planificación}
 
