@@ -3143,6 +3143,100 @@ En la Tabla~\ref{tab:planificacion} se resume la planificación descrita, indica
 En cuanto a la dedicación diaria, las Fases~1 y 2 se llevaron a cabo con una carga aproximada de entre media hora y 2h diarias, que pude compatibilizar con otras actividades académicas y laborales. Fue necesario dedicar gran parte del tiempo a profundizar en los fundamentos teóricos y a depurar la formalización sin "inventar" resultados, pues los temas a tratar salen bastante del conocimiento del Grado. La Fase~3, al tratarse de la implementación del software, tuvo una dedicación más irregular: periodos de baja actividad se alternaron con semanas de entre cuatro y seis horas diarias (sobre todo usando los períodos de vacaciones para poder avanzar el trabajo). La Fase~4 exigió períodos más largos pero espaciados en el tiempo, al requerir ejecuciones repetidas de los experimentos y ajustes en la configuración de los mismos. Por último, la Fase~5 ha sido la de mayor concentración de horas por día, con sesiones de 1 a 2 horas diarias entre semana y 5-8h en los fines de semana, dado que la redacción de la memoria, la revisión de la notación entre capítulos y la elaboración de los anexos de demostraciones son tareas que se benefician de sesiones de trabajo largas y continuas.
 
 \chapter{Presupuesto}
+\label{cap:presupuesto}
+
+Esta capítulo contiene una estimación del coste tanto directo como indirecto de desarrollar el algoritmo desde el punto de vista de una empresa. Todas las cantidades se reflejan con IVA incluido y comprenden el período descrito en el Capítulo~\ref{cap:planificacion}.
+
+La estimación separa los recursos inmateriales (horas de trabajo, software) con lo material (electricidad).
+
+El equipo personal se valora por amortización lineal con una vida útil de 4 años. Las tarifas de personal se valoran para un perfil de desarrollador junior y para la supervisión académica (correspondiente al trabajo del tutor). No han sido adquirir recursos en la nube ni licencias externas.
+
+\section{Coste de infraestructura}
+
+El desarrollo de la memoria, la implementación y la evaluación se realizaron sobre un equipo Macbook Pro M1. La implementación no depende de infraestructura especializada, pues el paquete se apoya en bibliotecas que pueden ejecutarse en CPU.
+
+El entorno de desarrollo se compone del IDE VSCode, Python, \texttt{uv}, Git, \LaTeX{} y las dependencias declaradas en el fichero \texttt{pyproject.toml}. Las bibliotecas principales de la implementación se han integrado respetando sus licencias de código abierto, por lo que no introducen un coste de licencia. La Tabla~\ref{tab:budget_resources} detalla estos recursos.
+
+\begin{table}[H]
+    \ttabbox[\FBwidth]
+    {\caption{Recursos materiales y de software}\label{tab:budget_resources}}
+    {\begin{tabular}{|p{4.1cm}|p{5.2cm}|c|}
+            \hline
+            \textbf{Concepto}                  & \textbf{Notas}                                                             & \textbf{Coste total (€)} \\
+            \hline
+            Equipo de desarrollo y periféricos & Amortización: $\frac{21}{48} \times 1500$~€                              & 656{,}25                 \\
+            \hline
+            Software de desarrollo             & Python, VSCode, \texttt{uv}, Git, \LaTeX{} y bibliotecas de código abierto & {,}00                    \\
+            \hline
+            Servicios de computación externos  & No utilizados durante el desarrollo ni la evaluación                       & {,}00                    \\
+            \hline
+            \textbf{Total}                     &                                                                            & \textbf{656{,}25}        \\
+            \hline
+        \end{tabular}}
+\end{table}
+
+\section{Coste de personal}
+
+El mayor coste presupuestado se corresponde con el salario, por la parte de trabajo intelectual y técnico. Partiendo de la planificación en Capítulo~\ref{cap:planificacion}, se estima una dedicación total de 600 horas por parte del autor, que comprende todo el ciclo de vida del proyecto realizado. Se añaden 25 horas de dirección académica por parte del tutor.
+
+La Tabla~\ref{tab:budget_staff} usa una tarifa de 15~€/hora para el autor, equivalente a un desarrollador junior en un contexto de beca académica, y de 50~€/hora para el tutor.
+
+\begin{table}[H]
+    \ttabbox[\FBwidth]
+    {\caption{Coste estimado del personal}\label{tab:budget_staff}}
+    {\begin{tabular}{|p{4.3cm}|c|c|c|}
+            \hline
+            \textbf{Perfil}                                        & \textbf{Horas} & \textbf{Coste/hora (€)} & \textbf{Coste total (€)} \\
+            \hline
+            Autor: investigación, desarrollo, evaluación y memoria & 600            & 15{,}00                 & 9\,000{,}00              \\
+            \hline
+            Tutor: dirección académica y seguimiento                      & 25             & 50{,}00                 & 1\,250{,}00              \\
+            \hline
+            \textbf{Total}                             & \textbf{625}   &                         & \textbf{10\,250{,}00}    \\
+            \hline
+        \end{tabular}}
+\end{table}
+
+\section{Costes indirectos}
+
+Los costes indirectos incluyen el consumo asociado al uso del equipo y a la conexión durante el proyecto. Para la electricidad se estima una potencia media de 60~W durante las 600 horas de dedicación \cite{apple_macbook_pro_m1_2020}. Según \cite{eurostat_electricity_2025} el precio medio de la electricidad con impuestos incluidos durante 2025 fue de 0{,}28565~€/kWh, lo que resulta en 10{,}28~€ de coste total. La conectividad se estima de forma prorrateada con un precio de 5~€ mensuales durante los 21 meses del proyecto.
+
+\begin{table}[H]
+    \ttabbox[\FBwidth]
+    {\caption{Costes indirectos}\label{tab:budget_indirect}}
+    {\begin{tabular}{|p{5.2cm}|p{4.1cm}|c|}
+            \hline
+            \textbf{Concepto}                   & \textbf{Criterio de valoración}                & \textbf{Coste total (€)} \\
+            \hline
+            Electricidad                        & $600$ h $\times$ {,}06 kW $\times$ {,}28565~€/kWh & 10{,}28                  \\
+            \hline
+            Conectividad a Internet             & 21 meses $\times$ 5~€/mes                      & 105{,}00                 \\
+            \hline
+            \textbf{Total} &                                                & \textbf{115{,}28}        \\
+            \hline
+        \end{tabular}}
+\end{table}
+
+\section{Resumen y viabilidad}
+
+La Tabla~\ref{tab:budget_total} resume todo el presupuesto. La dedicación de personal representa aproximadamente el 93\% del coste total, mientras que el software no añade costes adicionales.
+\begin{table}[H]
+    \ttabbox[\FBwidth]
+    {\caption{Presupuesto total estimado del proyecto}\label{tab:budget_total}}
+    {\begin{tabular}{|p{7.4cm}|c|}
+            \hline
+            \textbf{Partida}               & \textbf{Coste total (€)} \\
+            \hline
+            Recursos materiales y software & 656{,}25                 \\
+            \hline
+            Personal                       & 10\,250{,}00             \\
+            \hline
+            Costes indirectos              & 115{,}28                 \\
+            \hline
+            \textbf{Total estimado}        & \textbf{11\,021{,}53}    \\
+            \hline
+        \end{tabular}}
+\end{table}
 
 \chapter{Conclusiones}
 
