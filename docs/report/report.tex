@@ -301,7 +301,7 @@ hmargin=3cm
 
 % ESCRIBIR LA DEDICATORIA AQUÍ
 Mamá, Ari, Sara, Samuel sois las personas que más me han apoyado, mi familia. Todos hemos luchado para poder continuar mis estudios, y mis éxitos han sido igualmente vuestros éxitos.
-A la comunidad universitaria, y en especial al Grupo de Inteligencia Artificial Aplicada, conmigo han hido mucho más allá de lo necesario. Atesoro increíbles recuerdos y experiencias que me acomparán durante toda mi vida.
+A la comunidad universitaria, y en especial al Grupo de Inteligencia Artificial Aplicada, conmigo han ido mucho más allá de lo necesario. Atesoro increíbles recuerdos y experiencias que me acomparán durante toda mi vida.
 
 Gracias.
 \vfill
@@ -3016,18 +3016,41 @@ La conclusión es que la puntuación causal es prácticamente ortogonal a los ob
 \end{figure}
 
 \chapter{Marco regulador}
-% El TFG deberá incorporar el desarrollo de uno o varios de los siguientes apartados:
-% • Análisis de la legislación aplicable sobre la implementación descrita en el trabajo (riesgos, responsabilidades profesionales, responsabilidades éticas,
-% riesgos laborales, privacidad y seguridad, etc.).
-% • Estándares técnicos, si son aplicables (sobre tecnología desarrollada, implantada, sobre lenguajes de programación o herramientas utilizados, etc.).
-% • Estudio de las cuestiones relacionadas con la propiedad intelectual de la idea (patentabilidad, protección…), por ejemplo, si es un trabajo teórico.
-% En la ‘Introducción’ debe quedar indicado claramente cuáles son los apartados en los que se reflejan los contenidos del ‘Marco regulador’, siendo
-% recomendable que haya un apartado específico
-\section{Legislación}
-% Artificial intelligence act de la UE
 
+El marco regulador recoge el conjunto de leyes, normas y estándares relevantes para \texttt{CFGTS}. A diferencia de una aplicación final, \texttt{CFGTS} no recopila, almacena ni procesa datos personales: recibe un modelo ya ajustado, una instancia y un objetivo contrafactual, y devuelve explicaciones puntuadas. La legislación aplicable depende del contexto en el que un tercero decida desplegar la herramienta, más que de la propia ejecución del algoritmo. A continuación se mencionan la legislación aplicable, los estándares de programación y el régimen de propiedad intelectual relevantes.
+
+\section{Legislación}
+
+\subsection{Protección de datos: RGPD y LOPDGDD}
+El tratamiento de datos personales dentro de la Unión Europea está regulado por el Reglamento (UE) 2016/679, conocido como Reglamento General de Protección de Datos (RGPD) \cite{rgpd2016}, y en España se complementa con la Ley Orgánica 3/2018, de Protección de Datos Personales y garantía de los derechos digitales (LOPDGDD) \cite{lopdgdd2018}. En la evaluación de este trabajo (Capítulo~\ref{cap:resultados}) únicamente se han empleado series sintéticas generadas y la serie \textit{open source} de actividad solar \textit{Sunspots}, por lo que no se ha procesado ningún dato de carácter personal.
+
+Sí existe legislación aplicable si \texttt{CFGTS} se despliega sobre modelos que sí procesan datos personale. Generar y publicar contrafactuales que se acercan a la instancia original mediante pequeñas perturbaciones puede constituir en sí mismo una operación de tratamiento de datos personales (por ejemplo si la instancia contractual es un paciente con sus constantes vitales), y corresponde al operador valorar si resulta necesaria una evaluación de impacto según el artículo 35 del RGPD.
+
+Por otro lado, el artículo 22 del RGPD reconoce el derecho de toda persona a no verse sometida a una decisión basada únicamente en un tratamiento automatizado, así como a obtener una explicación significativa de dicha decisión. En \cite{Wachter2017} se argumenta que una explicación contrafactual es precisamente el mecanismo natural para implementar este derecho sin necesidad de revelar la lógica interna del modelo.
+
+\subsection{Regulación de la inteligencia artificial: AI Act}
+
+El Reglamento (UE) 2024/1689, o Ley de Inteligencia Artificial (AI Act) \cite{aiact2024}, clasifica los sistemas de IA según su nivel de riesgo e obliga a los operadores ciertas obligaciones proporcionales al riesgo. \texttt{CFGTS} no toma decisiones automatizadas y por tanto no constituye un sistema de IA de alto riesgo según el artículo 6 y el Anexo III del reglamento. Pero cuando el modelo explicado sí se emplea en alguno de los ámbitos de alto riesgo el proveedor de ese sistema queda sujeto a las obligaciones de transparencia del artículo 13 y al derecho a explicación de las decisiones individuales del artículo 86. \texttt{CFGTS} puede emplearse como mecanismo para satisfacer estas obligaciones, aunque.
+
+\section{Estándares de programación}
+
+La implementación sigue un conjunto de estándares técnicos propios del ecosistema Python:
+\begin{enumerate}
+    \item Estilo de código: se sigue la guía oficial PEP~8 \cite{pep8}, que define las convenciones de nomenclatura, indentación y organización del código Python. Su cumplimiento se verifica automáticamente mediante el \textit{linter} \texttt{ruff}.
+    \item Tipado estático: se aplica PEP~484 (anotaciones de tipos) y PEP~561 (paquetes tipados, marcador \texttt{py.typed}), el código se anota exhaustivamente y se valida con \texttt{mypy}.
+    \item Distribución: El fichero \texttt{pyproject.toml} sigue los estándares PEP~517/518 (especificación del sistema de construcción, \texttt{hatchling}) y PEP~621 (metadatos del proyecto en formato declarativo), lo que garantiza una instalación reproducible del paquete con cualquier gestor compatible (como \texttt{pip} o \texttt{uv}).
+\end{enumerate}
+
+\section{Propiedad intelectual y licencia}
+
+La formalización e implementación presentados en este trabajo son originales del autor. El paquete \texttt{cfgts} se distribuye bajo licencia Creative Commons Attribution NonCommercial NoDerivatives 4.0 International (CC~BY-NC-ND~4.0), tal y como se recoge en el fichero \texttt{LICENSE} del repositorio y en la portada de este documento. La licencia CC~BY-NC-ND~4.0 solo permite reproducir y redistribuir el paquete sin modificar, exclusivamente con fines no comerciales y reconociendo la autoría original.
+
+La propia Creative Commons desaconseja el uso de sus licencias para software, al no regular la distribución del código fuente frente a la del binario compilado. Una licencia de software reconocida por la \textit{Open Source Initiative} (por ejemplo, MIT o BSD-3-Clause) sería más adecuada para futuras versiones de la implementación si se desea maximizar su adopción.
+
+Por último, las dependencias externas de la Tabla~\ref{tab:dependencies} se distribuyen bajo licencias permisivas de código abierto: MIT (Optuna, DoWhy, Polars), BSD (scikit-learn, SciPy, NumPy, Numba, NetworkX, pandas), la licencia de la \textit{Python Software Foundation} (Matplotlib) y Apache~2.0 (PyArrow). Estas licencias solo exigen atribución y no imponen condiciones sobre la redistribución de obras derivadas, por lo que son compatibles con las restricciones \textit{NonCommercial} y \textit{NoDerivatives} de \texttt{cfgts}. La atribución se hace de forma explícita por el fichero \texttt{pyproject.toml} que se encuentra en la raíz del repositorio.
 
 \chapter{Impacto económico, social, medioambiental y ético}
+\label{cap:impacto}
 
 Se comprenden los impactos que este trabajo puede tener como aquellas consecuencias directas o indirectas que puede provocar su uso en los ámbitos económico, social, medioambiental y ético. Este trabajo formaliza un algoritmo junto con una implementación de referencia, lo que provoca que los impactos sean principalmente indirectos y potenciales: se materializa en la medida que terceros (investigadores, gobiernos, empresas, etc.) implementen su propia versión del algoritmo.
 
@@ -3064,6 +3087,7 @@ El planteamiento de generar contrafacuales sin tener acceso a los datos es afín
 
 
 \chapter{Planificación}
+\label{cap:planificacion}
 
 El proyecto se inició en enero de 2025, con una estimación de entrega en septiembre de 2025; esta estimación rápidamente demostró ser insuficiente con las obligaciones profesionales y la dificultad técnica del trabajo.
 
@@ -3078,7 +3102,7 @@ El trabajo se organizó en 5 fases secuenciales y con períodos solapados; la in
 
     \item \textbf{Fase 3: Implementación del paquete \texttt{cfgts}.} Esta fase consistió en materializar el algoritmo formalizado como un paquete de Python distribuible. Se desarrolló la clase principal \texttt{CFGTS}. También se incorporaron aspectos de calidad de software: tipado estático (\texttt{mypy}), pruebas automatizadas y la configuración del \textit{wheel} con \texttt{Hatchling}. Esta fase se desarrolló de forma intermitente entre julio de 2025 y abril de 2026, alternando periodos de programación intensiva con semanas de menor dedicación por coincidir con otras obligaciones o por necesitar refinar la parte teórica del algoritmo.
 
-    \item \textbf{Fase 4: Experimentación y resultados.} Con el paquete ya publicado en \texttt{pypi}, esta fase se dedicó a diseñar y ejecutar experimentos sobre conjuntos de datos sintéticos y reales, comparando la puntuación de consistencia causal obtenida mediante el modelo causal frente a una regresión lineal tipo LIME. También incluyó la elaboración de las figuras y tablas de resultados que se incorporan al capítulo correspondiente de la memoria. Se desarrolló entre marzo de 2026 y julio de 2026.
+    \item \textbf{Fase 4: Experimentación y resultados.} Con el paquete ya publicado en \texttt{pypi}, esta fase se dedicó a diseñar y ejecutar experimentos sobre conjuntos de datos sintéticos y reales, comparando la puntuación de consistencia causal obtenida mediante el modelo causal frente a una regresión lineal tipo LIME. También incluyó la elaboración de las figuras y tablas de resultados que se incorporan al capítulo correspondiente de la memoria. Se desarrolló entre marzo de 2026 y agosto de 2026.
 
     \item \textbf{Fase 5: Redacción de la memoria y revisión final.} La última fase se dedicó a la elaboración del documento \LaTeX completo. Esta fase se extendió desde enero de 2026 hasta la entrega final en septiembre de 2026. Confome se materializaban ciertos resultados del algoritmo se plasmaban directamente en la memoria.
 \end{itemize}
@@ -3098,7 +3122,7 @@ En la Tabla~\ref{tab:planificacion} se resume la planificación descrita, indica
             \hline
             Fase 3        & Implementación del paquete \texttt{cfgts}       & 07/2025               & 04/2026            \\
             \hline
-            Fase 4        & Experimentación y resultados                    & 03/2026               & 07/2026            \\
+            Fase 4        & Experimentación y resultados                    & 03/2026               & 08/2026            \\
             \hline
             Fase 5        & Redacción de la memoria y revisión final        & 01/2026               & 09/2026            \\
             \hline
