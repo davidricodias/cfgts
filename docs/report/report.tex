@@ -60,6 +60,71 @@ hmargin=3cm
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 
+\input{glyphtounicode}
+\pdfgentounicode=1
+\pdfglyphtounicode{a}{E000}
+\pdfglyphtounicode{b}{E001}
+\pdfglyphtounicode{c}{E002}
+\pdfglyphtounicode{d}{E003}
+\pdfglyphtounicode{e}{E004}
+\pdfglyphtounicode{f}{E005}
+\pdfglyphtounicode{g}{E006}
+\pdfglyphtounicode{h}{E007}
+\pdfglyphtounicode{i}{E008}
+\pdfglyphtounicode{j}{E009}
+\pdfglyphtounicode{k}{E00A}
+\pdfglyphtounicode{l}{E00B}
+\pdfglyphtounicode{m}{E00C}
+\pdfglyphtounicode{n}{E00D}
+\pdfglyphtounicode{o}{E00E}
+\pdfglyphtounicode{p}{E00F}
+\pdfglyphtounicode{q}{E010}
+\pdfglyphtounicode{r}{E011}
+\pdfglyphtounicode{s}{E012}
+\pdfglyphtounicode{t}{E013}
+\pdfglyphtounicode{u}{E014}
+\pdfglyphtounicode{v}{E015}
+\pdfglyphtounicode{w}{E016}
+\pdfglyphtounicode{x}{E017}
+\pdfglyphtounicode{y}{E018}
+\pdfglyphtounicode{z}{E019}
+\pdfglyphtounicode{A}{E01A}
+\pdfglyphtounicode{B}{E01B}
+\pdfglyphtounicode{C}{E01C}
+\pdfglyphtounicode{D}{E01D}
+\pdfglyphtounicode{E}{E01E}
+\pdfglyphtounicode{F}{E01F}
+\pdfglyphtounicode{G}{E020}
+\pdfglyphtounicode{H}{E021}
+\pdfglyphtounicode{I}{E022}
+\pdfglyphtounicode{J}{E023}
+\pdfglyphtounicode{K}{E024}
+\pdfglyphtounicode{L}{E025}
+\pdfglyphtounicode{M}{E026}
+\pdfglyphtounicode{N}{E027}
+\pdfglyphtounicode{O}{E028}
+\pdfglyphtounicode{P}{E029}
+\pdfglyphtounicode{Q}{E02A}
+\pdfglyphtounicode{R}{E02B}
+\pdfglyphtounicode{S}{E02C}
+\pdfglyphtounicode{T}{E02D}
+\pdfglyphtounicode{U}{E02E}
+\pdfglyphtounicode{V}{E02F}
+\pdfglyphtounicode{W}{E030}
+\pdfglyphtounicode{X}{E031}
+\pdfglyphtounicode{Y}{E032}
+\pdfglyphtounicode{Z}{E033}
+\pdfglyphtounicode{zero}{E034}
+\pdfglyphtounicode{one}{E035}
+\pdfglyphtounicode{two}{E036}
+\pdfglyphtounicode{three}{E037}
+\pdfglyphtounicode{four}{E038}
+\pdfglyphtounicode{five}{E039}
+\pdfglyphtounicode{six}{E03A}
+\pdfglyphtounicode{seven}{E03B}
+\pdfglyphtounicode{eight}{E03C}
+\pdfglyphtounicode{nine}{E03D}
+
 % Definición idioma español
 \usepackage[spanish, es-tabla]{babel}
 \usepackage[babel, spanish=spanish]{csquotes}
@@ -3239,6 +3304,16 @@ La Tabla~\ref{tab:budget_total} resume todo el presupuesto. La dedicación de pe
 \end{table}
 
 \chapter{Conclusiones}
+
+En este trabajo se ha desarrollado el algoritmo \texttt{CFGTS} junto con su implementación. El algoritmo combina la optimización bi-objetivo de candidatos cercanos al objetivo, la construcción de un conjunto de cobertura en el espacio de salida y la evaluación de la consistencia causal de los contrafactuales mediante un grafo temporal.
+
+La formalización desarrollada ha permitido precisar las condiciones de validez de los candidatos, las propiedades de la región factible y de la optimización de Pareto, así como el significado de la puntuación causal.
+
+La implementación en Python materializa las tres fases del algoritmo en una API única y agnóstica respecto al regresor de \textit{scikit-learn}, e incorpora restricciones de modificabilidad.
+
+La evaluación confirma que la puntuación depende de la naturaleza del modelo. Los modelos lineales alcanzan puntuaciones cercanas a la unidad, coherentes con la hipótesis de que sus cambios pueden describirse adecuadamente mediante efectos lineales. En cambio, los modelos \textit{Random Forest} muestran puntuaciones más bajas y dispersas, lo que refleja la dificultad de aproximar modelos no lineales.
+
+En conjunto, se han alcanzado los objetivos de formular un método de generación de contrafactuales para series temporales, implementar una versión funcional y evaluar de forma reproducible sus propiedades y limitaciones. El trabajo deja como resultado una base técnica y conceptual para futuras mejoras, especialmente en la construcción de conjuntos de cobertura más eficientes, la estimación de efectos en modelos no lineales y la validación de la plausibilidad de los contrafactuales frente a conocimiento externo o datos observados cuando estos estén disponibles.
 
 \chapter{Futuras líneas de investigación}
 
