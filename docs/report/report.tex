@@ -156,27 +156,37 @@ hmargin=3cm
 % More info on https://es.wikibooks.org/wiki/Manual_de_LaTeX/Listados_de_código/Listados_con_listings
 \usepackage{listings}
 
-% definimos un estilo de listings
-\lstdefinestyle{estilo}{ frame=Ltb,
-	framerule=0pt,
+% Colores inspirados en el tema claro por defecto de VS Code (Light+)
+\definecolor{vscBackground}{RGB}{255,255,255}
+\definecolor{vscBorder}{RGB}{229,229,229}
+\definecolor{vscKeywordControl}{RGB}{175,0,219}
+\definecolor{vscKeywordStorage}{RGB}{0,0,255}
+\definecolor{vscString}{RGB}{163,21,21}
+\definecolor{vscComment}{RGB}{0,128,0}
+\definecolor{vscLineNumber}{RGB}{160,160,160}
+
+% definimos un estilo de listings (paleta VS Code Light+)
+\lstdefinestyle{estilo}{ frame=single,
+	framerule=0.4pt,
+	rulecolor=\color{vscBorder},
 	aboveskip=0.5cm,
 	framextopmargin=3pt,
 	framexbottommargin=3pt,
 	framexleftmargin=0.4cm,
-	framesep=0pt,
-	rulesep=.4pt,
-	backgroundcolor=\color{gray97},
-	rulesepcolor=\color{black},
+	framesep=4pt,
+	backgroundcolor=\color{vscBackground},
 	%
 	basicstyle=\ttfamily\footnotesize,
-	keywordstyle=\bfseries,
-	stringstyle=\ttfamily,
+	keywordstyle=\color{vscKeywordControl},
+	emph={def, class, None, True, False},
+	emphstyle=\color{vscKeywordStorage},
+	stringstyle=\ttfamily\color{vscString},
 	showstringspaces = false,
-	commentstyle=\color{gray45},
+	commentstyle=\color{vscComment},
 	%
 	numbers=left,
 	numbersep=15pt,
-	numberstyle=\tiny,
+	numberstyle=\tiny\color{vscLineNumber},
 	numberfirstline = false,
 	breaklines=true,
 	xleftmargin=\parindent
@@ -2770,7 +2780,8 @@ cfgts = CFGTS(
     model=model,
     instance=instance,
     counterfactual_value=target,
-    whitelist=["X_t-1", "Y_t-1"],  # solo modificar los retardos mas recientes
+    # Solo modificar los retardos mas recientes
+    whitelist=["X_t-1", "Y_t-1"],
     timeout=30,
     n_walk_steps=2,
     range_min=-10,
