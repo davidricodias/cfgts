@@ -353,8 +353,6 @@ hmargin=3cm
 
     El trabajo incluye la implementación del algoritmo que se ha realizado en Python con código públicamente accesible.
 
-    % TODO Add more?
-
     \textbf{Palabras clave:}
     % Escribir las palabras clave aquí
     Explicaciones contrafactuales, Series temporales, Causalidad, Grafos causales, Inteligencia artificial explicable (XAI), Optimización multi-objetivo, Modelos autorregresivos, Modelos surrogados, Algoritmo
@@ -430,7 +428,7 @@ Gracias.
 \chapter{Introducción}
 \label{cap:introduccion}
 
-Los modelos de regresión de series temporales se usan para predecir la evolución de variables que se ven afectadas por el paso de tiempo, como la demanda energética o la actividad económica de un país. Poder tomar mejores deciciones es una las principales utilidades de los modelos de series temporales. Pero en ocasiones no es solo necesario obtener una predicción precisa, sino también entender por qué esa predicción se ha hecho, y en un escalón superior, cómo podemos cambiar el presente para llegar a un estado futuro deseado; en qué tenemos que invertir hoy para que el modelo prediga beneficios futuros.
+Los modelos de regresión de series temporales se usan para predecir la evolución de variables que se ven afectadas por el paso de tiempo, como la demanda energética o la actividad económica de un país. Poder tomar mejores decisiones es una las principales utilidades de los modelos de series temporales. Pero en ocasiones no es solo necesario obtener una predicción precisa, sino también entender por qué esa predicción se ha hecho, y en un escalón superior, cómo podemos cambiar el presente para llegar a un estado futuro deseado; en qué tenemos que invertir hoy para que el modelo prediga beneficios futuros.
 
 Una forma de obtener mejor entendimiento a estas preguntas es a través de las explicaciones contrafactuales, las cuales comparan una instancia observada con una alternativa hipotética: \textit{¿qué valores deberían haber sido diferentes para alcanzar un objetivo determinado?}. En las series temporales estas instancias son instantes pasados, que están ordenados y pueden estar relacionadas entre sí. Una explicación contrafactual no tiene porqué respetar la coherencia temporal.
 
@@ -1261,7 +1259,7 @@ La Figura~\ref{fig:dag_conversion_publicidad_intervenido} muestra esta cirugía 
     \label{fig:dag_conversion_publicidad_intervenido}
 \end{figure}
 
-Una de las suposiciones implícitas es que la intervención no tiene \textit{efectos secundarios no especificados}, es decir, que asignar el valor $X=x$ para un individuo no altera directamente las variables posteriores de forma distinta a la recogida en el modelo. Gráficamente correspondaría a que fuera del modelo no existen aristas adicionales que conecten $X$ con otras variables posteriores; cuando existen efectos secundarios, deben especificarse explícitamente en el modelo causal.
+Una de las suposiciones implícitas es que la intervención no tiene \textit{efectos secundarios no especificados}, es decir, que asignar el valor $X=x$ para un individuo no altera directamente las variables posteriores de forma distinta a la recogida en el modelo. Gráficamente correspondería a que fuera del modelo no existen aristas adicionales que conecten $X$ con otras variables posteriores; cuando existen efectos secundarios, deben especificarse explícitamente en el modelo causal.
 
 \subsection{Mediación}
 
@@ -1669,7 +1667,7 @@ Así mismo los algoritmos que generan las explicaciones contrafactuales debería
 \begin{enumerate}
     \item Eficientes. Deberían generar la explicación en un tiempo razonable para el usuario
     \item Estables. Dados dos modelos que den predicciones similares (por ejemplo un \textit{Knn} y \textit{CatBoost}), un mismo algoritmo de generación de contrafactuales debería dar explicaciones parecidas para ambos modelos.
-    \item Consistentes. Un algoritmo de generación de contrafactuales es consistente si los cambios que se realizan en el modelo original (por ejemplo por entranar con nuevos datos) refleja los cambios del modelo de forma fidedigna. Por ejemplo si el modelo de aceptación de crédito ahora necesita un mínimo de 30000€ para poder dar un crédito, el algoritmo de generación de explicaciones debería tener en cuenta el nuevo mínimo.
+    \item Consistentes. Un algoritmo de generación de contrafactuales es consistente si los cambios que se realizan en el modelo original (por ejemplo por entrenar con nuevos datos) refleja los cambios del modelo de forma fidedigna. Por ejemplo si el modelo de aceptación de crédito ahora necesita un mínimo de 30000€ para poder dar un crédito, el algoritmo de generación de explicaciones debería tener en cuenta el nuevo mínimo.
     \item Justos. Es quizás lo más difícil de conseguir, pues implica que variar ciertos atributos de la explicación no invalida la validez de la explicación. Por ejemplo, en un sistema de crédito el algoritmo de generación debería ser capaz de generar la misma explicación contrafactual independientemente de la raza de la persona.
 \end{enumerate}
 Los métodos existentes no dominan simultáneamente todas las propiedades, sino que dependiendo del modelo y tipo de datos es necesario aplicar una variedad de técnicas para encontrar las explicaciones.
@@ -2909,7 +2907,7 @@ En este capítulo se presenta una evaluación contra la implementación del algo
 
 Se emplean tres conjuntos de datos, resumidos en la Tabla~\ref{tab:res_datos}. El primero es un conjunto sintético de 20 series AR(2) estacionarias de longitud variable y mecanismo generador lineal, el segundo es un conjunto sintético bivariante VAR(4) de dos variables, y el tercero es la serie de actividad solar \textit{Sunspots} (1700-2008), no lineal y con un ciclo conocido de (aproximadamente) once años.
 
-Cada serie se entrena con los métodos usuales para series temporales, con un split 60, 20, 20, y se normaliza cada variable por por \textit{min-max}.
+Cada serie se entrena con los métodos usuales para series temporales, con un split 60, 20, 20, y se normaliza cada variable por \textit{min-max}.
 
 \begin{table}[H]
     \ttabbox[\FBwidth]
@@ -2920,6 +2918,8 @@ Cada serie se entrena con los métodos usuales para series temporales, con un sp
             \hline
             Sintético AR(2)   & 1              & 20              & 46                  & 15                  \\
             \hline
+            Sintético VAR(4)  & 2              & 20              & 66                  & 15                  \\
+            \hline
             \textit{Sunspots} & 1              & 1               & 6                   & 6                   \\
             \hline
         \end{tabular}}
@@ -2929,7 +2929,7 @@ Cada serie se entrena con los métodos usuales para series temporales, con un sp
 
 A cada conjunto de datos se ajustan dos modelos: una regresión lineal y un \textit{Random Forest}. El valor objetivo de cada instancia se define como una ventana de cambio porcentual ($cp$), $y^{*}_d = \operatorname{mediana}(\mathbf{x}_{0,d}) \cdot (1 + cp)$, con $cp = 0{,}50$.
 
-La Tabla~\ref{tab:res_protocolo} recoge la configuración, que constitute 216 ejecuciones de CFGTS.
+La Tabla~\ref{tab:res_protocolo} recoge la configuración, que constituye 216 ejecuciones de CFGTS.
 
 \begin{table}[H]
     \ttabbox[\FBwidth]
@@ -3075,7 +3075,7 @@ La Figura~\ref{fig:res_ejemplo} muestra cualitativamente una ejecución sobre el
 
 \begin{figure}[H]
     \ffigbox[\FBwidth]{
-        \caption[Ejemplo cualitativo de contrafactual generado por CFGTS]{Contrafactual generado por \texttt{CFGTS} sobre una instancia del conjunto sintético AR(2) con modelo lineal. En negro, la ventana de retardos original (trazo discontinuo) y su predicción recursiva a seis pasos (trazo contínuo); en verde, la ventana contrafactual y la predicción; en naranja, el valor objetivo $y^{*}$.}
+        \caption[Ejemplo cualitativo de contrafactual generado por CFGTS]{Contrafactual generado por \texttt{CFGTS} sobre una instancia del conjunto sintético AR(2) con modelo lineal. En negro, la ventana de retardos original (trazo discontinuo) y su predicción recursiva a seis pasos (trazo continuo); en verde, la ventana contrafactual y la predicción; en naranja, el valor objetivo $y^{*}$.}
         \label{fig:res_ejemplo}
     }{
         \includegraphics[width=0.85\linewidth]{fig_example.png}
@@ -3163,14 +3163,14 @@ Se comprenden los impactos que este trabajo puede tener como aquellas consecuenc
 
 El impacto económico se entiende como la posibilidad de alterar el uso de los recursos económico-financieros de una organización por el uso del algoritmo. Principalmente se identifica que el uso de \texttt{CFGTS} tiene el potencial de reducir el coste de incorporar explicabilidad los modelos desplegados:
 \begin{enumerate}
-    \item El algoritmo no necesita el \textit{dataset} de entrenamiento. Según lo formalizado en Capítulo~\ref{cap:propuesta}, el algoritmo solo necesita un modelo ajustado, una instancia y un objetivo contrafactual. Es relavanto porque con frecuencia las organizaciones necesitan aplicar políticas de retención de datos (es decir, borrado de datos) ya sea por protección de datos o costes de almacenamiento. Auditar un modelo con \texttt{CFGTS} se vuelve una operación de menor coste.
+    \item El algoritmo no necesita el \textit{dataset} de entrenamiento. Según lo formalizado en Capítulo~\ref{cap:propuesta}, el algoritmo solo necesita un modelo ajustado, una instancia y un objetivo contrafactual. Es relevanto porque con frecuencia las organizaciones necesitan aplicar políticas de retención de datos (es decir, borrado de datos) ya sea por protección de datos o costes de almacenamiento. Auditar un modelo con \texttt{CFGTS} se vuelve una operación de menor coste.
     \item El algoritmo es agnóstico al modelo. Al no imponerse una forma funcional, las organizaciones no tienen que desarrollar algoritmos de explicabilidad específicos por tipo de modelo. La implementación de referencia necesita que el modelo exponga la interfaz de \texttt{RegressorMixin} de scikit-learn, pero una implementación diferente del algoritmo (por ejemplo una basada en \texttt{PyTorch}) puede usar otro tipo de interfaz. Esto reduce la barrera de entrada a la explicabilidad en los equipos de ciencia de datos encargados de los modelos.
 \end{enumerate}
 
 
 \section{Impacto social}
 
-Los modelos de series temporales para los que \texttt{CFGTS} genera contrafactuales pueden usarse para tomar decisiones con un impacto directo sobre la sociedad: demanda eléctrica, parámetros clínicos contínuos o número de préstamos en \textit{default} son problemas en los que los modelos de series temporales son usados usualmente. En estos contextos poder generar explicaciones contrafactuales puede mejorar la confianza del operador en las situaciones en las que no es capaz de entender porqué el modelo ha predicho cierta cantidad y no otra. Esta confianza es positiva y entra en línea con las razones de interpretabilidad expuestas en el Capítulo~\ref{cap:estadodelarte}.
+Los modelos de series temporales para los que \texttt{CFGTS} genera contrafactuales pueden usarse para tomar decisiones con un impacto directo sobre la sociedad: demanda eléctrica, parámetros clínicos continuos o número de préstamos en \textit{default} son problemas en los que los modelos de series temporales son usados usualmente. En estos contextos poder generar explicaciones contrafactuales puede mejorar la confianza del operador en las situaciones en las que no es capaz de entender porqué el modelo ha predicho cierta cantidad y no otra. Esta confianza es positiva y entra en línea con las razones de interpretabilidad expuestas en el Capítulo~\ref{cap:estadodelarte}.
 
 Por otra parte, hay que matizar el límite de la confianza que puede aportar el uso del algoritmo a los operadores del modelo, ya que la puntuación de consistencia causal $s$ mide la coherencia del contrafactual contra lo esperado en un proceso causal. Del Capítulo~\ref{cap:resultados} se puede recordar que los modelos con un peor poder de predicción pueden obtener mejores puntuaciones de causalidad en sus contrafactuales. Es decir que la puntuación generada no debe arrojar confianza sobre el modelo que genera los contrafactuales, sino sobre los contrafactuales generados. Una puntuación causal elevada puede llevar a un efecto conocido en la literatura como \textit{explicabilidad de fachada}: una falsa sensación de que el modelo es válido porque sus contrafactuales son válidos.
 
@@ -3180,7 +3180,7 @@ Por último la naturaleza libre y agnóstica del modelo permite la democratizaci
 
 Por diseño \texttt{CFGTS} no inspecciona los parámetros internos del modelo, sino que obtiene información del modelo mediante la ejecución repetida del modelo durante la fase de optimización de la Fase~1. Por ejemplo con la configuración experimental del Capítulo~\ref{cap:resultados} se dan hasta 300 evaluaciones del modelo en la Fase~1. Generar los contrafactuales y asignarles la puntuación es varios órdenes de magnitud más intensivo energéticamente que hacer una única inferencia. Esto se traduce en un mayor gasto eléctrico, y de forma indirecta mayor consumo de agua y mayores emisiones de dióxido de carbono. Este problema no es exclusivo de \texttt{CFGTS}, ya que otros métodos de explicabilidad como LIME o DiCE también sufren de esta desventaja.
 
-Aun así, la implementación de referencia incluye mecanismos para acotar el impacto medioambiental mediante los parámetros \texttt{n\_trials}, \texttt{n\_coverage\_trials} y \texttt{timeout}, que permiten limitar tanto las evaluaciones como como el tiempo máximo de búsqueda en los problemas de optimización. El opreador que despliegue \texttt{CFGTS} puede intercambiar de forma consciente estabilidad de la explicación por consumo energético.
+Aun así, la implementación de referencia incluye mecanismos para acotar el impacto medioambiental mediante los parámetros \texttt{n\_trials}, \texttt{n\_coverage\_trials} y \texttt{timeout}, que permiten limitar tanto las evaluaciones como el tiempo máximo de búsqueda en los problemas de optimización. El operador que despliegue \texttt{CFGTS} puede intercambiar de forma consciente estabilidad de la explicación por consumo energético.
 
 \section{Impacto ético}
 
@@ -3260,9 +3260,9 @@ El entorno de desarrollo se compone del IDE VSCode, Python, \texttt{uv}, Git, \L
             \hline
             Equipo de desarrollo y periféricos & Amortización: $\frac{21}{48} \times 1500$~€                                & 656{,}25                 \\
             \hline
-            Software de desarrollo             & Python, VSCode, \texttt{uv}, Git, \LaTeX{} y bibliotecas de código abierto & {,}00                    \\
+            Software de desarrollo             & Python, VSCode, \texttt{uv}, Git, \LaTeX{} y bibliotecas de código abierto & 0{,}00                    \\
             \hline
-            Servicios de computación externos  & No utilizados durante el desarrollo ni la evaluación                       & {,}00                    \\
+            Servicios de computación externos  & No utilizados durante el desarrollo ni la evaluación                       & 0{,}00                    \\
             \hline
             \textbf{Total}                     &                                                                            & \textbf{656{,}25}        \\
             \hline
@@ -3348,7 +3348,15 @@ En conjunto, se han alcanzado los objetivos de formular un método de generació
 \chapter{Futuras líneas de investigación}
 \label{cap:futuras_lineas}
 
-% Hablar de que el método de generación de contrafactuales del paso 1 se puede cambiar por otros métodos.
+El trabajo desarrollado ha resultado en una implementación completa del algoritmo. Esta implementación y el trabajo teórico sirven de base para posibles extensiones o modificaciones del algoritmo. Las siguientes líneas de investigación permitirían ampliar tanto el alcance como la utilidad del algoritmo.
+
+\begin{itemize}
+    \item \textbf{Métodos alternativos de generación.} La generación de contrafactuales de la Fase~1 puede reemplazarse por otros métodos sin modificar la construcción del conjunto de cobertura ni la puntuación causal de las Fases~2 y~3. Por ejemplo, se pueden usar métodos de descenso de gradiente para modelos diferenciables, algoritmos evolutivos para modelos de caja negra o métodos basados en instancias observada (instancias prototípicas).
+
+    \item \textbf{Causalidad en modelos no lineales.} Dado que la puntuación es más dispersa para modelos no lineales, resulta necesario estudiar efectos locales que dependan de la instancia: modelos surrogados no lineales. Un grafo causal aportado por expertos o aprendido previamente permitiría además contrastar la coherencia interna del predictor con hipótesis sobre el proceso real; por ejemplo un economista podría proveer la estructura del grafo en un caso de contrafactaules económicos, y testear distintos modelos para ver la coherencia con el pensamiento de los expertos de dominio.
+
+    \item \textbf{Evaluación y transferencia.} Se podría ampliar el estudio con datos reales de otros dominios y modelos adicionales ya preentrenados. La extensión de la interfaz a regresores de \textit{PyTorch}, \textit{TensorFlow} u otros ecosistemas facilitaría estas evaluaciones y la aplicación del algoritmo a problemas más complejos.
+\end{itemize}
 
 % COMENZAR A ESCRIBIR la MEMORIA
 
@@ -4244,7 +4252,7 @@ Las herramientas de IA generativa suponen un aumento de la productividad sustanc
 
 \chapter* {Anexo D. Declaración de originalidad}
 
-Yo, José David Rico Días declaro que el TFG 'Propuesta de algoritmo de explicación contrafactual para el análisis de modelos predictivos de series temporales' es totalmente original mío, que no ha sido presentado en ninguna otra universidad como TFG y que todas las fuentes que han sido utilizadas han sido adecuadamente citadas y aparecen en las referencias bibiográficas.
+Yo, José David Rico Días declaro que el TFG 'Propuesta de algoritmo de explicación contrafactual para el análisis de modelos predictivos de series temporales' es totalmente original mío, que no ha sido presentado en ninguna otra universidad como TFG y que todas las fuentes que han sido utilizadas han sido adecuadamente citadas y aparecen en las referencias bibliográficas.
 
 Colmenarejo, septiembre de 2026
 
