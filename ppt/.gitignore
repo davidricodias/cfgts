@@ -1,0 +1,5 @@
+/scenes/slides/
+/scenes/media/
+/scenes/.manim-slides.toml
+/scenes/__pycache__/
+/output.html
