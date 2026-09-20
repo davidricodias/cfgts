@@ -27,7 +27,6 @@ SCENES=(
   "s01_intro.py:IntroSlide"
   "s02_phases.py:PhasesSlide"
   "s03_motivation_finance.py:MotivationFinanceSlide"
-  "s04_motivation_market.py:MotivationMarketSlide"
   "s05_fundamentos.py:FundamentosSlide"
   "s06_estado_arte.py:EstadoArteSlide"
   "s07_analisis_problema.py:AnalisisProblemaSlide"
