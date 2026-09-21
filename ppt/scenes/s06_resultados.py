@@ -2,17 +2,13 @@
 
 from __future__ import annotations
 
-import numpy as np
-from common import ACCENT, INK, MUTED, WARM, ThemedSlide, body
+from common import ACCENT, INK, MUTED, ThemedSlide, body, reveal_staggered, row_label, value_bar, vertical_axis
 from manim import (
     DOWN,
-    LEFT,
     RIGHT,
     UP,
     FadeIn,
     FadeOut,
-    LaggedStart,
-    Line,
     Rectangle,
     Text,
     VGroup,
@@ -36,14 +32,6 @@ ROW_STEP = 0.56
 BAR_ORIGIN_X = -2.2
 
 
-def _bar(value: float, y: float, color: str) -> Rectangle:
-    bar = Rectangle(
-        width=value * BAR_SCALE, height=BAR_HEIGHT, color=color, fill_opacity=0.9, stroke_width=0
-    )
-    bar.move_to(np.array([BAR_ORIGIN_X + bar.width / 2, y, 0.0]))
-    return bar
-
-
 class ResultadosSlide(ThemedSlide):
     def construct(self) -> None:
         head = self.show_heading("Resultados")
@@ -51,19 +39,17 @@ class ResultadosSlide(ThemedSlide):
         rows = VGroup()
         for index, (label, score, control) in enumerate(ROWS):
             y = -index * ROW_STEP
-            name = Text(label, font_size=21, color=INK)
-            name.next_to(np.array([BAR_ORIGIN_X, y, 0.0]), LEFT, buff=0.3)
-            top = _bar(score, y + (BAR_HEIGHT + BAR_GAP) / 2, ACCENT)
-            bottom = _bar(control, y - (BAR_HEIGHT + BAR_GAP) / 2, MUTED)
+            name = row_label(label, BAR_ORIGIN_X, y, font_size=21)
+            top = value_bar(
+                score, y + (BAR_HEIGHT + BAR_GAP) / 2, ACCENT, origin_x=BAR_ORIGIN_X, scale=BAR_SCALE, height=BAR_HEIGHT
+            )
+            bottom = value_bar(
+                control, y - (BAR_HEIGHT + BAR_GAP) / 2, MUTED, origin_x=BAR_ORIGIN_X, scale=BAR_SCALE, height=BAR_HEIGHT
+            )
             value = Text(f"{score:.3f}", font_size=20, color=ACCENT).next_to(top, RIGHT, buff=0.2)
             rows.add(VGroup(name, top, bottom, value))
 
-        axis = Line(
-            np.array([BAR_ORIGIN_X, 0.45, 0.0]),
-            np.array([BAR_ORIGIN_X, -len(ROWS) * ROW_STEP + 0.1, 0.0]),
-            color=MUTED,
-            stroke_width=2,
-        )
+        axis = vertical_axis(BAR_ORIGIN_X, 0.45, -len(ROWS) * ROW_STEP + 0.1)
         chart = VGroup(axis, rows).next_to(head, DOWN, buff=0.6)
 
         legend = VGroup(
@@ -79,15 +65,11 @@ class ResultadosSlide(ThemedSlide):
         legend.next_to(chart, DOWN, buff=0.45)
 
         self.play(FadeIn(axis), FadeIn(legend), run_time=0.6)
-        self.play(
-            LaggedStart(*[FadeIn(row, shift=RIGHT * 0.3) for row in rows], lag_ratio=0.15),
-            run_time=2.0,
-        )
+        reveal_staggered(self, rows, shift=RIGHT * 0.3, lag_ratio=0.15, run_time=2.0)
 
         self.next_slide()
         first = body(
-            "La naturaleza del modelo domina la puntuación: "
-            "lineal cerca de 1, Random Forest en torno a 0,5.",
+            "La naturaleza del modelo domina el causal score",
             font_size=26,
             width=62,
         ).next_to(legend, DOWN, buff=0.4)

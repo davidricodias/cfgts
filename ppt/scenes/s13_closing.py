@@ -29,11 +29,10 @@ class ClosingSlide(ThemedSlide):
         )
         self.play(FadeIn(thanks, shift=UP * 0.3))
 
-        self.next_slide()
         snippet_text = Text(
             "$ pip install cfgts",
             font="Monospace",
-            font_size=28,
+            font_size=18,
             color="#F2F4FF",
         )
         snippet_box = RoundedRectangle(

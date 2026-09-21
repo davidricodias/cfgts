@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from common import ACCENT, INK, ThemedSlide, body, fit_below, wrap
+from common import ACCENT, ThemedSlide, body, fit_below, marker_item
 from manim import (
     DOWN,
     LEFT,
@@ -29,10 +29,13 @@ class ConclusionesSlide(ThemedSlide):
 
         items = VGroup(
             *[
-                VGroup(
+                marker_item(
                     Text("\u2713", font_size=30, color=ACCENT, weight="BOLD"),
-                    Text(wrap(text, 52), font_size=25, color=INK, line_spacing=1.15),
-                ).arrange(RIGHT, buff=0.3, aligned_edge=UP)
+                    text,
+                    font_size=25,
+                    width=52,
+                    aligned_edge=UP,
+                )
                 for text in CONCLUSIONS
             ]
         ).arrange(DOWN, aligned_edge=LEFT, buff=0.5)

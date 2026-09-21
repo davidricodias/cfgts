@@ -2,13 +2,12 @@
 
 from __future__ import annotations
 
-from common import ACCENT, BG, INK, ThemedSlide, eq, wrap
+from common import ACCENT, ThemedSlide, disc_marker, eq, marker_item
 from manim import (
     DOWN,
     LEFT,
     RIGHT,
     UP,
-    Circle,
     FadeIn,
     Text,
     VGroup,
@@ -24,11 +23,7 @@ REQUIREMENTS = [
 
 
 def _requirement(number: int, text: str) -> VGroup:
-    disc = Circle(radius=0.22, color=ACCENT, fill_opacity=1.0, stroke_width=0)
-    badge = Text(str(number), font_size=20, color=BG, weight="BOLD").move_to(disc)
-    label = Text(wrap(text, 52), font_size=26, color=INK, line_spacing=1.1)
-    label.next_to(disc, RIGHT, buff=0.3)
-    return VGroup(disc, badge, label)
+    return marker_item(disc_marker(number), text, font_size=26, width=52)
 
 
 class AnalisisProblemaSlide(ThemedSlide):

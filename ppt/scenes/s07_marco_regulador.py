@@ -2,15 +2,13 @@
 
 from __future__ import annotations
 
-from common import ACCENT, INK, MUTED, ThemedSlide, body, wrap
+from common import ACCENT, INK, MUTED, ThemedSlide, body, card, reveal_card, wrap
 from manim import (
     DOWN,
     LEFT,
     RIGHT,
     UP,
-    Create,
     FadeIn,
-    SurroundingRectangle,
     Text,
     VGroup,
     Write,
@@ -43,15 +41,10 @@ BLOCKS = [
 
 
 def _block(title: str, lines: list[str]) -> VGroup:
-    label = Text(title, font_size=26, color=ACCENT, weight="BOLD")
     items = VGroup(
         *[Text(wrap(line, 26), font_size=20, color=INK, line_spacing=1.1) for line in lines]
     ).arrange(DOWN, aligned_edge=LEFT, buff=0.3)
-    content = VGroup(label, items).arrange(DOWN, buff=0.35)
-    frame = SurroundingRectangle(
-        content, corner_radius=0.12, buff=0.32, color=MUTED, stroke_width=2
-    )
-    return VGroup(frame, content)
+    return card(title, items, buff=0.32, gap=0.35)
 
 
 class MarcoReguladorSlide(ThemedSlide):
@@ -72,9 +65,7 @@ class MarcoReguladorSlide(ThemedSlide):
         blocks.arrange(RIGHT, buff=0.55, aligned_edge=UP).next_to(note, DOWN, buff=0.6)
 
         for block in blocks:
-            frame, content = block
-            self.play(Create(frame), Write(content[0]), run_time=0.7)
-            self.play(FadeIn(content[1], shift=UP * 0.2), run_time=0.7)
+            reveal_card(self, block, frame_run_time=0.7, body_run_time=0.7)
             self.next_slide()
 
         closing = Text(

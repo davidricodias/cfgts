@@ -3,18 +3,14 @@
 from __future__ import annotations
 
 import numpy as np
-from common import ACCENT, INK, MUTED, ThemedSlide, body
+from common import ACCENT, MUTED, ThemedSlide, body, range_bar, reveal_staggered, row_label, vertical_axis
 from manim import (
     DOWN,
-    LEFT,
     RIGHT,
     UP,
     Create,
     DashedLine,
     FadeIn,
-    LaggedStart,
-    Line,
-    Rectangle,
     Text,
     VGroup,
 )
@@ -45,31 +41,19 @@ class PlanificacionSlide(ThemedSlide):
         rows = VGroup()
         for index, (name, start, end) in enumerate(PHASES):
             y = -index * ROW_STEP
-            left, right = _month_x(start), _month_x(end)
-            bar = Rectangle(
-                width=right - left,
-                height=0.26,
-                color=ACCENT,
-                fill_opacity=0.85,
-                stroke_width=0,
-            ).move_to(np.array([(left + right) / 2, y, 0.0]))
-            label = Text(name, font_size=21, color=INK)
-            label.next_to(np.array([TRACK_LEFT, y, 0.0]), LEFT, buff=0.35)
+            bar = range_bar(_month_x(start), _month_x(end), y, ACCENT, height=0.26)
+            label = row_label(name, TRACK_LEFT, y, font_size=21, buff=0.35)
             rows.add(VGroup(label, bar))
 
-        baseline = Line(
-            np.array([TRACK_LEFT, 0.45, 0.0]),
-            np.array([TRACK_LEFT, -len(PHASES) * ROW_STEP + 0.15, 0.0]),
-            color=MUTED,
-            stroke_width=2,
-        )
+        bottom = -len(PHASES) * ROW_STEP + 0.15
+        baseline = vertical_axis(TRACK_LEFT, 0.45, bottom)
         ticks = VGroup()
         for month, name in ((0, "01/2025"), (TOTAL_MONTHS, "09/2026")):
             x = _month_x(month)
             ticks.add(
                 DashedLine(
                     np.array([x, 0.45, 0.0]),
-                    np.array([x, -len(PHASES) * ROW_STEP + 0.15, 0.0]),
+                    np.array([x, bottom, 0.0]),
                     color=MUTED,
                     stroke_width=1.5,
                 ),
@@ -79,10 +63,7 @@ class PlanificacionSlide(ThemedSlide):
         gantt = VGroup(baseline, ticks, rows).next_to(head, DOWN, buff=0.75)
 
         self.play(Create(baseline), FadeIn(ticks), run_time=0.8)
-        self.play(
-            LaggedStart(*[FadeIn(row, shift=RIGHT * 0.3) for row in rows], lag_ratio=0.2),
-            run_time=2.0,
-        )
+        reveal_staggered(self, rows, shift=RIGHT * 0.3, lag_ratio=0.2, run_time=2.0)
 
         self.next_slide()
         note = body(

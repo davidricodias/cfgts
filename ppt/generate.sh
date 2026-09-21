@@ -42,7 +42,7 @@ SCENES=(
   "s13_closing.py:ClosingSlide"
 )
 
-UV_RUN=(uv run --no-project --with "manim>=0.18.1" --with "manim-slides>=5.7.0" --with numpy)
+UV_RUN=(uv run --no-project --with "manim==0.21.0" --with "manim-slides==5.7.0" --with "numpy==2.5.3")
 
 # scenes/media/videos/*/*/partial_movie_files/ is Manim's own render cache
 # (keyed by a hash of each animation's content): keeping it across runs lets

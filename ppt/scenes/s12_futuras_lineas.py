@@ -2,17 +2,14 @@
 
 from __future__ import annotations
 
-from common import ACCENT, INK, MUTED, ThemedSlide, wrap
+from common import ACCENT, INK, ThemedSlide, card, reveal_card, wrap
 from manim import (
     DOWN,
     RIGHT,
     UP,
-    Create,
     FadeIn,
-    SurroundingRectangle,
     Text,
     VGroup,
-    Write,
 )
 
 LINES = [
@@ -34,13 +31,16 @@ LINES = [
 
 
 def _line(title: str, text: str) -> VGroup:
-    label = Text(wrap(title, 22), font_size=24, color=ACCENT, weight="BOLD", line_spacing=1.1)
     detail = Text(wrap(text, 30), font_size=19, color=INK, line_spacing=1.15)
-    content = VGroup(label, detail).arrange(DOWN, buff=0.3)
-    frame = SurroundingRectangle(
-        content, corner_radius=0.12, buff=0.32, color=MUTED, stroke_width=2
+    return card(
+        title,
+        detail,
+        title_font_size=24,
+        title_width=22,
+        title_line_spacing=1.1,
+        buff=0.32,
+        gap=0.3,
     )
-    return VGroup(frame, content)
 
 
 class FuturasLineasSlide(ThemedSlide):
@@ -50,14 +50,12 @@ class FuturasLineasSlide(ThemedSlide):
         cards = VGroup(*[_line(title, text) for title, text in LINES])
         cards.arrange(RIGHT, buff=0.55, aligned_edge=UP).next_to(head, DOWN, buff=0.9)
 
-        for card in cards:
-            frame, content = card
-            self.play(Create(frame), Write(content[0]), run_time=0.7)
-            self.play(FadeIn(content[1], shift=UP * 0.2), run_time=0.7)
+        for card_group in cards:
+            reveal_card(self, card_group, frame_run_time=0.7, body_run_time=0.7)
             self.next_slide()
 
         closing = Text(
-            "La implementación queda como base para extenderlo",
+            "La implementación es fácilmente extendible",
             font_size=26,
             color=ACCENT,
             weight="BOLD",

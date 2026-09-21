@@ -3,8 +3,7 @@
 from __future__ import annotations
 
 import numpy as np
-
-from common import ACCENT, GREEN, INK, MUTED, WARM, ThemedSlide, body, eq
+from common import ACCENT, GREEN, INK, MUTED, WARM, ThemedSlide, body, eq, reveal_staggered
 from manim import (
     DOWN,
     RIGHT,
@@ -17,7 +16,6 @@ from manim import (
     FadeIn,
     FadeOut,
     GrowArrow,
-    LaggedStart,
     Rectangle,
     Text,
     VGroup,
@@ -62,7 +60,7 @@ class EstadoArteSlide(ThemedSlide):
         items.next_to(intro, DOWN, buff=0.55)
 
         self.play(Write(intro))
-        self.play(LaggedStart(*[FadeIn(item, shift=UP * 0.2) for item in items], lag_ratio=0.15))
+        reveal_staggered(self, items, shift=UP * 0.2, lag_ratio=0.15, run_time=1.0)
 
         self.next_slide()
         gap = items[CAUSALITY_INDEX]
@@ -88,7 +86,7 @@ class EstadoArteSlide(ThemedSlide):
         self.play(Write(gap_text))
 
         self.next_slide()
-        here = Text("Ahí se sitúa CFGTS", font_size=34, color=ACCENT, weight="BOLD").move_to(
-            gap_text
-        )
+        here = Text(
+            "Ahí se sitúa CFGTS", font_size=34, color=ACCENT, weight="BOLD"
+        ).next_to(head, DOWN, buff=1.2)
         self.play(FadeOut(gap_text), FadeIn(here, shift=UP * 0.3))

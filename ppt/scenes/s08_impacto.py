@@ -2,16 +2,13 @@
 
 from __future__ import annotations
 
-from common import ACCENT, INK, MUTED, WARM, ThemedSlide, body, fit_below, wrap
+from common import ACCENT, INK, MUTED, ThemedSlide, body, card, fit_below, reveal_card, wrap
 from manim import (
     DOWN,
     UP,
-    Create,
     FadeIn,
-    SurroundingRectangle,
     Text,
     VGroup,
-    Write,
 )
 
 QUADRANTS = [
@@ -37,11 +34,8 @@ QUADRANTS = [
 
 
 def _quadrant(title: str, text: str, accent: str) -> VGroup:
-    label = Text(title, font_size=26, color=accent, weight="BOLD")
     lines = Text(wrap(text, 34), font_size=20, color=INK, line_spacing=1.15)
-    content = VGroup(label, lines).arrange(DOWN, buff=0.3)
-    frame = SurroundingRectangle(content, corner_radius=0.12, buff=0.3, color=MUTED, stroke_width=2)
-    return VGroup(frame, content)
+    return card(title, lines, title_color=accent, buff=0.3, gap=0.3)
 
 
 class ImpactoSlide(ThemedSlide):
@@ -58,14 +52,12 @@ class ImpactoSlide(ThemedSlide):
         grid.arrange_in_grid(rows=2, cols=2, buff=(0.6, 0.5))
         fit_below(grid, head, buff=0.5, bottom=-3.0)
 
-        for card in grid:
-            frame, content = card
-            self.play(Create(frame), Write(content[0]), run_time=0.6)
-            self.play(FadeIn(content[1], shift=UP * 0.15), run_time=0.6)
+        for card_group in grid:
+            reveal_card(self, card_group, frame_run_time=0.6, body_run_time=0.6, body_shift=UP * 0.15)
             self.next_slide()
 
         closing = body(
-            "El impacto es indirecto: depende del uso de quién despliegue CFGTS",
+            "El impacto es indirecto: depende del operador de CFGTS",
             font_size=25,
             width=80,
             color=MUTED,
