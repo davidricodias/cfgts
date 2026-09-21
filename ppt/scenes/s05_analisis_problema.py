@@ -24,14 +24,12 @@ from manim import (
     UP,
     Arrow,
     Create,
-    DashedLine,
     DashedVMobject,
     Dot,
     Ellipse,
     FadeIn,
     FadeOut,
     Line,
-    Rectangle,
     Text,
     VGroup,
     Write,
@@ -94,18 +92,22 @@ class AnalisisProblemaSlide(ThemedSlide):
         self.play(Write(given))
 
         self.next_slide()
-        detail = VGroup(
-            eq(
-                r"n_{\mathrm{In}} = D \times T, \qquad "
-                r"\mathbf{x}_0 = \bigl(Z^1_{t-1}, \ldots, Z^D_{t-T}\bigr)",
-                font_size=30,
-            ),
-            eq(
-                r"\hat{\mathbf{y}}_0 = \hat{f}(\mathbf{x}_0), \qquad "
-                r"\Delta \mathbf{y}^{*} = \mathbf{y}^{*} - \hat{\mathbf{y}}_0",
-                font_size=30,
-            ),
-        ).arrange(DOWN, buff=0.3).next_to(given, DOWN, buff=0.5)
+        detail = (
+            VGroup(
+                eq(
+                    r"n_{\mathrm{In}} = D \times T, \qquad "
+                    r"\mathbf{x}_0 = \bigl(Z^1_{t-1}, \ldots, Z^D_{t-T}\bigr)",
+                    font_size=30,
+                ),
+                eq(
+                    r"\hat{\mathbf{y}}_0 = \hat{f}(\mathbf{x}_0), \qquad "
+                    r"\Delta \mathbf{y}^{*} = \mathbf{y}^{*} - \hat{\mathbf{y}}_0",
+                    font_size=30,
+                ),
+            )
+            .arrange(DOWN, buff=0.3)
+            .next_to(given, DOWN, buff=0.5)
+        )
         self.play(Write(detail), run_time=1.6)
 
         self.next_slide()
@@ -117,9 +119,7 @@ class AnalisisProblemaSlide(ThemedSlide):
         # columna de fórmulas alineada a la izquierda (el ancho del texto varía)
         formula_x = max(item[0].get_right()[0] for item in items) + 0.5
         for item in items:
-            item[1].move_to(
-                np.array([formula_x + item[1].width / 2, item[1].get_center()[1], 0.0])
-            )
+            item[1].move_to(np.array([formula_x + item[1].width / 2, item[1].get_center()[1], 0.0]))
         fit_below(items, given, buff=0.55, bottom=-3.0)
 
         for item in items:
@@ -165,7 +165,6 @@ class AnalisisProblemaSlide(ThemedSlide):
         self.play(FadeIn(y0), Write(y0_label), FadeIn(ystar), Write(ystar_label))
         self.next_slide()
         self.play(Create(path))
-
 
         # nube de cobertura alrededor del trayecto
         self.next_slide()
@@ -235,12 +234,18 @@ class AnalisisProblemaSlide(ThemedSlide):
         arbitrary = _series(ARBITRARY, WARM, dashed=True)
 
         legend = VGroup(
-            VGroup(Line(np.array([0, 0, 0]), np.array([0.4, 0, 0]), color=INK, stroke_width=4),
-                   eq(r"\mathbf{x}_0", font_size=24, color=INK)).arrange(RIGHT, buff=0.2),
-            VGroup(Line(np.array([0, 0, 0]), np.array([0.4, 0, 0]), color=GREEN, stroke_width=4),
-                   Text("coherente", font_size=21, color=GREEN)).arrange(RIGHT, buff=0.2),
-            VGroup(Line(np.array([0, 0, 0]), np.array([0.4, 0, 0]), color=WARM, stroke_width=4),
-                   Text("arbitraria", font_size=21, color=WARM)).arrange(RIGHT, buff=0.2),
+            VGroup(
+                Line(np.array([0, 0, 0]), np.array([0.4, 0, 0]), color=INK, stroke_width=4),
+                eq(r"\mathbf{x}_0", font_size=24, color=INK),
+            ).arrange(RIGHT, buff=0.2),
+            VGroup(
+                Line(np.array([0, 0, 0]), np.array([0.4, 0, 0]), color=GREEN, stroke_width=4),
+                Text("coherente", font_size=21, color=GREEN),
+            ).arrange(RIGHT, buff=0.2),
+            VGroup(
+                Line(np.array([0, 0, 0]), np.array([0.4, 0, 0]), color=WARM, stroke_width=4),
+                Text("arbitraria", font_size=21, color=WARM),
+            ).arrange(RIGHT, buff=0.2),
         ).arrange(RIGHT, buff=0.6)
         legend.next_to(axis_x, DOWN, buff=0.55)
 
@@ -252,70 +257,3 @@ class AnalisisProblemaSlide(ThemedSlide):
         self.next_slide()
         self.play(Create(arbitrary))
         self.play(FadeIn(legend))
-
-        # --- Figura 3: consistencia causal por salida ---
-        caption3 = body(
-            "La puntuación compara, salida a salida, el cambio esperado por el "
-            "modelo causal auxiliar con el cambio real inducido por el predictor.",
-            font_size=25,
-            width=62,
-        ).next_to(head, DOWN, buff=0.5)
-        self.play(FadeOut(caption2), Write(caption3))
-
-        bar_scale = 4.0
-        bar_height = 0.22
-        bar_gap = 0.07
-        row_step = 0.95
-        origin = -1.6
-        rows = VGroup()
-        for index, (name, expected, real) in enumerate(CONSISTENCY):
-            y = -index * row_step
-            label = eq(rf"{name}", font_size=26, color=INK)
-            label.move_to(np.array([origin - 0.9, y, 0.0]))
-            top = Rectangle(
-                width=expected * bar_scale, height=bar_height, color=ACCENT, fill_opacity=0.9, stroke_width=0
-            ).move_to(np.array([origin + expected * bar_scale / 2, y + (bar_height + bar_gap) / 2, 0.0]))
-            bottom = Rectangle(
-                width=real * bar_scale, height=bar_height, color=WARM, fill_opacity=0.9, stroke_width=0
-            ).move_to(np.array([origin + real * bar_scale / 2, y - (bar_height + bar_gap) / 2, 0.0]))
-            gap_line = DashedLine(
-                np.array([origin + min(expected, real) * bar_scale, y, 0.0]),
-                np.array([origin + max(expected, real) * bar_scale, y, 0.0]),
-                color=MUTED,
-                stroke_width=2,
-                dash_length=0.08,
-            )
-            rows.add(VGroup(label, top, bottom, gap_line))
-
-        axis = Line(
-            np.array([origin, 0.6, 0.0]),
-            np.array([origin, -len(CONSISTENCY) * row_step + 0.35, 0.0]),
-            color=MUTED,
-            stroke_width=2,
-        )
-        legend3 = VGroup(
-            VGroup(
-                Rectangle(width=0.4, height=0.16, color=ACCENT, fill_opacity=0.9, stroke_width=0),
-                eq(r"\Delta \tilde{y}_d \ \text{(causal)}", font_size=23, color=INK),
-            ).arrange(RIGHT, buff=0.2),
-            VGroup(
-                Rectangle(width=0.4, height=0.16, color=WARM, fill_opacity=0.9, stroke_width=0),
-                eq(r"\Delta \hat{y}_d \ \text{(modelo)}", font_size=23, color=INK),
-            ).arrange(RIGHT, buff=0.2),
-        ).arrange(RIGHT, buff=0.8)
-
-        chart = VGroup(axis, rows)
-        score = eq(
-            r"s_k = \frac{1}{D} \sum_{d=1}^{D} "
-            r"\mathrm{cons}\bigl(\Delta \tilde{y}_d,\, \Delta \hat{y}_d\bigr) \in (0, 1]",
-            font_size=28,
-        )
-        block = VGroup(chart, legend3, score).arrange(DOWN, buff=0.35)
-        fit_below(block, caption3, buff=0.45, bottom=-3.9)
-
-        self.next_slide()
-        self.play(Create(axis))
-        reveal_staggered(self, rows, lag_ratio=0.2, run_time=1.6)
-        self.play(FadeIn(legend3))
-        self.next_slide()
-        self.play(Write(score), run_time=1.6)

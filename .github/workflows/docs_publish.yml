@@ -4,6 +4,10 @@ on:
   release:
     types:
       - published
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   deploy:
@@ -25,12 +29,36 @@ jobs:
       - name: Install Dependencies
         run: uv sync --frozen
 
-      - name: Install Pandoc
-        run: sudo apt-get update && sudo apt-get install -y pandoc
+      - name: Install Pandoc and LaTeX
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            pandoc \
+            biber \
+            texlive-latex-base \
+            texlive-latex-recommended \
+            texlive-latex-extra \
+            texlive-fonts-recommended \
+            texlive-fonts-extra \
+            texlive-science \
+            texlive-lang-spanish
 
       - name: Convert LaTeX to Markdown
         run: |
           pandoc docs/report/report.tex -o docs/report/report.md --mathjax
+
+      - name: Build Report PDF
+        run: |
+          # Two pdflatex passes around biber so bibliography and cross-references resolve.
+          # Non-zero exits are tolerated (undefined refs on the first pass, PDF/A
+          # warnings from pdfx); the `test -f` below is the real success check.
+          pdflatex -interaction=nonstopmode -file-line-error -output-directory=docs/report docs/report/report.tex || true
+          biber ./docs/report/report || true
+          pdflatex -interaction=nonstopmode -file-line-error -output-directory=docs/report docs/report/report.tex || true
+          test -f docs/report/report.pdf
+
+      - name: Bundle Presentation
+        run: cp ppt/output.html docs/presentation.html
 
       - name: Deploy Docs
         run: uv run mkdocs gh-deploy --force

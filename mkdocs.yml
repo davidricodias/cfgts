@@ -34,7 +34,25 @@ extra_javascript:
 
 nav:
   - Home: index.md
+  - Report: report/report.md
+  - Report (PDF): report/report.pdf
+  - Presentation: presentation.html
 
 plugins:
   - mkdocstrings
   - search
+
+# LaTeX sources and intermediate build files live next to the report; only the
+# generated report.md/report.pdf should reach the published site.
+exclude_docs: |
+  report/*.tex
+  report/*.bib
+  report/*.bbl*
+  report/*.aux
+  report/*.xmpdata
+  report/*.synctex.gz
+  report/*.run.xml
+  report/*.bcf*
+  report/*.log
+  report/pdfa.xmpi
+  report/report/

@@ -128,6 +128,10 @@ venv.bak/
 # mkdocs documentation
 /site
 
+# Generated docs artifacts (built by `just docs` / the Docs Publish workflow)
+docs/presentation.html
+docs/report/report.md
+
 # Manim presentation build output
 /presentation/media/
 

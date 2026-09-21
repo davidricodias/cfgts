@@ -44,8 +44,8 @@ SCENES=(
   "s14_impacto.py:ImpactoSlide"
   "s15_planificacion.py:PlanificacionSlide"
   "s16_presupuesto.py:PresupuestoSlide"
-  "s17_conclusiones.py:ConclusionesSlide"
-  "s18_futuras_lineas.py:FuturasLineasSlide"
+  "s17_futuras_lineas.py:FuturasLineasSlide"
+  "s18_conclusiones.py:ConclusionesSlide"
   "s19_closing.py:ClosingSlide"
 )
 
