@@ -1,0 +1,35 @@
+\babel@toc {spanish}{}\relax 
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Ejemplo de serie temporal}}{11}{figure.caption.6}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Ejemplo de serie temporal multivariante}}{12}{figure.caption.7}%
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Ejemplo de la paradoja de Simpson. Elaboración propia.}}{21}{figure.caption.8}%
+\contentsline {figure}{\numberline {3.4}{\ignorespaces DAG de conversión publicitaria}}{22}{figure.caption.9}%
+\contentsline {figure}{\numberline {3.5}{\ignorespaces DAG intervenido de conversión publicitaria}}{25}{figure.caption.10}%
+\contentsline {figure}{\numberline {3.6}{\ignorespaces DAG de mediación publicitaria}}{25}{figure.caption.11}%
+\contentsline {figure}{\numberline {3.7}{\ignorespaces DAG de mediación con confusión}}{26}{figure.caption.12}%
+\contentsline {figure}{\numberline {3.8}{\ignorespaces Descomposición del efecto total en PNDE y TNIE}}{28}{figure.caption.13}%
+\contentsline {figure}{\numberline {3.9}{\ignorespaces Grafo de series temporales de un proceso autorregresivo bivariante}}{29}{figure.caption.14}%
+\contentsline {figure}{\numberline {3.10}{\ignorespaces Grafo resumen del proceso autorregresivo bivariante}}{30}{figure.caption.15}%
+\contentsline {figure}{\numberline {3.11}{\ignorespaces Método de las trayectorias: efecto causal total de $Y_{t-2}$ sobre $X_t$}}{32}{figure.caption.16}%
+\contentsline {figure}{\numberline {3.12}{\ignorespaces Recomendación y su significado}}{33}{figure.caption.17}%
+\contentsline {figure}{\numberline {3.13}{\ignorespaces Niveles de entendimiento de los modelos}}{35}{figure.caption.18}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {6.1}{\ignorespaces Grafo causal para serie temporal bivariante con dos retardos}}{62}{figure.caption.19}%
+\contentsline {figure}{\numberline {6.2}{\ignorespaces Descomposición del efecto total a dos retardos}}{63}{figure.caption.20}%
+\contentsline {figure}{\numberline {6.3}{\ignorespaces Bloqueo de la mediación por el MCO ajustado}}{63}{figure.caption.21}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {7.1}{\ignorespaces Distribución de las puntuaciones de consistencia causal}}{79}{figure.caption.29}%
+\contentsline {figure}{\numberline {7.2}{\ignorespaces Ejemplo cualitativo de contrafactual generado por CFGTS}}{80}{figure.caption.30}%
+\contentsline {figure}{\numberline {7.3}{\ignorespaces Puntuación causal de CFGTS frente al control aleatorio}}{81}{figure.caption.31}%
+\contentsline {figure}{\numberline {7.4}{\ignorespaces Relación entre proximidad, error y consistencia causal}}{82}{figure.caption.32}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsfinish 

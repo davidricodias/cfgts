@@ -1,0 +1,18 @@
+[0] Config.pm:328> INFO - This is Biber 2.21
+[0] Config.pm:331> INFO - Logfile is './docs/report/report.blg'
+[61] biber:342> INFO - === Mon Sep 21, 2026, 22:59:43
+[76] Biber.pm:421> INFO - Reading './docs/report/report.bcf'
+[163] Biber.pm:1002> INFO - Found 65 citekeys in bib section 0
+[180] Biber.pm:4487> INFO - Processing section 0
+[190] Biber.pm:4678> INFO - Looking for bibtex file 'references.bib' for section 0
+[194] bibtex.pm:1713> INFO - LaTeX decoding ...
+[267] bibtex.pm:1519> INFO - Found BibTeX data source './docs/report/references.bib'
+[877] UCollate.pm:68> INFO - Overriding locale 'es-ES' defaults 'variable = shifted' with 'variable = non-ignorable'
+[878] UCollate.pm:68> INFO - Overriding locale 'es-ES' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[878] Biber.pm:4307> INFO - Sorting list 'none/global//global/global/global' of type 'entry' with template 'none' and locale 'es-ES'
+[925] bbl.pm:676> INFO - Writing './docs/report/report.bbl' with encoding 'UTF-8'
+[988] bbl.pm:779> INFO - Output to ./docs/report/report.bbl
+[988] Biber.pm:132> WARN - BibTeX subsystem: /var/folders/2b/sn9pm__s4xq2pw_dts6nk3y00000gn/T/biber_tmp_sJvq/33e59b5ca9ec342068223d604c3f8d55_88129.utf8, line 88, warning: undefined macro "June"
+[988] Biber.pm:132> WARN - BibTeX subsystem: /var/folders/2b/sn9pm__s4xq2pw_dts6nk3y00000gn/T/biber_tmp_sJvq/33e59b5ca9ec342068223d604c3f8d55_88129.utf8, line 166, warning: undefined macro "June"
+[988] Biber.pm:132> WARN - BibTeX subsystem: /var/folders/2b/sn9pm__s4xq2pw_dts6nk3y00000gn/T/biber_tmp_sJvq/33e59b5ca9ec342068223d604c3f8d55_88129.utf8, line 321, warning: undefined macro "July"
+[988] Biber.pm:134> INFO - WARNINGS: 3

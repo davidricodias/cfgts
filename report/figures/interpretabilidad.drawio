@@ -1,0 +1,73 @@
+<mxfile host="Electron">
+  <diagram name="Page-1" id="RIA-lsHl46gH6I6RpE3y">
+    <mxGraphModel dx="799" dy="573" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="3qFt93AZUqIp6da1eYbG-1" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=CMU Serif;fontSize=15;" value="output" vertex="1">
+          <mxGeometry height="30" width="60" x="381.09" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="3qFt93AZUqIp6da1eYbG-3" edge="1" parent="1" source="3qFt93AZUqIp6da1eYbG-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=15;" target="3qFt93AZUqIp6da1eYbG-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="3qFt93AZUqIp6da1eYbG-2" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=CMU Serif;fontSize=15;" value="modelo ( input)" vertex="1">
+          <mxGeometry height="30" width="120" x="240" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="3qFt93AZUqIp6da1eYbG-4" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=CMU Serif;fontSize=15;" value="output" vertex="1">
+          <mxGeometry height="30" width="60" x="381.09" y="359.48" as="geometry" />
+        </mxCell>
+        <mxCell id="3qFt93AZUqIp6da1eYbG-5" edge="1" parent="1" source="3qFt93AZUqIp6da1eYbG-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=15;" target="3qFt93AZUqIp6da1eYbG-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="3qFt93AZUqIp6da1eYbG-6" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=CMU Serif;fontSize=15;" value="modelo ( input)" vertex="1">
+          <mxGeometry height="30" width="120" x="240" y="359.48" as="geometry" />
+        </mxCell>
+        <mxCell id="3qFt93AZUqIp6da1eYbG-8" parent="1" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;rotation=-90;" value="" vertex="1">
+          <mxGeometry height="50" width="10" x="267.09" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="3qFt93AZUqIp6da1eYbG-9" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=CMU Serif;fontSize=11;" value="interpretabilidad" vertex="1">
+          <mxGeometry height="30" width="60" x="242.09" y="287" as="geometry" />
+        </mxCell>
+        <mxCell id="3qFt93AZUqIp6da1eYbG-11" parent="1" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;rotation=-90;" value="" vertex="1">
+          <mxGeometry height="110" width="10" x="296.09" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="3qFt93AZUqIp6da1eYbG-12" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=CMU Serif;fontSize=11;" value="explicabilidad" vertex="1">
+          <mxGeometry height="30" width="127.91" x="241.09" y="396.48" as="geometry" />
+        </mxCell>
+        <mxCell id="3qFt93AZUqIp6da1eYbG-13" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=CMU Serif;fontSize=15;" value="output&lt;span style=&quot;font-size: 10px;&quot;&gt;1&lt;/span&gt;" vertex="1">
+          <mxGeometry height="30" width="60" x="381.09" y="485.26000000000005" as="geometry" />
+        </mxCell>
+        <mxCell id="3qFt93AZUqIp6da1eYbG-14" edge="1" parent="1" source="3qFt93AZUqIp6da1eYbG-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=15;" target="3qFt93AZUqIp6da1eYbG-13">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="3qFt93AZUqIp6da1eYbG-15" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=CMU Serif;fontSize=15;" value="modelo ( input&lt;font style=&quot;font-size: 10px;&quot;&gt;1&lt;/font&gt;)" vertex="1">
+          <mxGeometry height="30" width="120" x="240" y="485.26000000000005" as="geometry" />
+        </mxCell>
+        <mxCell id="3qFt93AZUqIp6da1eYbG-16" parent="1" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;rotation=-90;" value="" vertex="1">
+          <mxGeometry height="190" width="6" x="336.08000000000004" y="426.48" as="geometry" />
+        </mxCell>
+        <mxCell id="3qFt93AZUqIp6da1eYbG-17" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontFamily=CMU Serif;fontSize=11;" value="explicación contrafactual" vertex="1">
+          <mxGeometry height="30" width="127.91" x="277.9100000000001" y="523.26" as="geometry" />
+        </mxCell>
+        <mxCell id="3qFt93AZUqIp6da1eYbG-18" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" value="" vertex="1">
+          <mxGeometry height="40" width="20" x="510" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="3qFt93AZUqIp6da1eYbG-20" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;size=10;position=0.5;fontFamily=CMU Serif;" value="¿Por qué el modelo es así?" vertex="1">
+          <mxGeometry height="60" width="130" x="470" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="3qFt93AZUqIp6da1eYbG-21" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" value="" vertex="1">
+          <mxGeometry height="40" width="20" x="510" y="370.52" as="geometry" />
+        </mxCell>
+        <mxCell id="3qFt93AZUqIp6da1eYbG-22" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;size=10;position=0.5;fontFamily=CMU Serif;" value="¿Con lo que espero del modelo, qué output debería tener?" vertex="1">
+          <mxGeometry height="60" width="130" x="470" y="310.52" as="geometry" />
+        </mxCell>
+        <mxCell id="3qFt93AZUqIp6da1eYbG-24" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" value="" vertex="1">
+          <mxGeometry height="40" width="20" x="510" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="3qFt93AZUqIp6da1eYbG-25" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;size=10;position=0.5;fontFamily=CMU Serif;" value="Dado input&lt;font style=&quot;font-size: 7px;&quot;&gt;1&lt;/font&gt;, ¿qué otro input&lt;span style=&quot;font-size: 7px;&quot;&gt;2&lt;/span&gt;&amp;nbsp;debería tener para llegar a output&lt;span style=&quot;font-size: 7px;&quot;&gt;2&lt;/span&gt;&lt;font&gt;?&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="130" x="470" y="440" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
