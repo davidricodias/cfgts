@@ -1,0 +1,4 @@
+# This file is used internally by FFMPEG.
+file 'file:/Users/josedavidricodias/dev/cfgts/ppt/media/videos/s13_closing/480p15/partial_movie_files/ClosingSlide/1924643240_2227400879_223132457.mp4'
+file 'file:/Users/josedavidricodias/dev/cfgts/ppt/media/videos/s13_closing/480p15/partial_movie_files/ClosingSlide/3192901421_551481375_1040569201.mp4'
+file 'file:/Users/josedavidricodias/dev/cfgts/ppt/media/videos/s13_closing/480p15/partial_movie_files/ClosingSlide/3192901421_3332274922_3494745895.mp4'

@@ -2,18 +2,36 @@
 
 from __future__ import annotations
 
-from common import ACCENT, INK, MUTED, WARM, ThemedSlide, body
+import numpy as np
+
+from common import ACCENT, GREEN, INK, MUTED, WARM, ThemedSlide, body, eq
 from manim import (
     DOWN,
+    RIGHT,
     UP,
+    Arrow,
+    Axes,
     Circumscribe,
+    Create,
+    Dot,
     FadeIn,
     FadeOut,
+    GrowArrow,
     LaggedStart,
+    Rectangle,
     Text,
     VGroup,
     Write,
 )
+
+
+def _forecast_curve(x: float) -> float:
+    """Synthetic differentiable forecaster f(x), only used to draw the diagram."""
+    return 0.25 * (x - 5) + 1.5 + 0.6 * np.sin(1.3 * x)
+
+
+ALPHA, BETA = 2.0, 2.6
+ORIGINAL_X, COUNTERFACTUAL_X = 2.0, 7.0
 
 PROPERTIES = [
     "Validez",
@@ -33,7 +51,7 @@ class EstadoArteSlide(ThemedSlide):
         head = self.show_heading("Estado del arte")
 
         intro = body(
-            "Propiedades deseables de una explicaci\u00f3n contrafactual:",
+            "Propiedades deseables de una explicación contrafactual:",
             font_size=28,
             width=58,
         ).next_to(head, DOWN, buff=0.55)
@@ -50,7 +68,7 @@ class EstadoArteSlide(ThemedSlide):
         gap = items[CAUSALITY_INDEX]
         self.play(gap.animate.set_color(WARM), Circumscribe(gap, color=WARM))
         note = body(
-            "Ning\u00fan m\u00e9todo domina todas a la vez, y c\u00f3mo incorporar "
+            "Ningún método domina todas a la vez, y cómo incorporar "
             "causalidad sigue siendo una pregunta abierta.",
             font_size=26,
             width=60,
@@ -60,8 +78,8 @@ class EstadoArteSlide(ThemedSlide):
 
         self.next_slide()
         gap_text = body(
-            "Adem\u00e1s, la literatura se concentra en clasificaci\u00f3n. "
-            "En regresi\u00f3n sobre series temporales apenas hay m\u00e9todos: "
+            "Además, la literatura se concentra en clasificación. "
+            "En regresión sobre series temporales apenas hay métodos: "
             "CounTS y ForecastCF.",
             font_size=30,
             width=48,
@@ -70,7 +88,7 @@ class EstadoArteSlide(ThemedSlide):
         self.play(Write(gap_text))
 
         self.next_slide()
-        here = Text(
-            "Ah\u00ed se sit\u00faa CFGTS", font_size=34, color=ACCENT, weight="BOLD"
-        ).next_to(gap_text, DOWN, buff=0.8)
-        self.play(FadeIn(here, shift=UP * 0.3))
+        here = Text("Ahí se sitúa CFGTS", font_size=34, color=ACCENT, weight="BOLD").move_to(
+            gap_text
+        )
+        self.play(FadeOut(gap_text), FadeIn(here, shift=UP * 0.3))

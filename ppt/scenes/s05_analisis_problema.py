@@ -33,7 +33,7 @@ def _requirement(number: int, text: str) -> VGroup:
 
 class AnalisisProblemaSlide(ThemedSlide):
     def construct(self) -> None:
-        head = self.show_heading("An\u00e1lisis del problema")
+        head = self.show_heading("Análisis del problema")
 
         given = eq(
             r"\hat{f}: \mathbb{R}^{n_{\mathrm{In}}} \to \mathbb{R}^{D},",
@@ -52,7 +52,7 @@ class AnalisisProblemaSlide(ThemedSlide):
             self.next_slide()
 
         closing = Text(
-            "M\u00e1s restrictivo que el caso tabular est\u00e1tico",
+            "Más restrictivo que el caso tabular estático",
             font_size=28,
             color=ACCENT,
             weight="BOLD",

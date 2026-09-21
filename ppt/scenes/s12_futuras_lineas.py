@@ -17,9 +17,9 @@ from manim import (
 
 LINES = [
     (
-        "M\u00e9todos alternativos de generaci\u00f3n",
+        "Métodos alternativos de generación",
         "Descenso de gradiente, algoritmos evolutivos o instancias "
-        "protot\u00edpicas en la Fase 1, sin tocar las Fases 2 y 3.",
+        "prototípicas en la Fase 1, sin tocar las Fases 2 y 3.",
     ),
     (
         "Causalidad en modelos no lineales",
@@ -27,8 +27,8 @@ LINES = [
         "aportados por expertos de dominio.",
     ),
     (
-        "Evaluaci\u00f3n y transferencia",
-        "M\u00e1s dominios reales y extensi\u00f3n de la interfaz a PyTorch o TensorFlow.",
+        "Evaluación y transferencia",
+        "Más dominios reales y extensión de la interfaz a PyTorch o TensorFlow.",
     ),
 ]
 
@@ -45,7 +45,7 @@ def _line(title: str, text: str) -> VGroup:
 
 class FuturasLineasSlide(ThemedSlide):
     def construct(self) -> None:
-        head = self.show_heading("Futuras l\u00edneas de investigaci\u00f3n")
+        head = self.show_heading("Futuras líneas de investigación")
 
         cards = VGroup(*[_line(title, text) for title, text in LINES])
         cards.arrange(RIGHT, buff=0.55, aligned_edge=UP).next_to(head, DOWN, buff=0.9)
@@ -57,7 +57,7 @@ class FuturasLineasSlide(ThemedSlide):
             self.next_slide()
 
         closing = Text(
-            "La implementaci\u00f3n queda como base para extenderlo",
+            "La implementación queda como base para extenderlo",
             font_size=26,
             color=ACCENT,
             weight="BOLD",

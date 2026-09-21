@@ -51,13 +51,22 @@ class TitleSlide(ThemedSlide):
 
         subtitle = Text(
             wrap(
-                "Explicaciones contrafactuales para modelos predictivos de series temporales",
-                46,
+                "CounterFactual Generation for Time Series",
+                70,
             ),
             font_size=28,
             color=INK,
         ).next_to(title, DOWN, buff=0.45)
-        author = Text(
-            "Jose David Rico Dias \u00b7 TFG \u00b7 UC3M", font_size=22, color=MUTED
-        ).next_to(subtitle, DOWN, buff=0.45)
-        self.play(FadeIn(subtitle, shift=UP * 0.25), FadeIn(author, shift=UP * 0.25))
+        author = Text("José David Rico Dias", font_size=22, color=MUTED).next_to(
+            subtitle, DOWN, buff=0.45
+        )
+        university = Text(
+            "Grado en Ingeniería Informática — Universidad Carlos III de Madrid",
+            font_size=16,
+            color=MUTED,
+        ).next_to(author, DOWN, buff=0.45)
+        self.play(
+            FadeIn(subtitle, shift=UP * 0.25),
+            FadeIn(author, shift=UP * 0.25),
+            FadeIn(university, shift=UP * 0.25),
+        )

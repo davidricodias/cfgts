@@ -18,14 +18,14 @@ from manim import (
 
 BLOCKS = [
     (
-        "Legislaci\u00f3n",
+        "Legislación",
         [
-            "RGPD art. 22: derecho a una explicaci\u00f3n significativa.",
+            "RGPD art. 22: derecho a una explicación significativa.",
             "AI Act (UE 2024/1689): transparencia en sistemas de alto riesgo.",
         ],
     ),
     (
-        "Est\u00e1ndares",
+        "Estándares",
         [
             "PEP 8 verificado con ruff.",
             "PEP 484 y PEP 561, validados con mypy.",
@@ -78,7 +78,7 @@ class MarcoReguladorSlide(ThemedSlide):
             self.next_slide()
 
         closing = Text(
-            "Una explicaci\u00f3n contrafactual es el mecanismo natural del art. 22",
+            "Una explicación contrafactual es el mecanismo natural del art. 22",
             font_size=26,
             color=ACCENT,
             weight="BOLD",

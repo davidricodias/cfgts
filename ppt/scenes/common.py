@@ -24,6 +24,8 @@ from manim import (
 )
 from manim_slides import Slide
 
+Text.set_default(font="CMU Serif")
+
 BG = "#F2F4FF"
 INK = "#12163A"
 MUTED = "#525C82"

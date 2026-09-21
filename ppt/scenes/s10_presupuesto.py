@@ -70,7 +70,7 @@ class PresupuestoSlide(ThemedSlide):
 
         self.next_slide()
         share = body(
-            "La dedicaci\u00f3n de personal supone el 93 % del coste total.",
+            " El coste de personal supone el 93 %",
             font_size=26,
             width=60,
             color=WARM,

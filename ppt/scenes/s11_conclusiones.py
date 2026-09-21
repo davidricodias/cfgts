@@ -43,7 +43,7 @@ class ConclusionesSlide(ThemedSlide):
             self.next_slide()
 
         closing = body(
-            "Una base t\u00e9cnica y conceptual para seguir construyendo.",
+            "Una base técnica y conceptual para seguir construyendo",
             font_size=26,
             width=80,
             color=ACCENT,

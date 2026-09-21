@@ -21,11 +21,11 @@ from manim import (
 
 # (fase, mes inicio, mes fin) con 0 = enero 2025 y 20 = septiembre 2026.
 PHASES = [
-    ("Investigaci\u00f3n y fundamentos", 0, 8),
-    ("Formalizaci\u00f3n matem\u00e1tica", 4, 10),
-    ("Implementaci\u00f3n del paquete", 6, 15),
-    ("Experimentaci\u00f3n y resultados", 14, 19),
-    ("Redacci\u00f3n de la memoria", 12, 20),
+    ("Investigación y fundamentos", 0, 8),
+    ("Formalización matemática", 4, 10),
+    ("Implementación del paquete", 6, 15),
+    ("Experimentación y resultados", 14, 19),
+    ("Redacción de la memoria", 12, 20),
 ]
 
 TOTAL_MONTHS = 20
@@ -40,7 +40,7 @@ def _month_x(month: int) -> float:
 
 class PlanificacionSlide(ThemedSlide):
     def construct(self) -> None:
-        head = self.show_heading("Planificaci\u00f3n")
+        head = self.show_heading("Planificación")
 
         rows = VGroup()
         for index, (name, start, end) in enumerate(PHASES):
@@ -86,8 +86,7 @@ class PlanificacionSlide(ThemedSlide):
 
         self.next_slide()
         note = body(
-            "Veinte meses en bloques diarios cortos pero fases largas: hubo margen para "
-            "reformular la puntuaci\u00f3n causal sin comprometer la entrega.",
+            "Veinte largos meses: no se pudo hacer antes por otras obligaciones",
             font_size=25,
             width=64,
             color=MUTED,

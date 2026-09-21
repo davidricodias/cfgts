@@ -39,12 +39,12 @@ class IntroSlide(ThemedSlide):
 
         self.next_slide()
         signature = eq(
-            r"\hat{f}:\ \mathbb{R}^{n_{\mathrm{In}}} \to \mathbb{R}^{D}",
+            r"\hat{f}:\ \mathbb{R}^{n_{\mathrm{In}}} \to \mathbb{R}^{D} | n_{\mathrm{In}} = D \times T",
             font_size=32,
             color=MUTED,
         ).next_to(diagram, DOWN, buff=0.75)
         caption = body(
-            "El modelo predice, pero no explica por qué esa salida y no otra.",
+            "Los modelos predicen",
             font_size=28,
             width=52,
         ).next_to(signature, DOWN, buff=0.5)
@@ -53,7 +53,7 @@ class IntroSlide(ThemedSlide):
         self.next_slide()
         ystar = eq(r"\mathbf{y}^{*}", font_size=46, color=WARM).move_to(y0)
         question = body(
-            "Fijamos un objetivo distinto en la salida...",
+            "Pero nos preguntamos cómo obtener una salida distinta...",
             font_size=28,
             width=52,
         ).move_to(caption)
@@ -63,7 +63,7 @@ class IntroSlide(ThemedSlide):
         self.next_slide()
         xprime = eq(r"\mathbf{x}'", font_size=46, color=WARM).move_to(x0)
         ask = body(
-            "...y buscamos qué entrada habría llevado al modelo hasta él.",
+            "...y qué entrada habría llevado al modelo hasta el nuevo objetivo",
             font_size=28,
             width=52,
         ).move_to(question)
@@ -72,11 +72,23 @@ class IntroSlide(ThemedSlide):
 
         self.next_slide()
         goal = eq(
-            r"\hat{f}(\mathbf{x}') \approx \mathbf{y}^{*}",
+            r"\hat{f}",
+            r"(",
+            r"\mathbf{x}'",
+            r")",
+            r"\approx",
+            r"\mathbf{y}^{*}",
             r"\qquad",
-            r"\|\mathbf{x}' - \mathbf{x}_0\|_2 \ \text{min}",
+            r"\|",
+            r"\mathbf{x}'",
+            r"- \mathbf{x}_0\|_2 \ \text{min}",
             font_size=38,
         ).move_to(ask)
-        goal[0].set_color(WARM)
-        goal[2].set_color(ACCENT)
+        goal[0].set_color(ACCENT)  # \hat{f}
+        goal[2].set_color(WARM)  # x'
+        goal[4].set_color(ACCENT)  # \approx
+        goal[5].set_color(WARM)  # y*
+        goal[7].set_color(ACCENT)  # \|...\|_2 min
+        goal[8].set_color(WARM)  # x'
+        goal[9].set_color(ACCENT)  # - x_0\|_2 min
         self.play(FadeOut(ask), Write(goal))

@@ -10,6 +10,7 @@ from manim import (
     RIGHT,
     UP,
     FadeIn,
+    FadeOut,
     LaggedStart,
     Line,
     Rectangle,
@@ -85,7 +86,7 @@ class ResultadosSlide(ThemedSlide):
 
         self.next_slide()
         first = body(
-            "La naturaleza del modelo domina la puntuaci\u00f3n: "
+            "La naturaleza del modelo domina la puntuación: "
             "lineal cerca de 1, Random Forest en torno a 0,5.",
             font_size=26,
             width=62,
@@ -94,9 +95,9 @@ class ResultadosSlide(ThemedSlide):
 
         self.next_slide()
         second = body(
-            "CFGTS supera al control aleatorio en las seis configuraciones.",
+            "CFGTS supera el control aleatorio",
             font_size=28,
             width=62,
-            color=WARM,
+            color=INK,
         ).move_to(first)
-        self.play(FadeIn(second, shift=UP * 0.2), first.animate.shift(UP * 0.45))
+        self.play(FadeOut(first), FadeIn(second, shift=UP * 0.2))

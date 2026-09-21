@@ -4,45 +4,56 @@
 # data URIs). Fully self-contained: uses `uv run --no-project` to fetch
 # manim/manim-slides into an ephemeral environment, independent of the root
 # cfgts venv and of presentation/'s.
+# Usage: ./generate.sh [l|m|h] [--clean]  (see CLEAN comment below for --clean)
 set -euo pipefail
 cd "$(dirname "$0")"
 
-QUALITY="${1:-h}"   # l=480p15 (draft), m=720p30, h=1080p60
-case "$QUALITY" in
-  l) ;;
-  m) ;;
-  h) ;;
-  *) echo "Uso: $0 [l|m|h]"; exit 1 ;;
-esac
+QUALITY="h"   # l=480p15 (draft), m=720p30, h=1080p60
+CLEAN=0
+for arg in "$@"; do
+  case "$arg" in
+    l|m|h) QUALITY="$arg" ;;
+    --clean) CLEAN=1 ;;
+    *) echo "Uso: $0 [l|m|h] [--clean]"; exit 1 ;;
+  esac
+done
 # NOTE: must pass "--quality h" as two argv tokens, NOT "-qh": manim-slides'
 # click parser splits unknown short-option clusters char by char, and since
 # its own help flag is registered as exactly "-h", "-qh" gets misdetected as
 # "-h" and just prints the help text instead of rendering (silently, exit 0).
 
-# One (file, scene) pair per slide, in presentation order. s05-s14 are
+# One (file, scene) pair per slide, in presentation order. s03-s12 are
 # empty chapter-divider placeholders for report.tex chapters not yet
 # scripted (content pending). Filenames are numbered to match this order.
 SCENES=(
   "s00_title.py:TitleSlide"
   "s01_intro.py:IntroSlide"
-  "s02_phases.py:PhasesSlide"
-  "s03_motivation_finance.py:MotivationFinanceSlide"
-  "s05_fundamentos.py:FundamentosSlide"
-  "s06_estado_arte.py:EstadoArteSlide"
-  "s07_analisis_problema.py:AnalisisProblemaSlide"
-  "s08_resultados.py:ResultadosSlide"
-  "s09_marco_regulador.py:MarcoReguladorSlide"
-  "s10_impacto.py:ImpactoSlide"
-  "s11_planificacion.py:PlanificacionSlide"
-  "s12_presupuesto.py:PresupuestoSlide"
-  "s13_conclusiones.py:ConclusionesSlide"
-  "s14_futuras_lineas.py:FuturasLineasSlide"
-  "s15_closing.py:ClosingSlide"
+  "s02_motivation_finance.py:MotivationFinanceSlide"
+  "s03_fundamentos.py:FundamentosSlide"
+  "s04_estado_arte.py:EstadoArteSlide"
+  "s05_analisis_problema.py:AnalisisProblemaSlide"
+  "s06_resultados.py:ResultadosSlide"
+  "s07_marco_regulador.py:MarcoReguladorSlide"
+  "s08_impacto.py:ImpactoSlide"
+  "s09_planificacion.py:PlanificacionSlide"
+  "s10_presupuesto.py:PresupuestoSlide"
+  "s11_conclusiones.py:ConclusionesSlide"
+  "s12_futuras_lineas.py:FuturasLineasSlide"
+  "s13_closing.py:ClosingSlide"
 )
 
 UV_RUN=(uv run --no-project --with "manim>=0.18.1" --with "manim-slides>=5.7.0" --with numpy)
 
-rm -rf scenes/slides scenes/media
+# scenes/media/videos/*/*/partial_movie_files/ is Manim's own render cache
+# (keyed by a hash of each animation's content): keeping it across runs lets
+# unchanged slides be skipped ("Animation already saved") instead of fully
+# re-rendered, which is what makes incremental `generate.sh` calls fast. Only
+# wipe it with `--clean` (e.g. after renaming/removing a scene, or if a
+# stale-cache render looks wrong).
+if [[ "$CLEAN" == "1" ]]; then
+  echo ">>> Limpiando caché (--clean)"
+  rm -rf scenes/slides scenes/media
+fi
 
 cd scenes
 for entry in "${SCENES[@]}"; do

@@ -16,7 +16,7 @@ from manim import (
 )
 
 PILLARS = [
-    ("Estad\u00edstica", r"y_t = \beta_0 + \beta_1 x_t + \varepsilon_t"),
+    ("Estadística", r"y_t = \beta_0 + \beta_1 x_t + \varepsilon_t"),
     ("Series temporales", r"X_t = \phi_1 X_{t-1} + \phi_2 X_{t-2} + \varepsilon_t"),
     ("Causalidad pearliana", r"\mathbb{P}\left(C \mid do(P = p)\right)"),
     ("Explicabilidad en IA", r"g \approx \hat{f} \quad \text{(LIME)}"),
@@ -33,7 +33,7 @@ def _pillar(title: str, tex: str) -> VGroup:
 
 class FundamentosSlide(ThemedSlide):
     def construct(self) -> None:
-        head = self.show_heading("Fundamentos te\u00f3ricos")
+        head = self.show_heading("Fundamentos teóricos")
 
         grid = VGroup(*[_pillar(title, tex) for title, tex in PILLARS])
         grid.arrange_in_grid(rows=2, cols=2, buff=(0.7, 0.6))

@@ -16,22 +16,20 @@ from manim import (
 
 QUADRANTS = [
     (
-        "Econ\u00f3mico",
-        "Auditar un modelo sin su conjunto de entrenamiento y sin c\u00f3digo espec\u00edfico "
+        "Económico",
+        "Auditar un modelo sin su conjunto de entrenamiento y sin código específico "
         "por tipo de modelo abarata la explicabilidad.",
     ),
     (
         "Social",
-        "Mejora la confianza del operador en demanda el\u00e9ctrica, cl\u00ednica o riesgo "
-        "de cr\u00e9dito, y democratiza la explicabilidad.",
+        "Mejora la confianza que el operador del modelo tiene sobre los outputs"
     ),
     (
         "Medioambiental",
-        "Cientos de evaluaciones del modelo por explicaci\u00f3n; acotadas por n_trials, "
-        "n_coverage_trials y timeout.",
+        "Cientos de evaluaciones del modelo por explicación, es intensivo energéticamente"
     ),
     (
-        "\u00c9tico",
+        "Ético",
         "Riesgo de explicabilidad de fachada y de abuso de la whitelist para justificar "
         "decisiones sesgadas.",
     ),
@@ -48,9 +46,9 @@ def _quadrant(title: str, text: str, accent: str) -> VGroup:
 
 class ImpactoSlide(ThemedSlide):
     def construct(self) -> None:
-        head = self.show_heading("Impacto econ\u00f3mico, social, medioambiental y \u00e9tico")
+        head = self.show_heading("Impacto económico, social, medioambiental y ético")
 
-        colors = [ACCENT, ACCENT, ACCENT, WARM]
+        colors = [ACCENT, ACCENT, ACCENT, ACCENT]
         grid = VGroup(
             *[
                 _quadrant(title, text, color)
@@ -67,7 +65,7 @@ class ImpactoSlide(ThemedSlide):
             self.next_slide()
 
         closing = body(
-            "El impacto es indirecto: depende de que terceros lo desplieguen.",
+            "El impacto es indirecto: depende del uso de quién despliegue CFGTS",
             font_size=25,
             width=80,
             color=MUTED,

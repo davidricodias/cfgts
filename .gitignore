@@ -128,6 +128,9 @@ venv.bak/
 # mkdocs documentation
 /site
 
+# Manim presentation build output
+/presentation/media/
+
 # mypy
 .mypy_cache/
 .dmypy.json
@@ -197,3 +200,26 @@ lean/CfgtsLean/CounterfactualObjective.lean
 lean/CfgtsLean/CoverageObjective.lean
 evaluation/
 scripts/
+presentation/manim.cfg
+presentation/pyproject.toml
+presentation/README.md
+presentation/render_all.sh
+presentation/uv.lock
+presentation/slides/__init__.py
+presentation/slides/diagrams.py
+presentation/slides/s00_title.py
+presentation/slides/s01_intro.py
+presentation/slides/s02_foundations.py
+presentation/slides/s03_soa.py
+presentation/slides/s04_problem.py
+presentation/slides/s05_proposal_phases.py
+presentation/slides/s06_proposal_causal.py
+presentation/slides/s07_implementation.py
+presentation/slides/s08_results.py
+presentation/slides/s09_closing.py
+presentation/slides/theme.py
+presentation/slides/TitleScene.json
+presentation/slides/files/TitleScene/b35dde5188929e82_reversed.mp4
+presentation/slides/files/TitleScene/b35dde5188929e82.mp4
+presentation/tools/concat_videos.py
+presentation/tools/extract_frames.py
