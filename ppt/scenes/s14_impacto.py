@@ -1,4 +1,4 @@
-"""Slide 11/16: impacto económico, social, medioambiental y ético."""
+"""Slide 15/20: impacto económico, social, medioambiental y ético."""
 
 from __future__ import annotations
 

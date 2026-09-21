@@ -1,4 +1,4 @@
-"""Slide 4/16: motivación (finanzas)."""
+"""Slide 3/20: motivación (finanzas)."""
 
 from __future__ import annotations
 

@@ -1,4 +1,4 @@
-"""Slide 16/16: cierre."""
+"""Slide 20/20: cierre."""
 
 from __future__ import annotations
 

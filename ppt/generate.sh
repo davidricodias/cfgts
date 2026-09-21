@@ -22,9 +22,10 @@ done
 # its own help flag is registered as exactly "-h", "-qh" gets misdetected as
 # "-h" and just prints the help text instead of rendering (silently, exit 0).
 
-# One (file, scene) pair per slide, in presentation order. s03-s12 are
-# empty chapter-divider placeholders for report.tex chapters not yet
-# scripted (content pending). Filenames are numbered to match this order.
+# One (file, scene) pair per slide, in presentation order: roughly one scene
+# per report.tex chapter, with the "Propuesta" chapter split across s06-s11
+# (one slide per phase, a summary, the implementation and a usage example).
+# Filenames are numbered to match this order.
 SCENES=(
   "s00_title.py:TitleSlide"
   "s01_intro.py:IntroSlide"
@@ -32,14 +33,20 @@ SCENES=(
   "s03_fundamentos.py:FundamentosSlide"
   "s04_estado_arte.py:EstadoArteSlide"
   "s05_analisis_problema.py:AnalisisProblemaSlide"
-  "s06_resultados.py:ResultadosSlide"
-  "s07_marco_regulador.py:MarcoReguladorSlide"
-  "s08_impacto.py:ImpactoSlide"
-  "s09_planificacion.py:PlanificacionSlide"
-  "s10_presupuesto.py:PresupuestoSlide"
-  "s11_conclusiones.py:ConclusionesSlide"
-  "s12_futuras_lineas.py:FuturasLineasSlide"
-  "s13_closing.py:ClosingSlide"
+  "s06_propuesta_fase1.py:PropuestaFase1Slide"
+  "s07_propuesta_fase2.py:PropuestaFase2Slide"
+  "s08_propuesta_fase3.py:PropuestaFase3Slide"
+  "s09_propuesta_resumen.py:PropuestaResumenSlide"
+  "s10_implementacion.py:ImplementacionSlide"
+  "s11_ejemplo_uso.py:EjemploUsoSlide"
+  "s12_resultados.py:ResultadosSlide"
+  "s13_marco_regulador.py:MarcoReguladorSlide"
+  "s14_impacto.py:ImpactoSlide"
+  "s15_planificacion.py:PlanificacionSlide"
+  "s16_presupuesto.py:PresupuestoSlide"
+  "s17_conclusiones.py:ConclusionesSlide"
+  "s18_futuras_lineas.py:FuturasLineasSlide"
+  "s19_closing.py:ClosingSlide"
 )
 
 UV_RUN=(uv run --no-project --with "manim==0.21.0" --with "manim-slides==5.7.0" --with "numpy==2.5.3")

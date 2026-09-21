@@ -1,4 +1,4 @@
-"""Slide 10/16: marco regulador."""
+"""Slide 14/20: marco regulador."""
 
 from __future__ import annotations
 
