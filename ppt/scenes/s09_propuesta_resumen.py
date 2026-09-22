@@ -19,7 +19,7 @@ PHASES = [
     (
         "Fase 1 · Candidatos",
         r"\min\ \big(J_1(\mathbf{x}'),\, J_2(\mathbf{x}')\big)",
-        "TPE bi-objetivo sobre el hipercubo factible: el frente de Pareto es C0.",
+        "NSGA bi-objetivo sobre el hipercubo factible: el frente de Pareto es C0.",
         ACCENT,
     ),
     (

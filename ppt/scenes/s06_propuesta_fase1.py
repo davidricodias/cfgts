@@ -49,7 +49,7 @@ class PropuestaFase1Slide(ThemedSlide):
         head = self.show_heading("Fase 1: candidatos contrafactuales")
 
         intro = body(
-            "Optimización bi-objetivo (TPE) sobre el hipercubo factible.",
+            "Optimización bi-objetivo (NSGA) sobre el hipercubo factible.",
             font_size=27,
             width=62,
         ).next_to(head, DOWN, buff=0.45)

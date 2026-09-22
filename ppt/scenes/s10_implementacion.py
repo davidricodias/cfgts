@@ -26,7 +26,7 @@ MODULES = [
 
 DEPENDENCIES = [
     ("scikit-learn", "RegressorMixin + check_is_fitted"),
-    ("Optuna", "TPE de las fases 1 y 2"),
+    ("Optuna", "NSGA y TPE de las fases 1 y 2"),
     ("DoWhy + NetworkX", "DAG y efectos causales"),
     ("Polars + NumPy + Numba", "datos y cálculo vectorizado"),
 ]
