@@ -34,7 +34,6 @@ extra_javascript:
 
 nav:
   - Home: index.md
-  - Report: report/report.md
   - Report (PDF): report/report.pdf
   - Presentation: presentation.html
 

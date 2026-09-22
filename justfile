@@ -65,6 +65,5 @@
   just latex-pdf
   biber ./docs/report/report
   just latex-pdf
-  pandoc docs/report/report.tex -o docs/report/report.md --mathjax
   cp ppt/output.html docs/presentation.html
   uv run mkdocs build

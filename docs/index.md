@@ -2,6 +2,5 @@
 
 ## Documents
 
-- [Report](report/report.md) — full report, rendered as HTML.
 - [Report (PDF)](report/report.pdf) — printable version.
 - [Presentation](presentation.html) — interactive slide deck (use the arrow keys to navigate).
