@@ -33,7 +33,6 @@ cfgts = CFGTS(
     counterfactual_value=target,
     whitelist=["X_t-1", "Y_t-1"],
     timeout=30,
-    n_walk_steps=2,
 )
 cfgts.run()
 print(cfgts.counterfactuals)

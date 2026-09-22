@@ -43,7 +43,7 @@ class PropuestaResumenSlide(ThemedSlide):
 
         inputs = eq(
             r"\langle \hat{f},\; \mathbf{x}_0,\; \mathbf{y}^{*},\; W,\;"
-            r"r_{\min},\; r_{\max},\; n_{\mathrm{walk}} \rangle",
+            r"r_{\min},\; r_{\max} \rangle",
             font_size=30,
         ).next_to(head, DOWN, buff=0.45)
         self.play(Write(inputs))
